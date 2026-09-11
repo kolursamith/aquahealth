@@ -25,3 +25,10 @@ torchvision==0.29.0
 # enter the pipeline as PIL images) and the environment verifier must see them.
 numpy==2.4.6
 pillow==12.3.0
+
+# Layer 6 — OpenCV (headless). Provides the reference CLAHE implementation
+# (tiled histogram equalisation with clip limit and bilinear interpolation
+# across tile borders) and the RGB<->LAB conversion it is applied in. Chosen
+# over a numpy re-implementation so "CLAHE" here means exactly what it means
+# in the literature; over full opencv-python to avoid GUI toolkit dependencies.
+opencv-python-headless==5.0.0.93
