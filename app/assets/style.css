@@ -1,0 +1,574 @@
+/* ===========================================================
+   AquaHealth AI — website-style theme for Streamlit
+   Colors are set explicitly so the page looks identical in
+   Streamlit's light and dark themes.
+   =========================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+    --ink: #0c1f2c;
+    --ink-soft: #4a6474;
+    --ink-faint: #7b93a1;
+    --surface: #ffffff;
+    --surface-2: #f3f8fa;
+    --line: #dbe7ed;
+    --brand: #0e7c86;
+    --brand-dark: #0a5a62;
+    --brand-soft: #e3f4f5;
+    --ok: #1a8f5e;
+    --ok-soft: #e4f6ed;
+    --warn: #b7791f;
+    --warn-soft: #fdf3e0;
+    --bad: #c23b3b;
+    --bad-soft: #fceceb;
+    --muted: #667f8d;
+    --muted-soft: #eef2f4;
+    --radius: 18px;
+    --shadow: 0 10px 30px rgba(12, 31, 44, 0.07);
+    --shadow-lg: 0 18px 46px rgba(12, 31, 44, 0.12);
+}
+
+/* ---------- Page canvas ---------- */
+
+.stApp {
+    background:
+        radial-gradient(900px 420px at 12% -8%, #dff1f3 0%, rgba(223, 241, 243, 0) 60%),
+        radial-gradient(760px 380px at 92% 4%, #e7f0fb 0%, rgba(231, 240, 251, 0) 62%),
+        #f7fbfc;
+    color: var(--ink);
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+.stApp,
+.stApp p,
+.stApp li,
+.stApp span,
+.stApp label,
+.stApp div {
+    color: var(--ink);
+}
+
+/* Hide Streamlit chrome so the page reads as a website, not a tool. */
+#MainMenu,
+footer,
+header[data-testid="stHeader"] {
+    visibility: hidden;
+    height: 0;
+}
+
+.block-container {
+    padding-top: 1.6rem !important;
+    padding-bottom: 3.5rem !important;
+    max-width: 1120px;
+}
+
+h1, h2, h3, h4 {
+    font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+}
+
+/* ---------- Hero ---------- */
+
+.ah-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 26px;
+    padding: 40px 44px 36px;
+    background: linear-gradient(128deg, #0a4d55 0%, #0e7c86 48%, #17a0a0 100%);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 26px;
+}
+
+.ah-hero::after {
+    content: "";
+    position: absolute;
+    right: -90px;
+    top: -110px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.ah-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #eafcfd !important;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.ah-hero h1 {
+    margin: 16px 0 6px;
+    font-size: 46px;
+    line-height: 1.05;
+    font-weight: 800;
+    color: #ffffff !important;
+}
+
+.ah-hero .ah-sub {
+    font-size: 19px;
+    font-weight: 500;
+    color: #d3f1f3 !important;
+    margin: 0 0 14px;
+}
+
+.ah-hero .ah-lede {
+    max-width: 640px;
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: #bfe6e9 !important;
+    margin: 0;
+}
+
+/* ---------- Generic card ---------- */
+
+.ah-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 26px 28px;
+    margin-bottom: 20px;
+}
+
+.ah-section-title {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brand) !important;
+    margin: 30px 0 12px;
+}
+
+.ah-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint) !important;
+    margin-bottom: 8px;
+}
+
+/* ---------- Dashboard stats ---------- */
+
+.ah-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.ah-stat {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--brand);
+}
+
+.ah-stat.is-bad   { border-top-color: var(--bad); }
+.ah-stat.is-warn  { border-top-color: var(--warn); }
+.ah-stat.is-ok    { border-top-color: var(--ok); }
+
+.ah-stat-value {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--ink) !important;
+}
+
+.ah-stat-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-soft) !important;
+    margin-top: 4px;
+}
+
+.ah-stat-note {
+    font-size: 11.5px;
+    color: var(--ink-faint) !important;
+    margin-top: 2px;
+}
+
+/* ---------- How it works ---------- */
+
+.ah-steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.ah-step {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.ah-step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-soft);
+    color: var(--brand-dark) !important;
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.ah-step-title {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink) !important;
+    margin-bottom: 4px;
+}
+
+.ah-step-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-soft) !important;
+}
+
+/* ---------- Result card ---------- */
+
+.ah-result {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    padding: 28px 30px 24px;
+    margin-bottom: 18px;
+}
+
+.ah-result-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.ah-diagnosis {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--ink) !important;
+    margin: 2px 0 0;
+}
+
+.ah-conf {
+    text-align: right;
+    min-width: 130px;
+}
+
+.ah-conf-value {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--brand) !important;
+}
+
+.ah-conf-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint) !important;
+}
+
+.ah-meter {
+    height: 10px;
+    width: 100%;
+    border-radius: 999px;
+    background: var(--muted-soft);
+    overflow: hidden;
+    margin: 18px 0 6px;
+}
+
+.ah-meter-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #17a0a0, #0e7c86);
+}
+
+.ah-meter-fill.is-low { background: linear-gradient(90deg, #d6a24a, #b7791f); }
+
+.ah-note {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: var(--warn-soft);
+    border: 1px solid #f0dcb4;
+    border-left: 4px solid var(--warn);
+    border-radius: 12px;
+    padding: 13px 16px;
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #6d4a11 !important;
+}
+
+.ah-note strong { color: #6d4a11 !important; }
+
+/* ---------- Probability bars ---------- */
+
+.ah-prob-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 230px) 1fr 52px;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 0;
+}
+
+.ah-prob-name {
+    font-size: 13.5px;
+    color: var(--ink-soft) !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ah-prob-row.is-top .ah-prob-name {
+    font-weight: 700;
+    color: var(--ink) !important;
+}
+
+.ah-prob-track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--muted-soft);
+    overflow: hidden;
+}
+
+.ah-prob-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: #b7cdd6;
+}
+
+.ah-prob-row.is-top .ah-prob-bar {
+    background: linear-gradient(90deg, #17a0a0, #0e7c86);
+}
+
+.ah-prob-pct {
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--ink-faint) !important;
+}
+
+.ah-prob-row.is-top .ah-prob-pct {
+    color: var(--brand) !important;
+    font-weight: 700;
+}
+
+/* ---------- Risk card ---------- */
+
+.ah-risk {
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 18px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    border-left: 6px solid var(--muted);
+}
+
+.ah-risk-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ah-risk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.ah-risk-caption {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-faint) !important;
+}
+
+.ah-risk-action {
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.62;
+    color: var(--ink) !important;
+}
+
+.ah-risk-hint {
+    margin-top: 12px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-soft) !important;
+}
+
+.ah-risk.risk-high      { border-left-color: var(--bad);  background: linear-gradient(180deg, var(--bad-soft), #fff 55%); }
+.ah-risk.risk-moderate  { border-left-color: var(--warn); background: linear-gradient(180deg, var(--warn-soft), #fff 55%); }
+.ah-risk.risk-low       { border-left-color: var(--ok);   background: linear-gradient(180deg, var(--ok-soft), #fff 55%); }
+.ah-risk.risk-uncertain { border-left-color: var(--muted); background: linear-gradient(180deg, var(--muted-soft), #fff 55%); }
+
+.ah-risk.risk-high      .ah-risk-pill { background: var(--bad);   color: #fff !important; }
+.ah-risk.risk-moderate  .ah-risk-pill { background: var(--warn);  color: #fff !important; }
+.ah-risk.risk-low       .ah-risk-pill { background: var(--ok);    color: #fff !important; }
+.ah-risk.risk-uncertain .ah-risk-pill { background: var(--muted); color: #fff !important; }
+
+/* ---------- Inline messages ---------- */
+
+.ah-msg {
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 8px 0;
+    border: 1px solid transparent;
+}
+
+.ah-msg.err  { background: var(--bad-soft);  border-color: #f3cfcd; color: #8d2a2a !important; }
+.ah-msg.warn { background: var(--warn-soft); border-color: #f0dcb4; color: #6d4a11 !important; }
+.ah-msg.info { background: var(--brand-soft); border-color: #c5e6e8; color: #0a5a62 !important; }
+.ah-msg.ok   { background: var(--ok-soft);   border-color: #c5e8d6; color: #14663f !important; }
+
+.ah-msg.err *, .ah-msg.warn *, .ah-msg.info *, .ah-msg.ok * { color: inherit !important; }
+
+/* ---------- Image preview ---------- */
+
+.ah-preview-meta {
+    font-size: 12.5px;
+    color: var(--ink-faint) !important;
+    margin-top: 6px;
+}
+
+div[data-testid="stImage"] img {
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+}
+
+/* ---------- Streamlit widgets ---------- */
+
+section[data-testid="stFileUploaderDropzone"],
+div[data-testid="stFileUploaderDropzone"] {
+    background: var(--surface-2);
+    border: 2px dashed #b6d3da;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+div[data-testid="stFileUploader"] label,
+div[data-testid="stFileUploaderDropzoneInstructions"] * {
+    color: var(--ink-soft) !important;
+}
+
+.stButton > button {
+    border-radius: 12px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 0.7rem 1.2rem;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink) !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+    border-color: #b6d3da;
+    color: var(--brand-dark) !important;
+}
+
+.stButton > button[kind="primary"] {
+    background: linear-gradient(120deg, #0e7c86, #14a0a0);
+    border: none;
+    color: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(14, 124, 134, 0.3);
+}
+
+.stButton > button[kind="primary"]:hover {
+    color: #ffffff !important;
+    box-shadow: 0 12px 26px rgba(14, 124, 134, 0.38);
+}
+
+div[data-testid="stExpander"] {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+div[data-testid="stExpander"] summary,
+div[data-testid="stExpander"] summary p {
+    font-weight: 600;
+    color: var(--ink) !important;
+}
+
+hr, div[data-testid="stDivider"] hr {
+    border-color: var(--line);
+}
+
+/* ---------- Footer ---------- */
+
+.ah-footer {
+    margin-top: 34px;
+    padding: 22px 26px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft) !important;
+}
+
+.ah-footer strong { color: var(--ink) !important; }
+
+/* ---------- Responsive: keep it usable on a laptop / tablet ---------- */
+
+@media (max-width: 1000px) {
+    .ah-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ah-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+    .ah-hero { padding: 28px 22px; }
+    .ah-hero h1 { font-size: 32px; }
+    .ah-hero .ah-sub { font-size: 16px; }
+    .ah-stats, .ah-steps { grid-template-columns: 1fr; }
+    .ah-diagnosis { font-size: 25px; }
+    .ah-conf { text-align: left; }
+    .ah-prob-row { grid-template-columns: 1fr 44px; }
+    .ah-prob-row .ah-prob-track { grid-column: 1 / -1; }
+}
