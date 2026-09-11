@@ -1,6 +1,10 @@
-import numpy as np
+import pytest
 
-from app.mock_prediction import predict as mock_predict
+pytest.importorskip("numpy", reason="numpy is introduced by Layer 5")
+
+import numpy as np  # noqa: E402
+
+from app.mock_prediction import predict as mock_predict  # noqa: E402
 
 REQUIRED_KEYS = {"predicted_class", "confidence", "risk", "message"}
 

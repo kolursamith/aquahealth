@@ -18,6 +18,6 @@
 ```bash
 git checkout develop
 git checkout student-2
-pip install -r requirements-dev.txt
+pip install -r requirements/dev.txt
 python scripts/audit_dataset.py
 ```

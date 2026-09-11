@@ -5,12 +5,7 @@ Owner: Student 1
 
 from src.config import (
     CHECKPOINT_PATH,
-    LEARNING_RATE,
-    NUM_EPOCHS,
     SEED,
-    TRAIN_DIR,
-    VAL_DIR,
-    WEIGHT_DECAY,
 )
 from src.utils import get_logger, set_seed
 

@@ -14,7 +14,7 @@
 ```bash
 git checkout develop
 git checkout student-4
-pip install -r requirements-dev.txt
+pip install -r requirements/dev.txt
 streamlit run app/app.py
 ```
 

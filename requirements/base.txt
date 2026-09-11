@@ -1,0 +1,10 @@
+# Runtime dependencies for AquaHealth AI.
+#
+# This file grows one layer at a time. A dependency is added only by the layer
+# that actually needs it, once that layer has passed its acceptance gate, so
+# that this file always describes exactly what the validated codebase requires
+# — never what it might require later.
+#
+# Layer 0 (environment) introduces no runtime dependency: the foundation at
+# this point is an interpreter plus a quality toolchain (see dev.txt).
+# PyTorch is added by Layer 1, TorchVision by Layer 2.

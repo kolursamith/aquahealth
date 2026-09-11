@@ -15,6 +15,6 @@
 ```bash
 git checkout develop
 git checkout student-1
-pip install -r requirements-dev.txt
+pip install -r requirements/dev.txt
 python scripts/verify_environment.py
 ```

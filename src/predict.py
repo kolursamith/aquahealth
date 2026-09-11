@@ -14,7 +14,6 @@ from typing import TypedDict
 
 import numpy as np
 
-from src.config import CLASS_NAMES
 from src.risk_engine import get_risk_level, get_risk_message
 
 

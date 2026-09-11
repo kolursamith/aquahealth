@@ -1,0 +1,13 @@
+# Development and quality-gate tooling (development-only — no runtime module
+# imports any of these).
+#
+# Every layer's acceptance gate runs the same four checks: tests, lint, type
+# check, format check. Versions are pinned exactly so that a layer which
+# passes its gate locally passes the identical gate in CI.
+
+-r base.txt
+
+pytest==9.1.1   # test runner; every layer ships tests run by `pytest`
+ruff==0.16.7    # linter; configured in pyproject.toml, run as `ruff check .`
+mypy==2.3.1     # static type checker for src/, app/, scripts/
+black==26.5.1   # formatter; CI runs `black --check .`

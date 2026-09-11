@@ -15,10 +15,10 @@ IMAGENET_STD = (0.229, 0.224, 0.225)
 def apply_clahe(image: np.ndarray, clip_limit: float = 2.0, tile_grid_size: int = 8) -> np.ndarray:
     """Apply CLAHE to the luminance channel of an RGB image."""
     lab = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
-    l, a, b = cv2.split(lab)
+    lightness, green_red, blue_yellow = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=(tile_grid_size, tile_grid_size))
-    l = clahe.apply(l)
-    lab = cv2.merge((l, a, b))
+    lightness = clahe.apply(lightness)
+    lab = cv2.merge((lightness, green_red, blue_yellow))
     return cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
 
 

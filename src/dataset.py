@@ -8,7 +8,6 @@ from pathlib import Path
 from torch.utils.data import DataLoader, Dataset
 
 from src.config import BATCH_SIZE, CLASS_NAMES, NUM_WORKERS
-from src.preprocessing import preprocess
 
 
 class FishDiseaseDataset(Dataset):
@@ -34,7 +33,9 @@ class FishDiseaseDataset(Dataset):
         return len(self.samples)
 
     def __getitem__(self, index: int):
-        raise NotImplementedError("Load image, apply transform + preprocess, return (tensor, label)")
+        raise NotImplementedError(
+            "Load image, apply transform + preprocess, return (tensor, label)"
+        )
 
 
 def get_dataloader(root: Path, transform=None, shuffle: bool = False) -> DataLoader:

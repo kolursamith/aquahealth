@@ -1,7 +1,12 @@
-import numpy as np
+import pytest
 
-from src.config import IMAGE_SIZE
-from src.preprocessing import apply_clahe, preprocess, resize
+pytest.importorskip("numpy", reason="numpy is introduced by Layer 5")
+pytest.importorskip("cv2", reason="OpenCV is introduced by Layer 6 (CLAHE)")
+
+import numpy as np  # noqa: E402
+
+from src.config import IMAGE_SIZE  # noqa: E402
+from src.preprocessing import apply_clahe, preprocess, resize  # noqa: E402
 
 
 def _dummy_image(size: int = 300) -> np.ndarray:

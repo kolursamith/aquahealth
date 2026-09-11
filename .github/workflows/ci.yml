@@ -19,7 +19,10 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: pip install -r requirements-dev.txt
+        run: pip install -r requirements/dev.txt
+
+      - name: Verify environment
+        run: python scripts/verify_environment.py
 
       - name: Run tests
-        run: pytest --cov=src --cov=app
+        run: pytest -rs

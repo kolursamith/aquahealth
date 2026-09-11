@@ -6,7 +6,6 @@ data/train/, data/val/, data/test/.
 import argparse
 import random
 import shutil
-from pathlib import Path
 
 from src.config import CLASS_NAMES, ORIGINAL_DIR, SEED, TEST_DIR, TRAIN_DIR, VAL_DIR
 
@@ -46,8 +45,10 @@ def create_split(
             for src_path in files:
                 shutil.copy2(src_path, dest_dir / src_path.name)
 
-        print(f"{class_name}: {len(splits[TRAIN_DIR])} train / "
-              f"{len(splits[VAL_DIR])} val / {len(splits[TEST_DIR])} test")
+        print(
+            f"{class_name}: {len(splits[TRAIN_DIR])} train / "
+            f"{len(splits[VAL_DIR])} val / {len(splits[TEST_DIR])} test"
+        )
 
 
 if __name__ == "__main__":

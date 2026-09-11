@@ -50,21 +50,61 @@ student-4
 
 `main` and `develop` are protected. Student branches merge into `develop` via pull request; only `develop` → `main` is merged directly by the project maintainer.
 
-## Local Run
+## Build Status
+
+The project is built one validated layer at a time. Each layer is only started
+once the previous one passes its acceptance gate; see [docs/layers/](docs/layers/).
+
+| Layer | Scope | Status |
+|---|---|---|
+| 0 | Python environment | PASS |
+| 1 | PyTorch | not started |
+| 2 | TorchVision | not started |
+| 3 | Pretrained EfficientNet-B0 | not started |
+| 4 | Disease classifier head | not started |
+| 5 | Dataset / DataLoader | not started |
+| 6 | Preprocessing + CLAHE | not started |
+| 7 | Training loop | not started |
+| 8 | Validation | not started |
+| 9 | Fine-tuning | not started |
+| 10 | Evaluation | not started |
+| 11 | Prediction API | not started |
+| 12 | YOLO integration | deferred by design |
+
+Modules under `src/` and `app/` that belong to layers which have not been built
+yet are unvalidated scaffolding and will be replaced by their layer.
+
+## Local Setup
+
+Requires Python 3.11 (pinned in `.python-version`).
 
 ```bash
-python -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements-dev.txt
-
-streamlit run app/app.py
+pip install -r requirements/dev.txt
+python scripts/verify_environment.py
 ```
+
+`verify_environment.py` checks the interpreter against `.python-version` and
+every distribution declared in `requirements/`, and exits non-zero if the
+environment does not match. It is the same check CI runs.
 
 ## Testing
 
 ```bash
-pytest
+pytest -rs
 ```
+
+Tests belonging to layers that are not built yet skip with an explicit reason
+rather than failing.
+
+## Running the App
+
+```bash
+streamlit run app/app.py
+```
+
+Not runnable yet — Streamlit is introduced by Layer 11.
 
 ## Project Layout
 
