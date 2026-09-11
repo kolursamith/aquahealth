@@ -7,7 +7,6 @@
 #
 # Layer 0 (environment) introduces no runtime dependency: the foundation at
 # this point is an interpreter plus a quality toolchain (see dev.txt).
-# TorchVision is added by Layer 2.
 
 # Layer 1 — PyTorch. Deep-learning runtime: tensors, autograd, nn, device
 # backends. The default PyPI wheel is used: on macOS arm64 it ships the MPS
@@ -15,3 +14,14 @@
 # download.pytorch.org (same version, "+cpu" local label) to avoid pulling
 # multi-GB CUDA libraries onto a GPU-less runner.
 torch==2.14.0
+
+# Layer 2 — TorchVision. Image transforms (transforms.v2), the pretrained
+# model registry (EfficientNet-B0 weights come from here in Layer 3), and
+# image I/O. Its compiled ops are built against one exact torch version, so
+# the two pins move together: torch 2.14.0 <-> torchvision 0.29.0.
+torchvision==0.29.0
+# numpy and pillow are hard dependencies of torchvision; they are pinned here
+# because project code imports them directly (src/utils seeds numpy; images
+# enter the pipeline as PIL images) and the environment verifier must see them.
+numpy==2.4.6
+pillow==12.3.0

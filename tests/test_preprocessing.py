@@ -1,6 +1,5 @@
 import pytest
 
-pytest.importorskip("numpy", reason="numpy is introduced by Layer 5")
 pytest.importorskip("cv2", reason="OpenCV is introduced by Layer 6 (CLAHE)")
 
 import numpy as np  # noqa: E402
