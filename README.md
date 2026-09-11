@@ -60,7 +60,7 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | 0 | Python environment | PASS |
 | 1 | PyTorch | PASS |
 | 2 | TorchVision | PASS |
-| 3 | Pretrained EfficientNet-B0 | not started |
+| 3 | Pretrained EfficientNet-B0 | PASS |
 | 4 | Disease classifier head | not started |
 | 5 | Dataset / DataLoader | not started |
 | 6 | Preprocessing + CLAHE | not started |
