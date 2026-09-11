@@ -58,7 +58,7 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | Layer | Scope | Status |
 |---|---|---|
 | 0 | Python environment | PASS |
-| 1 | PyTorch | not started |
+| 1 | PyTorch | PASS |
 | 2 | TorchVision | not started |
 | 3 | Pretrained EfficientNet-B0 | not started |
 | 4 | Disease classifier head | not started |

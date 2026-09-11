@@ -6,8 +6,8 @@ declared in the requirements files. Exits non-zero when the environment does
 not satisfy what is declared, so the same command works as a local check and
 as a CI gate.
 
-GPU/CUDA/MPS availability is not reported here: establishing it requires
-PyTorch, which Layer 0 does not install. Layer 1 verifies it.
+GPU/CUDA/MPS availability is reported only when PyTorch is installed (Layer 1
+onwards), because establishing it requires importing torch.
 """
 
 from __future__ import annotations
@@ -17,17 +17,34 @@ import dataclasses
 import json
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.environment import EnvironmentReport, build_report  # noqa: E402
+
+if TYPE_CHECKING:
+    from src.device import TorchReport
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_REQUIREMENTS = [ROOT / "requirements" / "base.txt", ROOT / "requirements" / "dev.txt"]
 PYTHON_VERSION_FILE = ROOT / ".python-version"
 
 
-def format_report(report: EnvironmentReport) -> str:
+def torch_section(report: EnvironmentReport) -> TorchReport | None:
+    """Torch runtime facts, or None when torch is not installed.
+
+    Imported lazily so this script still runs (and reports the absence) in an
+    environment where torch is not installed.
+    """
+    if not report.accelerator.torch_installed:
+        return None
+    from src.device import torch_report
+
+    return torch_report()
+
+
+def format_report(report: EnvironmentReport, torch: TorchReport | None = None) -> str:
     py = report.python
     plat = report.platform
     acc = report.accelerator
@@ -57,10 +74,27 @@ def format_report(report: EnvironmentReport) -> str:
         f"  machine          {acc.machine}",
         f"  nvidia-smi       {'present' if acc.nvidia_smi_present else 'not present'}",
         f"  torch installed  {'yes' if acc.torch_installed else 'no'}",
-        "  cuda / mps       not determined in Layer 0 (requires torch — Layer 1)",
-        "",
-        "Declared distributions",
     ]
+
+    if torch is None:
+        lines.append("  cuda / mps       not determined (requires torch)")
+    else:
+        cuda_text = "no"
+        if torch.cuda_available:
+            cuda_text = f"yes, {torch.cuda_device_count} device(s) ({torch.cuda_device_name})"
+        lines += [
+            "",
+            "PyTorch",
+            f"  version          {torch.version}",
+            f"  cuda built       {'yes' if torch.cuda_built else 'no'}",
+            f"  cuda available   {cuda_text}",
+            f"  mps built        {'yes' if torch.mps_built else 'no'}",
+            f"  mps available    {'yes' if torch.mps_available else 'no'}",
+            f"  cpu threads      {torch.num_threads}",
+            f"  selected device  {torch.selected_device}",
+        ]
+
+    lines += ["", "Declared distributions"]
 
     if not report.distributions:
         lines.append("  (none declared yet)")
@@ -103,10 +137,14 @@ def main(argv: list[str] | None = None) -> int:
         python_version_file=PYTHON_VERSION_FILE if PYTHON_VERSION_FILE.exists() else None,
     )
 
+    torch = torch_section(report)
+
     if args.json:
-        print(json.dumps(dataclasses.asdict(report), indent=2, default=str))
+        payload = dataclasses.asdict(report)
+        payload["torch"] = dataclasses.asdict(torch) if torch else None
+        print(json.dumps(payload, indent=2, default=str))
     else:
-        print(format_report(report))
+        print(format_report(report, torch))
 
     return 0 if report.ok else 1
 

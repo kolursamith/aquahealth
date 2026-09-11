@@ -7,4 +7,11 @@
 #
 # Layer 0 (environment) introduces no runtime dependency: the foundation at
 # this point is an interpreter plus a quality toolchain (see dev.txt).
-# PyTorch is added by Layer 1, TorchVision by Layer 2.
+# TorchVision is added by Layer 2.
+
+# Layer 1 — PyTorch. Deep-learning runtime: tensors, autograd, nn, device
+# backends. The default PyPI wheel is used: on macOS arm64 it ships the MPS
+# (Metal) backend; on Linux it ships CUDA. CI installs the CPU-only build from
+# download.pytorch.org (same version, "+cpu" local label) to avoid pulling
+# multi-GB CUDA libraries onto a GPU-less runner.
+torch==2.14.0

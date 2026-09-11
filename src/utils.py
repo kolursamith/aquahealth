@@ -3,20 +3,22 @@
 import logging
 import random
 
-import numpy as np
+import torch
 
 
 def set_seed(seed: int) -> None:
-    """Seed python, numpy, and torch RNGs for reproducibility."""
-    random.seed(seed)
-    np.random.seed(seed)
-    try:
-        import torch
+    """Seed python, torch (all devices), and numpy when it is installed.
 
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
+    numpy is seeded opportunistically because it is not a declared dependency
+    until the data layers; once it is, the guard can go.
+    """
+    random.seed(seed)
+    torch.manual_seed(seed)
+    try:
+        import numpy as np
     except ImportError:
-        pass
+        return
+    np.random.seed(seed)
 
 
 def get_logger(name: str) -> logging.Logger:

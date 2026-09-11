@@ -7,7 +7,7 @@ installed yet, which is exactly the situation it is meant to diagnose.
 It reports facts and never infers them. Anything that cannot be established
 without a dependency that is not installed is reported as unknown rather than
 guessed — notably GPU/CUDA/MPS availability, which requires PyTorch and is
-therefore determined in Layer 1, not here.
+therefore determined by `src.device` (Layer 1), not here.
 """
 
 from __future__ import annotations
@@ -72,8 +72,8 @@ class AcceleratorReport:
     """Accelerator facts observable without importing a deep-learning library.
 
     `cuda_available` and `mps_available` are intentionally absent: determining
-    them requires PyTorch, which Layer 0 does not install. Layer 1 owns that
-    verification.
+    them requires importing PyTorch, which this stdlib-only module must not do.
+    `src.device.torch_report` owns that verification.
     """
 
     machine: str
