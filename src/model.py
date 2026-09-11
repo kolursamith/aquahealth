@@ -1,17 +1,21 @@
-"""EfficientNet-B0 backbone (Layer 3).
+"""EfficientNet-B0 backbone (Layer 3) and configurable classifier head (Layer 4).
 
 Input (N, 3, H, W), ImageNet-normalized -> EfficientNet-B0 -> logits.
 
 The pretrained weights are torchvision's ImageNet-1K general-purpose image
-classification weights. They are NOT fish-disease-trained. At this layer the
-model keeps its stock 1000-way ImageNet head; the disease classifier head is
-introduced by Layer 4 and is configurable there.
+classification weights. They are NOT fish-disease-trained.
+
+`build_efficientnet_b0` returns the stock model with its 1000-way ImageNet
+head. `build_classifier` swaps that head for one with a caller-supplied
+number of classes; the count is a required argument because the real class
+list is only known once the dataset has been inspected.
 
 Owner: Student 1
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import torch
@@ -21,6 +25,8 @@ from torchvision.models import EfficientNet, EfficientNet_B0_Weights, efficientn
 PRETRAINED_WEIGHTS = EfficientNet_B0_Weights.IMAGENET1K_V1
 IMAGENET_NUM_CLASSES = len(PRETRAINED_WEIGHTS.meta["categories"])
 INPUT_CHANNELS = 3
+STOCK_DROPOUT = 0.2
+MIN_NUM_CLASSES = 2
 
 
 @dataclass(frozen=True)
@@ -39,6 +45,44 @@ def build_efficientnet_b0(pretrained: bool = True) -> EfficientNet:
     """
     weights = PRETRAINED_WEIGHTS if pretrained else None
     return efficientnet_b0(weights=weights)
+
+
+def build_classifier(
+    num_classes: int,
+    *,
+    dropout: float = STOCK_DROPOUT,
+    freeze_backbone: bool = False,
+    pretrained: bool = True,
+) -> EfficientNet:
+    """EfficientNet-B0 with a fresh `Dropout -> Linear(1280, num_classes)` head.
+
+    The backbone (`features`) is left exactly as loaded; only the head is
+    replaced. The new head uses torchvision's own Linear initialisation
+    (uniform ±1/sqrt(out_features), zero bias) so it starts the way the
+    reference recipe's head did, and is deterministic under `set_seed`.
+    """
+    if num_classes < MIN_NUM_CLASSES:
+        raise ValueError(f"num_classes must be >= {MIN_NUM_CLASSES}, got {num_classes}")
+    if not 0.0 <= dropout < 1.0:
+        raise ValueError(f"dropout must be in [0, 1), got {dropout}")
+
+    model = build_efficientnet_b0(pretrained=pretrained)
+    in_features = model.classifier[-1].in_features
+
+    head = nn.Linear(in_features, num_classes)
+    init_range = 1.0 / math.sqrt(num_classes)
+    nn.init.uniform_(head.weight, -init_range, init_range)
+    nn.init.zeros_(head.bias)
+    model.classifier = nn.Sequential(nn.Dropout(p=dropout, inplace=True), head)
+
+    if freeze_backbone:
+        set_backbone_trainable(model, False)
+    return model
+
+
+def set_backbone_trainable(model: EfficientNet, trainable: bool) -> None:
+    for parameter in model.features.parameters():
+        parameter.requires_grad_(trainable)
 
 
 def summarize(model: nn.Module) -> ModelSummary:

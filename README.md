@@ -61,7 +61,7 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | 1 | PyTorch | PASS |
 | 2 | TorchVision | PASS |
 | 3 | Pretrained EfficientNet-B0 | PASS |
-| 4 | Disease classifier head | not started |
+| 4 | Disease classifier head | PASS |
 | 5 | Dataset / DataLoader | not started |
 | 6 | Preprocessing + CLAHE | not started |
 | 7 | Training loop | not started |
