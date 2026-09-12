@@ -97,14 +97,28 @@ def test_parameter_count_is_stock_minus_old_head_plus_new_head(num_classes):
     assert summary.output_features == num_classes
 
 
-def test_head_initialisation_follows_torchvision_scheme():
+def test_head_initialisation_is_fan_in_scaled_with_zero_bias():
     set_seed(0)
     linear = build_classifier(8, pretrained=False).classifier[1]
-    bound = 1.0 / 8**0.5
+    bound = 1.0 / BACKBONE_FEATURES**0.5
     assert torch.equal(linear.bias, torch.zeros(8))
     assert linear.weight.abs().max() <= bound
     expected_std = bound / 3**0.5
     assert linear.weight.std().item() == pytest.approx(expected_std, rel=0.05)
+
+
+@pytest.mark.parametrize("num_classes", [2, 4, 8, 13])
+def test_initial_loss_is_close_to_uniform_chance_for_any_class_count(batch, num_classes):
+    """Regression for Layer 7's finding: out_features-scaled init gave loss ≈ 3·ln(K)."""
+    import math
+
+    set_seed(0)
+    model = build_classifier(num_classes, pretrained=True).eval()
+    with torch.no_grad():
+        logits = model(batch)
+        loss = F.cross_entropy(logits, torch.zeros(4, dtype=torch.long))
+    assert logits.std().item() < 0.5
+    assert loss.item() == pytest.approx(math.log(num_classes), abs=0.3)
 
 
 def test_head_initialisation_is_deterministic_under_seed():

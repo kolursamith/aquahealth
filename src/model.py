@@ -57,9 +57,13 @@ def build_classifier(
     """EfficientNet-B0 with a fresh `Dropout -> Linear(1280, num_classes)` head.
 
     The backbone (`features`) is left exactly as loaded; only the head is
-    replaced. The new head uses torchvision's own Linear initialisation
-    (uniform ±1/sqrt(out_features), zero bias) so it starts the way the
-    reference recipe's head did, and is deterministic under `set_seed`.
+    replaced. The head is initialised uniform ±1/sqrt(in_features) with zero
+    bias (fan-in scaling), deterministic under `set_seed`.
+
+    torchvision's own scheme scales by 1/sqrt(out_features), which is only
+    well-conditioned for its 1000-way head: for a handful of classes it
+    yields initial logits with std ≈ 4 and an initial loss ≈ 3x ln(K).
+    Fan-in scaling keeps the initial logits near zero for any class count.
     """
     if num_classes < MIN_NUM_CLASSES:
         raise ValueError(f"num_classes must be >= {MIN_NUM_CLASSES}, got {num_classes}")
@@ -70,7 +74,7 @@ def build_classifier(
     in_features = model.classifier[-1].in_features
 
     head = nn.Linear(in_features, num_classes)
-    init_range = 1.0 / math.sqrt(num_classes)
+    init_range = 1.0 / math.sqrt(in_features)
     nn.init.uniform_(head.weight, -init_range, init_range)
     nn.init.zeros_(head.bias)
     model.classifier = nn.Sequential(nn.Dropout(p=dropout, inplace=True), head)

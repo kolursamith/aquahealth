@@ -174,3 +174,18 @@ Layer 5 (Dataset / DataLoader) must:
 - build a controlled synthetic fixture (generated images, known labels) under `tmp_path` for tests; no real dataset
 - verify: length, item shape/dtype, label range, class ↔ index mapping stability (sorted, deterministic), DataLoader batching, `shuffle` reproducibility under seed, worker behaviour, rejection of corrupt/unreadable files
 - re-run Layers 0–4 as regression
+
+---
+
+## Amendment (Layer 7, 2026-09-12) — D2 superseded
+
+D2 above chose torchvision's `uniform(±1/√out_features)` head initialisation.
+Layer 7's fixture training exposed that this scheme is only well-conditioned
+for torchvision's 1000-way head: for K = 4 it yields initial logits with
+std ≈ 4.2 and an initial loss ≈ 4.3 (ln 4 = 1.39), and training did not
+converge. The head is now initialised `uniform(±1/√in_features)` (fan-in),
+which gives initial logits near zero for any K. `tests/test_classifier.py`
+was corrected accordingly and gained
+`test_initial_loss_is_close_to_uniform_chance_for_any_class_count`.
+All 39 Layer 4 tests pass after the change. See
+[layer-07-training.md](layer-07-training.md) §9 B1.

@@ -64,7 +64,7 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | 4 | Disease classifier head | PASS |
 | 5 | Dataset / DataLoader | PASS |
 | 6 | Preprocessing + CLAHE | PASS |
-| 7 | Training loop | not started |
+| 7 | Training loop | PASS |
 | 8 | Validation | not started |
 | 9 | Fine-tuning | not started |
 | 10 | Evaluation | not started |
