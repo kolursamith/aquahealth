@@ -69,10 +69,9 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | 9 | Fine-tuning | PASS |
 | 10 | Evaluation | PASS |
 | 11 | Prediction API | PASS |
-| 12 | YOLO integration | deferred by design |
+| 12 | YOLO integration | DEFERRED — decision needs the real dataset ([record](docs/layers/layer-12-yolo-decision.md)) |
 
-Modules under `src/` and `app/` that belong to layers which have not been built
-yet are unvalidated scaffolding and will be replaced by their layer.
+All layers 0–11 are built and gated; Layer 12 is an evidence-gated decision.
 
 ## Local Setup
 
