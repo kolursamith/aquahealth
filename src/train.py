@@ -22,6 +22,7 @@ Owner: Student 1
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import random
 import time
 from dataclasses import asdict, dataclass, field
@@ -40,13 +41,16 @@ from src.config import LEARNING_RATE, NUM_EPOCHS, SEED, WEIGHT_DECAY
 from src.dataset import ImageFolderDataset, build_dataloader
 from src.device import resolve_device
 from src.model import build_classifier
-from src.preprocessing import CLAHEConfig, PreprocessConfig
+from src.preprocessing import CLAHEConfig, PreprocessConfig, build_eval_transform
 from src.utils import get_logger, set_seed
+from src.validation import ValidationSummary, run_validation
 
 logger = get_logger(__name__)
 
-CHECKPOINT_FORMAT_VERSION = 1
+CHECKPOINT_FORMAT_VERSION = 2
 LAST_CHECKPOINT_NAME = "last.pt"
+BEST_CHECKPOINT_NAME = "best.pt"
+SELECTION_METRICS = ("f1_macro", "accuracy", "loss")
 
 
 @dataclass(frozen=True)
@@ -55,8 +59,14 @@ class TrainConfig:
     learning_rate: float = LEARNING_RATE
     weight_decay: float = WEIGHT_DECAY
     seed: int = SEED
+    selection_metric: str = "f1_macro"
 
     def __post_init__(self) -> None:
+        if self.selection_metric not in SELECTION_METRICS:
+            raise ValueError(
+                f"selection_metric must be one of {SELECTION_METRICS}, "
+                f"got {self.selection_metric!r}"
+            )
         if self.epochs < 1:
             raise ValueError(f"epochs must be >= 1, got {self.epochs}")
         if self.learning_rate <= 0:
@@ -80,16 +90,40 @@ class EpochStats:
     train_accuracy: float
     samples: int
     seconds: float
+    validation: ValidationSummary | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        payload["validation"] = self.validation.to_dict() if self.validation else None
+        return payload
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, Any]) -> EpochStats:
+        validation = payload.get("validation")
+        return cls(
+            **{k: v for k, v in payload.items() if k != "validation"},
+            validation=ValidationSummary(**validation) if validation else None,
+        )
 
 
 @dataclass
 class TrainingResult:
     history: list[EpochStats] = field(default_factory=list)
     last_checkpoint: Path | None = None
+    best_checkpoint: Path | None = None
+    best_epoch: int | None = None
+    best_metric: float | None = None
 
     @property
     def final(self) -> EpochStats:
         return self.history[-1]
+
+
+def is_improvement(metric: str, candidate: float, incumbent: float | None) -> bool:
+    """Strict improvement; for `loss` lower is better, otherwise higher."""
+    if incumbent is None:
+        return True
+    return candidate < incumbent if metric == "loss" else candidate > incumbent
 
 
 # --- model mode -------------------------------------------------------------
@@ -207,6 +241,8 @@ def save_checkpoint(
     preprocess: PreprocessConfig,
     train_config: TrainConfig,
     loader: DataLoader | None = None,
+    best_epoch: int | None = None,
+    best_metric: float | None = None,
 ) -> Path:
     """Everything needed to rebuild the model and continue the exact trajectory."""
     path = Path(path)
@@ -220,7 +256,9 @@ def save_checkpoint(
         "class_names": list(class_names),
         "preprocess": asdict(preprocess),
         "train_config": asdict(train_config),
-        "history": [asdict(h) for h in history],
+        "history": [h.to_dict() for h in history],
+        "best_epoch": best_epoch,
+        "best_metric": best_metric,
         "rng": _rng_state(),
         "loader_generator": (
             loader.generator.get_state()
@@ -243,6 +281,8 @@ class Checkpoint:
     preprocess: PreprocessConfig
     train_config: TrainConfig
     history: list[EpochStats]
+    best_epoch: int | None
+    best_metric: float | None
     _payload: dict[str, Any]
 
     def build_model(self, *, pretrained: bool = False) -> EfficientNet:
@@ -288,7 +328,9 @@ def load_checkpoint(path: Path) -> Checkpoint:
         class_names=list(payload["class_names"]),
         preprocess=PreprocessConfig(**pre),
         train_config=TrainConfig(**payload["train_config"]),
-        history=[EpochStats(**h) for h in payload["history"]],
+        history=[EpochStats.from_dict(h) for h in payload["history"]],
+        best_epoch=payload.get("best_epoch"),
+        best_metric=payload.get("best_metric"),
         _payload=payload,
     )
 
@@ -306,11 +348,14 @@ def fit(
     device: torch.device,
     checkpoint_dir: Path | None = None,
     resume_from: Checkpoint | None = None,
+    val_loader: DataLoader | None = None,
 ) -> TrainingResult:
     """Train for `config.epochs` total epochs, checkpointing after each.
 
-    With `resume_from`, model/optimizer/RNG/loader state are restored and
-    training continues from the checkpoint's epoch to `config.epochs`.
+    With `val_loader`, every epoch ends with an eval-mode validation pass
+    (src/validation.py); the epoch whose `config.selection_metric` is best
+    is written to `best.pt`. With `resume_from`, model/optimizer/RNG/loader
+    state are restored and training continues from the checkpoint's epoch.
     """
     model.to(device)
     optimizer = build_optimizer(model, config)
@@ -323,14 +368,29 @@ def fit(
         resume_from.restore_optimizer(optimizer)
         resume_from.restore_rng(loader)
         result.history = list(resume_from.history)
+        result.best_epoch = resume_from.best_epoch
+        result.best_metric = resume_from.best_metric
         start_epoch = resume_from.epoch + 1
         logger.info("resuming from %s at epoch %d", resume_from.path, start_epoch)
 
+    def checkpoint(name: str) -> Path:
+        return save_checkpoint(
+            Path(checkpoint_dir) / name,  # type: ignore[arg-type]
+            model=model,
+            optimizer=optimizer,
+            epoch=epoch,
+            history=result.history,
+            class_names=class_names,
+            preprocess=preprocess,
+            train_config=config,
+            loader=loader,
+            best_epoch=result.best_epoch,
+            best_metric=result.best_metric,
+        )
+
     for epoch in range(start_epoch, config.epochs + 1):
         stats = train_one_epoch(model, loader, optimizer, device, epoch=epoch)
-        result.history.append(stats)
-        logger.info(
-            "epoch %d/%d  loss %.4f  train_acc %.3f  (%d samples, %.1fs)",
+        message = "epoch %d/%d  loss %.4f  train_acc %.3f  (%d samples, %.1fs)" % (
             epoch,
             config.epochs,
             stats.loss,
@@ -338,18 +398,30 @@ def fit(
             stats.samples,
             stats.seconds,
         )
-        if checkpoint_dir is not None:
-            result.last_checkpoint = save_checkpoint(
-                Path(checkpoint_dir) / LAST_CHECKPOINT_NAME,
-                model=model,
-                optimizer=optimizer,
-                epoch=epoch,
-                history=result.history,
-                class_names=class_names,
-                preprocess=preprocess,
-                train_config=config,
-                loader=loader,
+
+        if val_loader is not None:
+            summary = run_validation(model, val_loader, device, class_names).summary
+            stats = dataclasses.replace(stats, validation=summary)
+            message += "  |  val loss %.4f  acc %.3f  f1_macro %.3f" % (
+                summary.loss,
+                summary.accuracy,
+                summary.f1_macro,
             )
+            candidate = getattr(summary, config.selection_metric)
+            if is_improvement(config.selection_metric, candidate, result.best_metric):
+                result.best_metric = candidate
+                result.best_epoch = epoch
+                message += "  *"
+
+        result.history.append(stats)
+        logger.info(message)
+
+        if checkpoint_dir is not None:
+            result.last_checkpoint = checkpoint(LAST_CHECKPOINT_NAME)
+            if result.best_epoch == epoch:
+                result.best_checkpoint = checkpoint(BEST_CHECKPOINT_NAME)
+            elif result.best_epoch is not None:
+                result.best_checkpoint = Path(checkpoint_dir) / BEST_CHECKPOINT_NAME
 
     model.eval()
     return result
@@ -361,7 +433,9 @@ def fit(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Train the classifier on an image folder.")
     parser.add_argument("--train-root", type=Path, required=True)
+    parser.add_argument("--val-root", type=Path, default=None, help="validation image folder")
     parser.add_argument("--checkpoint-dir", type=Path, required=True)
+    parser.add_argument("--selection-metric", choices=SELECTION_METRICS, default="f1_macro")
     parser.add_argument("--epochs", type=int, default=NUM_EPOCHS)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--lr", type=float, default=LEARNING_RATE)
@@ -381,6 +455,7 @@ def main(argv: list[str] | None = None) -> int:
         learning_rate=args.lr,
         weight_decay=args.weight_decay,
         seed=args.seed,
+        selection_metric=args.selection_metric,
     )
     device = resolve_device(args.device)
 
@@ -417,6 +492,19 @@ def main(argv: list[str] | None = None) -> int:
         seed=config.seed,
         persistent_workers=True,
     )
+    val_loader = None
+    if args.val_root is not None:
+        val_dataset = ImageFolderDataset(
+            args.val_root,
+            transform=build_eval_transform(preprocess),
+            class_names=dataset.class_names,
+        )
+        val_loader = build_dataloader(
+            val_dataset,
+            batch_size=args.batch_size,
+            num_workers=args.workers,
+            persistent_workers=True,
+        )
 
     logger.info(
         "training %d classes %s on %s — %d images, %d epochs",
@@ -435,10 +523,19 @@ def main(argv: list[str] | None = None) -> int:
         device=device,
         checkpoint_dir=args.checkpoint_dir,
         resume_from=checkpoint,
+        val_loader=val_loader,
     )
     logger.info(
         "done: final loss %.4f train_acc %.3f", result.final.loss, result.final.train_accuracy
     )
+    if result.best_epoch is not None:
+        logger.info(
+            "best %s %.4f at epoch %d -> %s",
+            config.selection_metric,
+            result.best_metric,
+            result.best_epoch,
+            result.best_checkpoint,
+        )
     return 0
 
 
