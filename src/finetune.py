@@ -24,13 +24,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import torch
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torchvision.models import EfficientNet
 
 from src.augmentation import build_train_transform
 from src.config import LEARNING_RATE, SEED, WEIGHT_DECAY
 from src.dataset import ImageFolderDataset, build_dataloader
 from src.device import resolve_device
+from src.manifest import MANIFEST_PATH, build_split_dataset
 from src.model import backbone_block_count, build_classifier, set_trainable_blocks
 from src.preprocessing import CLAHEConfig, PreprocessConfig, build_eval_transform
 from src.train import (
@@ -116,14 +117,37 @@ def apply_stage(model: EfficientNet, stage: Stage) -> int:
     return blocks
 
 
-def stage_train_config(stage: Stage, *, seed: int, selection_metric: str) -> TrainConfig:
+@dataclass(frozen=True)
+class OptimizerSettings:
+    """Run-level optimisation choices shared by every stage of a schedule."""
+
+    optimizer: str = "adamw"
+    weight_decay: float = WEIGHT_DECAY
+    momentum: float = 0.9
+    lr_step_size: int | None = None
+    lr_gamma: float = 0.1
+    amp: bool = False
+
+
+def stage_train_config(
+    stage: Stage,
+    *,
+    seed: int,
+    selection_metric: str,
+    settings: OptimizerSettings = OptimizerSettings(),
+) -> TrainConfig:
     return TrainConfig(
         epochs=stage.epochs,
         learning_rate=stage.learning_rate,
-        weight_decay=WEIGHT_DECAY,
+        weight_decay=settings.weight_decay,
         seed=seed,
         selection_metric=selection_metric,
         backbone_learning_rate=stage.backbone_learning_rate,
+        amp=settings.amp,
+        optimizer=settings.optimizer,
+        momentum=settings.momentum,
+        lr_step_size=settings.lr_step_size,
+        lr_gamma=settings.lr_gamma,
     )
 
 
@@ -140,6 +164,7 @@ def run_schedule(
     seed: int = SEED,
     selection_metric: str = "f1_macro",
     resume_from: Checkpoint | None = None,
+    settings: OptimizerSettings = OptimizerSettings(),
 ) -> ScheduleResult:
     """Run every stage in order; each stage starts from the previous stage's best weights.
 
@@ -164,7 +189,9 @@ def run_schedule(
             continue
         resuming = resume_from if index == start_index and resume_from is not None else None
         blocks = apply_stage(model, stage)
-        config = stage_train_config(stage, seed=seed, selection_metric=selection_metric)
+        config = stage_train_config(
+            stage, seed=seed, selection_metric=selection_metric, settings=settings
+        )
         stage_dir = checkpoint_dir / stage.name
         logger.info(
             "stage %s: %d epoch(s), %d/%d backbone blocks trainable, lr %g, backbone lr %s",
@@ -199,7 +226,15 @@ def run_schedule(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Staged fine-tuning on an image folder.")
-    parser.add_argument("--train-root", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--train-root", type=Path, help="image folder laid out as <class>/<img>")
+    source.add_argument(
+        "--manifest",
+        type=Path,
+        nargs="?",
+        const=MANIFEST_PATH,
+        help=f"frozen split manifest (default {MANIFEST_PATH.name}); train/val splits",
+    )
     parser.add_argument("--val-root", type=Path, default=None)
     parser.add_argument("--checkpoint-dir", type=Path, required=True)
     parser.add_argument("--head-epochs", type=int, default=DEFAULT_SCHEDULE[0].epochs)
@@ -214,6 +249,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--selection-metric", default="f1_macro")
     parser.add_argument("--device", default=None)
     parser.add_argument("--resume", type=Path, default=None, help="stage checkpoint to resume")
+    parser.add_argument("--amp", action="store_true", help="mixed precision (float16 on CUDA)")
+    parser.add_argument("--pin-memory", action="store_true", help="pinned host memory (CUDA)")
     args = parser.parse_args(argv)
 
     stages = (
@@ -253,9 +290,18 @@ def main(argv: list[str] | None = None) -> int:
         class_names = None
 
     set_seed(args.seed)
-    train_dataset = ImageFolderDataset(
-        args.train_root, transform=build_train_transform(preprocess), class_names=class_names
-    )
+    train_dataset: Dataset[tuple[torch.Tensor, int]]
+    if args.manifest is not None:
+        train_dataset = build_split_dataset(
+            "train",
+            transform=build_train_transform(preprocess),
+            manifest_path=args.manifest,
+            class_names=class_names,
+        )
+    else:
+        train_dataset = ImageFolderDataset(
+            args.train_root, transform=build_train_transform(preprocess), class_names=class_names
+        )
     train_loader = build_dataloader(
         train_dataset,
         batch_size=args.batch_size,
@@ -263,19 +309,27 @@ def main(argv: list[str] | None = None) -> int:
         num_workers=args.workers,
         seed=args.seed,
         persistent_workers=True,
+        pin_memory=args.pin_memory,
     )
     val_loader = None
-    if args.val_root is not None:
+    val_dataset: Dataset[tuple[torch.Tensor, int]] | None = None
+    if args.manifest is not None:
+        val_dataset = build_split_dataset(
+            "val", transform=build_eval_transform(preprocess), manifest_path=args.manifest
+        )
+    elif args.val_root is not None:
         val_dataset = ImageFolderDataset(
             args.val_root,
             transform=build_eval_transform(preprocess),
             class_names=train_dataset.class_names,
         )
+    if val_dataset is not None:
         val_loader = build_dataloader(
             val_dataset,
             batch_size=args.batch_size,
             num_workers=args.workers,
             persistent_workers=True,
+            pin_memory=args.pin_memory,
         )
 
     model = (
@@ -295,6 +349,7 @@ def main(argv: list[str] | None = None) -> int:
         seed=args.seed,
         selection_metric=args.selection_metric,
         resume_from=checkpoint,
+        settings=OptimizerSettings(amp=args.amp),
     )
     logger.info("schedule complete: final checkpoint %s", schedule.final_checkpoint)
     return 0
