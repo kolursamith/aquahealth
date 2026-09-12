@@ -117,17 +117,37 @@ def apply_stage(model: EfficientNet, stage: Stage) -> int:
     return blocks
 
 
+@dataclass(frozen=True)
+class OptimizerSettings:
+    """Run-level optimisation choices shared by every stage of a schedule."""
+
+    optimizer: str = "adamw"
+    weight_decay: float = WEIGHT_DECAY
+    momentum: float = 0.9
+    lr_step_size: int | None = None
+    lr_gamma: float = 0.1
+    amp: bool = False
+
+
 def stage_train_config(
-    stage: Stage, *, seed: int, selection_metric: str, amp: bool = False
+    stage: Stage,
+    *,
+    seed: int,
+    selection_metric: str,
+    settings: OptimizerSettings = OptimizerSettings(),
 ) -> TrainConfig:
     return TrainConfig(
         epochs=stage.epochs,
         learning_rate=stage.learning_rate,
-        weight_decay=WEIGHT_DECAY,
+        weight_decay=settings.weight_decay,
         seed=seed,
         selection_metric=selection_metric,
         backbone_learning_rate=stage.backbone_learning_rate,
-        amp=amp,
+        amp=settings.amp,
+        optimizer=settings.optimizer,
+        momentum=settings.momentum,
+        lr_step_size=settings.lr_step_size,
+        lr_gamma=settings.lr_gamma,
     )
 
 
@@ -144,7 +164,7 @@ def run_schedule(
     seed: int = SEED,
     selection_metric: str = "f1_macro",
     resume_from: Checkpoint | None = None,
-    amp: bool = False,
+    settings: OptimizerSettings = OptimizerSettings(),
 ) -> ScheduleResult:
     """Run every stage in order; each stage starts from the previous stage's best weights.
 
@@ -169,7 +189,9 @@ def run_schedule(
             continue
         resuming = resume_from if index == start_index and resume_from is not None else None
         blocks = apply_stage(model, stage)
-        config = stage_train_config(stage, seed=seed, selection_metric=selection_metric, amp=amp)
+        config = stage_train_config(
+            stage, seed=seed, selection_metric=selection_metric, settings=settings
+        )
         stage_dir = checkpoint_dir / stage.name
         logger.info(
             "stage %s: %d epoch(s), %d/%d backbone blocks trainable, lr %g, backbone lr %s",
@@ -327,7 +349,7 @@ def main(argv: list[str] | None = None) -> int:
         seed=args.seed,
         selection_metric=args.selection_metric,
         resume_from=checkpoint,
-        amp=args.amp,
+        settings=OptimizerSettings(amp=args.amp),
     )
     logger.info("schedule complete: final checkpoint %s", schedule.final_checkpoint)
     return 0

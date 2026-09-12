@@ -263,14 +263,18 @@ def build_split_dataset(
     *,
     transform: Transform | None = None,
     manifest_path: Path = MANIFEST_PATH,
-    root: Path = ROOT_DIR,
+    root: Path | None = None,
     class_names: list[str] | None = None,
 ) -> ManifestDataset:
     """One split of the frozen manifest, digest-verified, ready for a DataLoader.
 
+    Manifest paths are relative to the repository root, i.e. the manifest's
+    grandparent (`<root>/data/split_manifest.csv`), which is the default `root`.
     `class_names` (e.g. from a checkpoint) must equal the canonical list; the
     manifest's label indices are only meaningful under that mapping.
     """
+    manifest_path = Path(manifest_path)
+    root = Path(root) if root is not None else manifest_path.resolve().parent.parent
     verify_manifest_digest(manifest_path)
     if class_names is not None and list(class_names) != list(CANONICAL_CLASSES):
         raise ValueError(

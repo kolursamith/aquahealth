@@ -1,0 +1,6 @@
+# Experiment tooling (scripts/run_experiment.py): plots for training curves and
+# confusion matrices. Not imported by src/ or app/.
+
+-r base.txt
+
+matplotlib==3.11.2

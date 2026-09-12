@@ -115,3 +115,63 @@ def test_train_cli_accepts_manifest_and_rejects_both_sources(tmp_path):
         cwd=ROOT,
     )
     assert result.returncode != 0 and "not allowed with argument" in result.stderr
+
+
+# --- optimizer / scheduler options added for paper-informed experiments ---
+
+
+@pytest.mark.parametrize(
+    "kwargs", [{"optimizer": "lion"}, {"momentum": 1.0}, {"lr_step_size": 0}, {"lr_gamma": 0}]
+)
+def test_train_config_rejects_invalid_optimizer_settings(kwargs):
+    from src.train import TrainConfig
+
+    with pytest.raises(ValueError):
+        TrainConfig(**kwargs)
+
+
+@pytest.mark.parametrize("name,cls", [("adamw", "AdamW"), ("adam", "Adam"), ("sgd", "SGD")])
+def test_build_optimizer_honours_choice_and_groups(name, cls):
+    from src.model import build_classifier, set_trainable_blocks
+    from src.train import TrainConfig, build_optimizer, current_learning_rates
+
+    model = build_classifier(3, pretrained=False)
+    set_trainable_blocks(model, 2)
+    config = TrainConfig(
+        optimizer=name, learning_rate=1e-2, backbone_learning_rate=1e-4, momentum=0.8
+    )
+    optimizer = build_optimizer(model, config)
+    assert type(optimizer).__name__ == cls
+    assert current_learning_rates(optimizer) == {"head": 1e-2, "backbone": 1e-4}
+    if name == "sgd":
+        assert all(g["momentum"] == 0.8 for g in optimizer.param_groups)
+
+
+def test_step_scheduler_decays_both_groups_and_is_recorded(make_image_folder, tmp_path):
+    from src.dataset import ImageFolderDataset, build_dataloader
+    from src.model import build_classifier, set_trainable_blocks
+    from src.preprocessing import PreprocessConfig, build_eval_transform
+    from src.train import TrainConfig, fit, load_checkpoint
+
+    root = make_image_folder(("a", "b", "c"), per_class=4, size=(80, 60))
+    dataset = ImageFolderDataset(root, transform=build_eval_transform(PreprocessConfig(64, 72)))
+    loader = build_dataloader(dataset, batch_size=6, num_workers=0)
+    model = build_classifier(3, pretrained=False)
+    set_trainable_blocks(model, 1)
+    config = TrainConfig(
+        epochs=3, learning_rate=1e-2, backbone_learning_rate=1e-3, lr_step_size=2, lr_gamma=0.1
+    )
+    result = fit(
+        model,
+        loader,
+        config=config,
+        class_names=dataset.class_names,
+        preprocess=PreprocessConfig(64, 72),
+        device=torch.device("cpu"),
+        checkpoint_dir=tmp_path,
+    )
+    assert [h.lr_head for h in result.history] == pytest.approx([1e-2, 1e-2, 1e-3])
+    assert [h.lr_backbone for h in result.history] == pytest.approx([1e-3, 1e-3, 1e-4])
+    checkpoint = load_checkpoint(tmp_path / "last.pt")
+    assert checkpoint.history[-1].lr_head == pytest.approx(1e-3)
+    assert checkpoint._payload["scheduler_state"]["last_epoch"] == 3
