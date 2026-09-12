@@ -68,7 +68,7 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | 8 | Validation | PASS |
 | 9 | Fine-tuning | PASS |
 | 10 | Evaluation | PASS |
-| 11 | Prediction API | not started |
+| 11 | Prediction API | PASS |
 | 12 | YOLO integration | deferred by design |
 
 Modules under `src/` and `app/` that belong to layers which have not been built
@@ -101,10 +101,22 @@ rather than failing.
 ## Running the App
 
 ```bash
-streamlit run app/app.py
+pip install -r requirements/app.txt        # adds Streamlit on top of base.txt
+streamlit run app/main.py
 ```
 
-Not runnable yet — Streamlit is introduced by Layer 11.
+With no checkpoint at `models/final_model.pth` (or `AQUAHEALTH_CHECKPOINT`)
+the page runs on the mock predictor and says so; with one, it serves the
+real model through `src/predict.py`.
+
+## Prediction API
+
+```python
+from src.predict import Predictor
+result = Predictor("models/final_model.pth").predict("fish.jpg")
+result.predicted_class, result.confidence, result.risk, result.ranked_predictions
+result.to_dict()   # JSON-serialisable; status "ok" | "error", model/preprocessing versions, warnings
+```
 
 ## Project Layout
 

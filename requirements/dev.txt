@@ -5,7 +5,7 @@
 # check, format check. Versions are pinned exactly so that a layer which
 # passes its gate locally passes the identical gate in CI.
 
--r base.txt
+-r app.txt
 
 pytest==9.1.1   # test runner; every layer ships tests run by `pytest`
 ruff==0.16.7    # linter; configured in pyproject.toml, run as `ruff check .`
