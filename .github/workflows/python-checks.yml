@@ -19,7 +19,8 @@ jobs:
           cache: "pip"
 
       - name: Install dependencies
-        run: pip install -r requirements-dev.txt
+        # CPU-only torch build: same version as requirements/base.txt, without CUDA libraries.
+        run: pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements/dev.txt
 
       - name: Ruff lint
         run: ruff check .
@@ -28,4 +29,4 @@ jobs:
         run: black --check .
 
       - name: Mypy type check
-        run: mypy src app
+        run: mypy src app scripts

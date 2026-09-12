@@ -1,26 +1,66 @@
-"""Training-only augmentation pipeline.
+"""Training-only augmentation (Layer 6).
 
-Training image -> Flip -> Rotation -> Brightness/Contrast -> Controlled crop/zoom
+    PIL RGB
+      ├─ CLAHE (if enabled in PreprocessConfig — same stage as eval)
+      ├─ RandomResizedCrop(image_size, scale, ratio)   controlled crop / zoom
+      ├─ RandomHorizontalFlip(p)
+      ├─ RandomRotation(±degrees)
+      ├─ ColorJitter(brightness, contrast)
+      └─ tensor_transforms(config)                       identical to eval
+
+Only the geometric/photometric middle differs from `build_eval_transform`;
+the output space (size, dtype, normalisation) is shared through the same
+`PreprocessConfig`, so a model trained with this pipeline receives
+identically-scaled inputs at inference.
 
 Owner: Student 2
 """
 
-import albumentations as A
+from __future__ import annotations
 
-from src.config import IMAGE_SIZE
+from dataclasses import dataclass
 
+from torchvision.transforms import InterpolationMode, v2
 
-def get_train_transforms(image_size: int = IMAGE_SIZE) -> A.Compose:
-    return A.Compose(
-        [
-            A.HorizontalFlip(p=0.5),
-            A.Rotate(limit=20, p=0.5),
-            A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
-            A.RandomResizedCrop(size=(image_size, image_size), scale=(0.85, 1.0), p=0.5),
-        ]
-    )
+from src.preprocessing import CLAHE, PreprocessConfig, tensor_transforms
 
 
-def get_eval_transforms(image_size: int = IMAGE_SIZE) -> A.Compose:
-    """No randomness — resizing/normalization is handled by preprocessing.py."""
-    return A.Compose([])
+@dataclass(frozen=True)
+class AugmentConfig:
+    crop_scale: tuple[float, float] = (0.8, 1.0)
+    crop_ratio: tuple[float, float] = (0.9, 1.1)
+    horizontal_flip: float = 0.5
+    rotation_degrees: float = 15.0
+    brightness: float = 0.2
+    contrast: float = 0.2
+
+    def __post_init__(self) -> None:
+        if not 0.0 < self.crop_scale[0] <= self.crop_scale[1] <= 1.0:
+            raise ValueError(f"crop_scale must satisfy 0 < lo <= hi <= 1, got {self.crop_scale}")
+        if not 0.0 <= self.horizontal_flip <= 1.0:
+            raise ValueError(f"horizontal_flip must be a probability, got {self.horizontal_flip}")
+        if self.rotation_degrees < 0 or self.brightness < 0 or self.contrast < 0:
+            raise ValueError("rotation_degrees, brightness and contrast must be >= 0")
+
+
+def build_train_transform(
+    config: PreprocessConfig = PreprocessConfig(),
+    augment: AugmentConfig = AugmentConfig(),
+) -> v2.Compose:
+    stages: list = []
+    if config.clahe is not None:
+        stages.append(CLAHE(config.clahe))
+    stages += [
+        v2.RandomResizedCrop(
+            config.image_size,
+            scale=augment.crop_scale,
+            ratio=augment.crop_ratio,
+            interpolation=InterpolationMode.BICUBIC,
+            antialias=True,
+        ),
+        v2.RandomHorizontalFlip(p=augment.horizontal_flip),
+        v2.RandomRotation(augment.rotation_degrees, interpolation=InterpolationMode.BILINEAR),
+        v2.ColorJitter(brightness=augment.brightness, contrast=augment.contrast),
+    ]
+    stages += tensor_transforms(config)
+    return v2.Compose(stages)

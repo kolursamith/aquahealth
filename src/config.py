@@ -4,6 +4,12 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
+# EXPECTED class list from the project brief — NOT yet verified against the
+# real dataset. scripts/audit_dataset.py must confirm the actual class
+# directories, counts and names before any training run; this list is then
+# corrected to match the data, never the other way round. The classifier
+# head (src/model.build_classifier) takes num_classes as an explicit argument
+# and does not read this constant.
 CLASS_NAMES = [
     "Aeromoniasis",
     "Bacterial_Gill_Disease",

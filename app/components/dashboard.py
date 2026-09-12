@@ -2,11 +2,10 @@
 
 import streamlit as st
 
-from src.config import CLASS_NAMES
 
-
-def render_dashboard() -> None:
+def render_dashboard(class_names: list[str], source: str) -> None:
     st.info("Upload a fish image to run disease detection.")
-    with st.expander("Supported disease classes"):
-        for name in CLASS_NAMES:
+    with st.expander(f"Classes known to the loaded model ({len(class_names)})"):
+        st.caption(source)
+        for name in class_names:
             st.write(f"- {name}")

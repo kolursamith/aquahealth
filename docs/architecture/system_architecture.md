@@ -31,20 +31,33 @@ Streamlit UI
 | `src/evaluate.py` | Accuracy, precision, recall, macro-F1, confusion matrix, inference time | Student 2 |
 | `src/predict.py` | `predict(image)` — the AI ↔ frontend integration interface | Student 1 + Student 2 |
 | `src/risk_engine.py` | Confidence → risk level | Student 2 |
-| `app/app.py` + `app/components/` | Streamlit UI | Student 3 (components) + Student 4 (dashboard/UX) |
+| `app/main.py` + `app/components/` | Streamlit UI | Student 3 (components) + Student 4 (dashboard/UX) |
 
 ## Integration Contract
 
-`predict(image)` returns:
+`predict(image)` returns a dict whose original four keys are unchanged and
+which now also carries provenance and status (see `src/predict.py`):
 
 ```json
 {
+  "status": "ok",
   "predicted_class": "Aeromoniasis",
   "confidence": 0.87,
   "risk": "HIGH",
-  "message": "High-confidence disease indication."
+  "message": "High-confidence disease indication.",
+  "ranked_predictions": [{"rank": 1, "class_name": "Aeromoniasis", "probability": 0.87}, "..."],
+  "model_version": "best.pt@6b1cc32580ad epoch 12/full",
+  "preprocessing_version": "preprocess-30991495576a",
+  "api_version": "1.0",
+  "device": "mps",
+  "warnings": [],
+  "error": null
 }
 ```
+
+Input problems come back as `status: "error"` with `error` set, never as an
+exception; a missing or incompatible checkpoint raises `ModelLoadError` when
+the predictor is created.
 
 Any change to this schema must be coordinated across `src/predict.py`,
 `app/mock_prediction.py`, and every `app/components/*.py` file that consumes
@@ -53,9 +66,9 @@ it, since the frontend depends on it. See
 [inference_pipeline.md](inference_pipeline.md) for the two flows that
 produce and consume this interface.
 
-While the model is untrained, `app/app.py` uses
-`app/mock_prediction.py`, which returns a fixed response matching this
-schema, so frontend work is never blocked on training.
+While no checkpoint exists, `app/main.py` uses `app/mock_prediction.py`,
+which builds the same `PredictionResult` type with a fixed response, so
+frontend work is never blocked on training and the schema cannot drift.
 
 ## Modularity
 

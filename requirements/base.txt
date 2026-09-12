@@ -1,0 +1,34 @@
+# Runtime dependencies for AquaHealth AI.
+#
+# This file grows one layer at a time. A dependency is added only by the layer
+# that actually needs it, once that layer has passed its acceptance gate, so
+# that this file always describes exactly what the validated codebase requires
+# — never what it might require later.
+#
+# Layer 0 (environment) introduces no runtime dependency: the foundation at
+# this point is an interpreter plus a quality toolchain (see dev.txt).
+
+# Layer 1 — PyTorch. Deep-learning runtime: tensors, autograd, nn, device
+# backends. The default PyPI wheel is used: on macOS arm64 it ships the MPS
+# (Metal) backend; on Linux it ships CUDA. CI installs the CPU-only build from
+# download.pytorch.org (same version, "+cpu" local label) to avoid pulling
+# multi-GB CUDA libraries onto a GPU-less runner.
+torch==2.14.0
+
+# Layer 2 — TorchVision. Image transforms (transforms.v2), the pretrained
+# model registry (EfficientNet-B0 weights come from here in Layer 3), and
+# image I/O. Its compiled ops are built against one exact torch version, so
+# the two pins move together: torch 2.14.0 <-> torchvision 0.29.0.
+torchvision==0.29.0
+# numpy and pillow are hard dependencies of torchvision; they are pinned here
+# because project code imports them directly (src/utils seeds numpy; images
+# enter the pipeline as PIL images) and the environment verifier must see them.
+numpy==2.4.6
+pillow==12.3.0
+
+# Layer 6 — OpenCV (headless). Provides the reference CLAHE implementation
+# (tiled histogram equalisation with clip limit and bilinear interpolation
+# across tile borders) and the RGB<->LAB conversion it is applied in. Chosen
+# over a numpy re-implementation so "CLAHE" here means exactly what it means
+# in the literature; over full opencv-python to avoid GUI toolkit dependencies.
+opencv-python-headless==5.0.0.93

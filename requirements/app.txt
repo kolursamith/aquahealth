@@ -1,0 +1,8 @@
+# Frontend (Streamlit UI) dependencies. Separate from base.txt because the
+# training and prediction API (src/) never import them; only app/ does.
+# Install with `pip install -r requirements/app.txt` to run `streamlit run app/app.py`.
+
+-r base.txt
+
+# Layer 11 — Streamlit. The demo UI over src/predict.py (app/app.py).
+streamlit==1.63.0
