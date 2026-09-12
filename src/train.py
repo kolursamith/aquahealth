@@ -32,13 +32,14 @@ from typing import Any
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torchvision.models import EfficientNet
 
 from src.augmentation import build_train_transform
 from src.config import LEARNING_RATE, NUM_EPOCHS, SEED, WEIGHT_DECAY
 from src.dataset import ImageFolderDataset, build_dataloader
 from src.device import resolve_device
+from src.manifest import MANIFEST_PATH, build_split_dataset
 from src.model import build_classifier, set_trainable_blocks, trainable_block_count
 from src.preprocessing import CLAHEConfig, PreprocessConfig, build_eval_transform
 from src.utils import get_logger, set_seed
@@ -60,6 +61,7 @@ class TrainConfig:
     seed: int = SEED
     selection_metric: str = "f1_macro"
     backbone_learning_rate: float | None = None
+    amp: bool = False
 
     def __post_init__(self) -> None:
         if self.backbone_learning_rate is not None and self.backbone_learning_rate <= 0:
@@ -174,6 +176,16 @@ def build_optimizer(model: EfficientNet, config: TrainConfig) -> torch.optim.Ada
     return torch.optim.AdamW(groups, lr=config.learning_rate, weight_decay=config.weight_decay)
 
 
+def autocast_dtype(device: torch.device) -> torch.dtype:
+    """float16 on CUDA (with a GradScaler), bfloat16 elsewhere (no scaler needed)."""
+    return torch.float16 if device.type == "cuda" else torch.bfloat16
+
+
+def build_scaler(device: torch.device, amp: bool) -> torch.amp.GradScaler:
+    """Loss scaler for float16 autocast; a disabled scaler is a transparent no-op."""
+    return torch.amp.GradScaler("cuda", enabled=amp and device.type == "cuda")
+
+
 def train_one_epoch(
     model: EfficientNet,
     loader: DataLoader,
@@ -181,8 +193,11 @@ def train_one_epoch(
     device: torch.device,
     *,
     epoch: int,
+    amp: bool = False,
+    scaler: torch.amp.GradScaler | None = None,
 ) -> EpochStats:
     set_train_mode(model)
+    scaler = scaler if scaler is not None else build_scaler(device, amp)
     started = time.perf_counter()
     total_loss = 0.0
     correct = 0
@@ -193,10 +208,12 @@ def train_one_epoch(
         labels = labels.to(device, non_blocking=True)
 
         optimizer.zero_grad(set_to_none=True)
-        logits = model(images)
-        loss = F.cross_entropy(logits, labels)
-        loss.backward()
-        optimizer.step()
+        with torch.autocast(device_type=device.type, dtype=autocast_dtype(device), enabled=amp):
+            logits = model(images)
+            loss = F.cross_entropy(logits.float(), labels)
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
         batch = labels.shape[0]
         total_loss += loss.item() * batch
@@ -264,6 +281,7 @@ def save_checkpoint(
     best_epoch: int | None = None,
     best_metric: float | None = None,
     stage: str | None = None,
+    scaler: torch.amp.GradScaler | None = None,
 ) -> Path:
     """Everything needed to rebuild the model and continue the exact trajectory."""
     path = Path(path)
@@ -281,6 +299,7 @@ def save_checkpoint(
         "best_epoch": best_epoch,
         "best_metric": best_metric,
         "stage": stage,
+        "scaler_state": scaler.state_dict() if scaler is not None and scaler.is_enabled() else None,
         "rng": _rng_state(),
         "loader_generator": (
             loader.generator.get_state()
@@ -327,6 +346,11 @@ class Checkpoint:
 
     def restore_optimizer(self, optimizer: torch.optim.Optimizer) -> None:
         optimizer.load_state_dict(self._payload["optimizer_state"])
+
+    def restore_scaler(self, scaler: torch.amp.GradScaler) -> None:
+        state = self._payload.get("scaler_state")
+        if state is not None and scaler.is_enabled():
+            scaler.load_state_dict(state)
 
     def restore_rng(self, loader: DataLoader | None = None) -> None:
         _restore_rng_state(self._payload["rng"])
@@ -389,6 +413,7 @@ def fit(
     """
     model.to(device)
     optimizer = build_optimizer(model, config)
+    scaler = build_scaler(device, config.amp)
     result = TrainingResult()
     start_epoch = 1
 
@@ -396,6 +421,7 @@ def fit(
         set_seed(config.seed)
     else:
         resume_from.restore_optimizer(optimizer)
+        resume_from.restore_scaler(scaler)
         resume_from.restore_rng(loader)
         result.history = list(resume_from.history)
         result.best_epoch = resume_from.best_epoch
@@ -426,10 +452,13 @@ def fit(
             best_epoch=result.best_epoch,
             best_metric=result.best_metric,
             stage=stage,
+            scaler=scaler,
         )
 
     for epoch in range(start_epoch, config.epochs + 1):
-        stats = train_one_epoch(model, loader, optimizer, device, epoch=epoch)
+        stats = train_one_epoch(
+            model, loader, optimizer, device, epoch=epoch, amp=config.amp, scaler=scaler
+        )
         message = "epoch %d/%d  loss %.4f  train_acc %.3f  (%d samples, %.1fs)" % (
             epoch,
             config.epochs,
@@ -472,7 +501,16 @@ def fit(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Train the classifier on an image folder.")
-    parser.add_argument("--train-root", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--train-root", type=Path, help="image folder laid out as <class>/<img>")
+    source.add_argument(
+        "--manifest",
+        type=Path,
+        nargs="?",
+        const=MANIFEST_PATH,
+        help=f"frozen split manifest (default {MANIFEST_PATH.name}); trains on split=train, "
+        "validates on split=val",
+    )
     parser.add_argument("--val-root", type=Path, default=None, help="validation image folder")
     parser.add_argument("--checkpoint-dir", type=Path, required=True)
     parser.add_argument("--selection-metric", choices=SELECTION_METRICS, default="f1_macro")
@@ -488,6 +526,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-pretrained", action="store_true")
     parser.add_argument("--device", default=None, help="cpu / mps / cuda; default: auto")
     parser.add_argument("--resume", type=Path, default=None, help="checkpoint to continue from")
+    parser.add_argument("--amp", action="store_true", help="mixed precision (float16 on CUDA)")
+    parser.add_argument("--pin-memory", action="store_true", help="pinned host memory (CUDA)")
     args = parser.parse_args(argv)
 
     config = TrainConfig(
@@ -496,6 +536,7 @@ def main(argv: list[str] | None = None) -> int:
         weight_decay=args.weight_decay,
         seed=args.seed,
         selection_metric=args.selection_metric,
+        amp=args.amp,
     )
     device = resolve_device(args.device)
 
@@ -515,9 +556,18 @@ def main(argv: list[str] | None = None) -> int:
         model = None
 
     set_seed(config.seed)
-    dataset = ImageFolderDataset(
-        args.train_root, transform=build_train_transform(preprocess), class_names=class_names
-    )
+    dataset: Dataset[tuple[torch.Tensor, int]]
+    if args.manifest is not None:
+        dataset = build_split_dataset(
+            "train",
+            transform=build_train_transform(preprocess),
+            manifest_path=args.manifest,
+            class_names=class_names,
+        )
+    else:
+        dataset = ImageFolderDataset(
+            args.train_root, transform=build_train_transform(preprocess), class_names=class_names
+        )
     if model is None:
         model = build_classifier(
             len(dataset.class_names),
@@ -531,19 +581,27 @@ def main(argv: list[str] | None = None) -> int:
         num_workers=args.workers,
         seed=config.seed,
         persistent_workers=True,
+        pin_memory=args.pin_memory,
     )
     val_loader = None
-    if args.val_root is not None:
+    val_dataset: Dataset[tuple[torch.Tensor, int]] | None = None
+    if args.manifest is not None:
+        val_dataset = build_split_dataset(
+            "val", transform=build_eval_transform(preprocess), manifest_path=args.manifest
+        )
+    elif args.val_root is not None:
         val_dataset = ImageFolderDataset(
             args.val_root,
             transform=build_eval_transform(preprocess),
             class_names=dataset.class_names,
         )
+    if val_dataset is not None:
         val_loader = build_dataloader(
             val_dataset,
             batch_size=args.batch_size,
             num_workers=args.workers,
             persistent_workers=True,
+            pin_memory=args.pin_memory,
         )
 
     logger.info(

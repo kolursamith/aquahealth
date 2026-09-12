@@ -30,6 +30,13 @@ data/**/*.npy
 data/**/*.npz
 data/**/*.csv
 !data/README.md
+# The real dataset is referenced, never copied: data/original/<name> is a
+# symlink to the read-only local dataset. Only the placeholder is tracked.
+data/original/*
+!data/original/.gitkeep
+# The frozen split manifest and its hash are committed on purpose.
+!data/split_manifest.csv
+!data/split_manifest.sha256
 
 # Model checkpoints
 models/**/*.pth
@@ -43,6 +50,9 @@ results/**/*.png
 results/**/*.csv
 results/**/*.json
 !results/README.md
+# Dataset audit outputs are committed: they document the frozen split.
+!results/data_audit.csv
+!results/data_audit_report.md
 
 # Streamlit / app runtime
 app/assets/*

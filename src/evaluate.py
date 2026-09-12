@@ -35,6 +35,7 @@ from torchvision.models import EfficientNet
 from src.config import BATCH_SIZE
 from src.dataset import ImageFolderDataset, build_dataloader
 from src.device import resolve_device
+from src.manifest import MANIFEST_PATH, ManifestDataset, build_split_dataset
 from src.metrics import ClassificationMetrics, classification_report, normalize_confusion_matrix
 from src.preprocessing import build_eval_transform
 from src.train import Checkpoint, load_checkpoint
@@ -173,7 +174,7 @@ def _assert_sequential(loader: DataLoader) -> None:
 
 def evaluate_model(
     model: EfficientNet,
-    dataset: ImageFolderDataset,
+    dataset: ImageFolderDataset | ManifestDataset,
     loader: DataLoader,
     device: torch.device,
     *,
@@ -223,24 +224,48 @@ def evaluate_model(
 
 def evaluate_checkpoint(
     checkpoint_path: Path,
-    data_root: Path,
+    data_root: Path | None = None,
     *,
+    manifest_split: str | None = None,
+    manifest_path: Path = MANIFEST_PATH,
     device: torch.device | None = None,
     batch_size: int = BATCH_SIZE,
     num_workers: int = 0,
     num_bins: int = DEFAULT_CONFIDENCE_BINS,
 ) -> EvaluationReport:
-    """Evaluate a saved checkpoint on an image folder using the checkpoint's own preprocessing."""
-    data_root = Path(data_root)
+    """Evaluate a saved checkpoint on an image folder, or on one split of the frozen
+    manifest, using the checkpoint's own preprocessing."""
+    if (data_root is None) == (manifest_split is None):
+        raise ValueError("give exactly one of data_root or manifest_split")
+    checkpoint = load_checkpoint(checkpoint_path)
+    device = device or resolve_device()
+    model = checkpoint.build_model().to(device).eval()
+
+    if manifest_split is not None:
+        if manifest_split in HELD_OUT_SPLIT_NAMES:
+            logger.warning(
+                "evaluating the frozen %r split: this must happen once, at the end, "
+                "and never to choose a checkpoint",
+                manifest_split,
+            )
+        manifest_dataset = build_split_dataset(
+            manifest_split,
+            transform=build_eval_transform(checkpoint.preprocess),
+            manifest_path=manifest_path,
+            class_names=checkpoint.class_names,
+        )
+        loader = build_dataloader(manifest_dataset, batch_size=batch_size, num_workers=num_workers)
+        return evaluate_model(
+            model, manifest_dataset, loader, device, checkpoint=checkpoint, num_bins=num_bins
+        )
+
+    data_root = Path(data_root)  # type: ignore[arg-type]
     if data_root.name in HELD_OUT_SPLIT_NAMES:
         logger.warning(
             "evaluating %s: a held-out test split must be evaluated once, at the end, "
             "and never used to choose a checkpoint",
             data_root,
         )
-    checkpoint = load_checkpoint(checkpoint_path)
-    device = device or resolve_device()
-    model = checkpoint.build_model().to(device).eval()
     dataset = ImageFolderDataset(
         data_root,
         transform=build_eval_transform(checkpoint.preprocess),
@@ -304,7 +329,10 @@ def export_report(report: EvaluationReport, out_dir: Path) -> dict[str, Path]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Evaluate a checkpoint on an image folder.")
     parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--data-root", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--data-root", type=Path, help="image folder laid out as <class>/<img>")
+    source.add_argument("--split", choices=("val", "test"), help="a split of the frozen manifest")
+    parser.add_argument("--manifest", type=Path, default=MANIFEST_PATH)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--batch-size", type=int, default=BATCH_SIZE)
     parser.add_argument("--workers", type=int, default=0)
@@ -315,6 +343,8 @@ def main(argv: list[str] | None = None) -> int:
     report = evaluate_checkpoint(
         args.checkpoint,
         args.data_root,
+        manifest_split=args.split,
+        manifest_path=args.manifest,
         device=resolve_device(args.device),
         batch_size=args.batch_size,
         num_workers=args.workers,

@@ -13,6 +13,8 @@ target-version = ["py311"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# Colab notebooks mix shell magics with Python; they are orchestration, not library code.
+extend-exclude = ["notebooks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]

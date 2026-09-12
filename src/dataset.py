@@ -144,12 +144,14 @@ def build_dataloader(
     seed: int | None = None,
     drop_last: bool = False,
     persistent_workers: bool = False,
+    pin_memory: bool = False,
 ) -> DataLoader[tuple[torch.Tensor, int]]:
     """DataLoader whose shuffle order is reproducible when `seed` is given.
 
     `persistent_workers` keeps worker processes alive between epochs so the
     (slow, on macOS `spawn`) start-up cost is paid once per loader, not once
-    per epoch. It is only meaningful with `num_workers > 0`.
+    per epoch. It is only meaningful with `num_workers > 0`. `pin_memory`
+    speeds up host→CUDA copies and is ignored elsewhere.
     """
     generator = None
     if shuffle and seed is not None:
@@ -162,4 +164,5 @@ def build_dataloader(
         drop_last=drop_last,
         generator=generator,
         persistent_workers=persistent_workers and num_workers > 0,
+        pin_memory=pin_memory and torch.cuda.is_available(),
     )
