@@ -1,0 +1,102 @@
+{
+  "id": "EXP-001",
+  "description": "EXP-001 EfficientNet-B0 baseline: existing AquaHealth preprocessing (CLAHE on, resize 256 -> centre-crop 224, ImageNet normalisation), existing train-only augmentation, existing Layer 9 staged fine-tuning (head -> last 3 blocks -> all), AdamW, selection on validation Macro-F1. Values are the existing repository defaults [C], not paper-derived.",
+  "preprocess": {
+    "image_size": 224,
+    "resize_size": 256,
+    "resize_mode": "crop",
+    "clahe": {
+      "clip_limit": 2.0,
+      "tile_grid_size": 8
+    },
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "augment": {
+    "crop_scale": [
+      0.8,
+      1.0
+    ],
+    "crop_ratio": [
+      0.9,
+      1.1
+    ],
+    "horizontal_flip": 0.5,
+    "rotation_degrees": 15.0,
+    "brightness": 0.2,
+    "contrast": 0.2
+  },
+  "stages": [
+    {
+      "name": "head",
+      "epochs": 5,
+      "trainable_blocks": 0,
+      "learning_rate": 0.001,
+      "backbone_learning_rate": null
+    },
+    {
+      "name": "partial",
+      "epochs": 10,
+      "trainable_blocks": 3,
+      "learning_rate": 0.0003,
+      "backbone_learning_rate": 3e-05
+    },
+    {
+      "name": "full",
+      "epochs": 15,
+      "trainable_blocks": -1,
+      "learning_rate": 0.0003,
+      "backbone_learning_rate": 1e-05
+    }
+  ],
+  "optimizer": {
+    "optimizer": "adamw",
+    "weight_decay": 0.0001,
+    "momentum": 0.9,
+    "lr_step_size": null,
+    "lr_gamma": 0.1,
+    "amp": true
+  },
+  "batch_size": 64,
+  "workers": 2,
+  "seed": 42,
+  "selection_metric": "f1_macro",
+  "manifest": "/content/aquahealth/data/split_manifest.csv",
+  "manifest_sha256": "b7d1fccbb21e73a847e078aed921c02339505bc735199d311103f4d708021d43",
+  "train_images": 2384,
+  "val_images": 512,
+  "class_names": [
+    "Bacterial Red Disease",
+    "Aeromoniasis",
+    "Bacterial Gill Disease",
+    "EUS Disease",
+    "Saprolegniasis",
+    "Parasitic Disease",
+    "White Tail Disease",
+    "Healthy Fish"
+  ],
+  "environment": {
+    "python": "3.13.15",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "torch": {
+      "version": "2.14.0+cu130",
+      "cuda_built": true,
+      "cuda_available": true,
+      "cuda_device_count": 1,
+      "cuda_device_name": "Tesla T4",
+      "mps_built": false,
+      "mps_available": false,
+      "num_threads": 1,
+      "selected_device": "cuda"
+    }
+  },
+  "started": "2026-09-12T11:37:37"
+}

@@ -60,8 +60,12 @@ results/**/*.pt
 !results/experiments/**/metrics.csv
 !results/experiments/**/experiment_report.md
 !results/experiments/**/inference_benchmark.json
-!results/paper_technique_matrix.csv
-!results/final_experiment_comparison.csv
+!results/experiments/**/eval_val/metrics.json
+!results/experiments/**/training_curves.png
+!results/experiments/**/confusion_matrix.png
+!results/experiments/**/confusion_matrix_normalized.png
+# Top-level comparison tables (paper matrix, gate comparisons, final results).
+!results/*.csv
 !results/final/*.json
 !results/final/*.csv
 !results/final/*.md
