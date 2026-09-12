@@ -89,6 +89,40 @@ def set_backbone_trainable(model: EfficientNet, trainable: bool) -> None:
         parameter.requires_grad_(trainable)
 
 
+def backbone_block_count(model: EfficientNet) -> int:
+    return len(model.features)
+
+
+def set_trainable_blocks(model: EfficientNet, last_n_blocks: int) -> None:
+    """Freeze the backbone except its last `last_n_blocks` feature blocks.
+
+    0 freezes the whole backbone (head only); `backbone_block_count(model)`
+    unfreezes everything. The head is always trainable.
+    """
+    total = backbone_block_count(model)
+    if not 0 <= last_n_blocks <= total:
+        raise ValueError(f"last_n_blocks must be in [0, {total}], got {last_n_blocks}")
+    for index, block in enumerate(model.features):
+        trainable = index >= total - last_n_blocks
+        for parameter in block.parameters():
+            parameter.requires_grad_(trainable)
+    for parameter in model.classifier.parameters():
+        parameter.requires_grad_(True)
+
+
+def trainable_block_count(model: EfficientNet) -> int:
+    """Number of trailing backbone blocks that are trainable (inverse of `set_trainable_blocks`).
+
+    Raises if the trainable pattern is not "a frozen prefix then a trainable
+    suffix", since that state cannot be described by a single count.
+    """
+    flags = [any(p.requires_grad for p in block.parameters()) for block in model.features]
+    count = sum(flags)
+    if flags != [False] * (len(flags) - count) + [True] * count:
+        raise ValueError(f"backbone trainability is not a trailing suffix: {flags}")
+    return count
+
+
 def summarize(model: nn.Module) -> ModelSummary:
     parameters = list(model.parameters())
     linear_layers = [module for module in model.modules() if isinstance(module, nn.Linear)]

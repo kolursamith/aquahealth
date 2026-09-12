@@ -111,14 +111,14 @@ def test_set_train_mode_keeps_frozen_backbone_in_eval():
     model = build_classifier(4, pretrained=False, freeze_backbone=True)
     set_train_mode(model)
     assert model.training and model.classifier.training
-    assert not model.features.training
+    assert all(not block.training for block in model.features)
     assert is_backbone_frozen(model)
 
 
 def test_set_train_mode_trains_everything_when_unfrozen():
     model = build_classifier(4, pretrained=False)
     set_train_mode(model)
-    assert model.features.training and model.classifier.training
+    assert all(block.training for block in model.features) and model.classifier.training
     assert not is_backbone_frozen(model)
 
 
@@ -303,7 +303,12 @@ def test_checkpoint_round_trip_preserves_everything(fixture_root, tmp_path):
     assert checkpoint.preprocess == preprocess
     assert checkpoint.train_config == TrainConfig(epochs=3, learning_rate=2e-3)
     assert checkpoint.history == [stats]
-    assert checkpoint.model_spec == {"num_classes": 4, "dropout": 0.2, "freeze_backbone": True}
+    assert checkpoint.model_spec == {
+        "num_classes": 4,
+        "dropout": 0.2,
+        "freeze_backbone": True,
+        "trainable_blocks": 0,
+    }
 
     rebuilt = checkpoint.build_model()
     for key, value in model.state_dict().items():
@@ -328,6 +333,7 @@ def test_model_spec_reflects_the_model():
         "num_classes": 7,
         "dropout": 0.35,
         "freeze_backbone": False,
+        "trainable_blocks": 9,
     }
 
 
@@ -356,9 +362,18 @@ def test_resume_at_target_epoch_trains_nothing_more(fixture_root, tmp_path):
     ck_dir = tmp_path / "ck"
     _fit(fixture_root, epochs=2, checkpoint_dir=ck_dir)
     checkpoint = load_checkpoint(ck_dir / LAST_CHECKPOINT_NAME)
-    resumed = _fit(fixture_root, epochs=2, resume=checkpoint, model=checkpoint.build_model())
+    resumed = _fit(
+        fixture_root,
+        epochs=2,
+        resume=checkpoint,
+        model=checkpoint.build_model(),
+        checkpoint_dir=ck_dir,
+    )
     assert len(resumed.history) == 2
     assert resumed.history == checkpoint.history
+    assert (
+        resumed.last_checkpoint == ck_dir / LAST_CHECKPOINT_NAME
+    ), "a zero-epoch resume must still report the checkpoint it was resumed from"
 
 
 # --- CLI ---

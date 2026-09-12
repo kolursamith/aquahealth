@@ -32,7 +32,6 @@ from typing import Any
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch import nn
 from torch.utils.data import DataLoader
 from torchvision.models import EfficientNet
 
@@ -40,7 +39,7 @@ from src.augmentation import build_train_transform
 from src.config import LEARNING_RATE, NUM_EPOCHS, SEED, WEIGHT_DECAY
 from src.dataset import ImageFolderDataset, build_dataloader
 from src.device import resolve_device
-from src.model import build_classifier
+from src.model import build_classifier, set_trainable_blocks, trainable_block_count
 from src.preprocessing import CLAHEConfig, PreprocessConfig, build_eval_transform
 from src.utils import get_logger, set_seed
 from src.validation import ValidationSummary, run_validation
@@ -60,8 +59,13 @@ class TrainConfig:
     weight_decay: float = WEIGHT_DECAY
     seed: int = SEED
     selection_metric: str = "f1_macro"
+    backbone_learning_rate: float | None = None
 
     def __post_init__(self) -> None:
+        if self.backbone_learning_rate is not None and self.backbone_learning_rate <= 0:
+            raise ValueError(
+                f"backbone_learning_rate must be > 0, got {self.backbone_learning_rate}"
+            )
         if self.selection_metric not in SELECTION_METRICS:
             raise ValueError(
                 f"selection_metric must be one of {SELECTION_METRICS}, "
@@ -134,25 +138,40 @@ def is_backbone_frozen(model: EfficientNet) -> bool:
 
 
 def set_train_mode(model: EfficientNet) -> None:
-    """`train()` for what is being trained; a frozen backbone stays in `eval()`.
+    """`train()` for what is being trained; frozen backbone blocks stay in `eval()`.
 
-    A frozen backbone's parameters do not update, but its BatchNorm running
-    statistics would still drift in `train()` mode. Keeping it in `eval()`
-    means "frozen" is true for buffers as well as parameters.
+    A frozen block's parameters do not update, but its BatchNorm running
+    statistics would still drift in `train()` mode. Keeping frozen blocks in
+    `eval()` means "frozen" is true for buffers as well as parameters, at
+    block granularity so partial unfreezing (Layer 9) behaves the same way.
     """
     model.train()
-    if is_backbone_frozen(model):
-        model.features.eval()
+    for block in model.features:
+        if not any(p.requires_grad for p in block.parameters()):
+            block.eval()
 
 
 # --- one epoch ----------------------------------------------------------------
 
 
-def build_optimizer(model: nn.Module, config: TrainConfig) -> torch.optim.AdamW:
-    trainable = [p for p in model.parameters() if p.requires_grad]
-    if not trainable:
+def build_optimizer(model: EfficientNet, config: TrainConfig) -> torch.optim.AdamW:
+    """AdamW over trainable parameters, in two groups: `head` and (if any) `backbone`.
+
+    The backbone group uses `config.backbone_learning_rate` when set, so
+    fine-tuning can move pretrained weights more gently than the fresh head.
+    """
+    head = [p for p in model.classifier.parameters() if p.requires_grad]
+    backbone = [p for p in model.features.parameters() if p.requires_grad]
+    if not head and not backbone:
         raise ValueError("model has no trainable parameters")
-    return torch.optim.AdamW(trainable, lr=config.learning_rate, weight_decay=config.weight_decay)
+
+    groups: list[dict[str, Any]] = []
+    if head:
+        groups.append({"params": head, "lr": config.learning_rate, "name": "head"})
+    if backbone:
+        backbone_lr = config.backbone_learning_rate or config.learning_rate
+        groups.append({"params": backbone, "lr": backbone_lr, "name": "backbone"})
+    return torch.optim.AdamW(groups, lr=config.learning_rate, weight_decay=config.weight_decay)
 
 
 def train_one_epoch(
@@ -227,6 +246,7 @@ def model_spec(model: EfficientNet) -> dict[str, Any]:
         "num_classes": head.out_features,
         "dropout": dropout.p,
         "freeze_backbone": is_backbone_frozen(model),
+        "trainable_blocks": trainable_block_count(model),
     }
 
 
@@ -243,6 +263,7 @@ def save_checkpoint(
     loader: DataLoader | None = None,
     best_epoch: int | None = None,
     best_metric: float | None = None,
+    stage: str | None = None,
 ) -> Path:
     """Everything needed to rebuild the model and continue the exact trajectory."""
     path = Path(path)
@@ -259,6 +280,7 @@ def save_checkpoint(
         "history": [h.to_dict() for h in history],
         "best_epoch": best_epoch,
         "best_metric": best_metric,
+        "stage": stage,
         "rng": _rng_state(),
         "loader_generator": (
             loader.generator.get_state()
@@ -283,10 +305,15 @@ class Checkpoint:
     history: list[EpochStats]
     best_epoch: int | None
     best_metric: float | None
+    stage: str | None
     _payload: dict[str, Any]
 
+    @property
+    def model_state(self) -> dict[str, torch.Tensor]:
+        return self._payload["model_state"]
+
     def build_model(self, *, pretrained: bool = False) -> EfficientNet:
-        """Rebuild the architecture and load the saved weights (on the CPU)."""
+        """Rebuild the architecture, load the saved weights, restore the freeze pattern."""
         spec = self.model_spec
         model = build_classifier(
             spec["num_classes"],
@@ -294,7 +321,8 @@ class Checkpoint:
             freeze_backbone=spec["freeze_backbone"],
             pretrained=pretrained,
         )
-        model.load_state_dict(self._payload["model_state"])
+        model.load_state_dict(self.model_state)
+        set_trainable_blocks(model, spec["trainable_blocks"])
         return model
 
     def restore_optimizer(self, optimizer: torch.optim.Optimizer) -> None:
@@ -331,6 +359,7 @@ def load_checkpoint(path: Path) -> Checkpoint:
         history=[EpochStats.from_dict(h) for h in payload["history"]],
         best_epoch=payload.get("best_epoch"),
         best_metric=payload.get("best_metric"),
+        stage=payload.get("stage"),
         _payload=payload,
     )
 
@@ -349,6 +378,7 @@ def fit(
     checkpoint_dir: Path | None = None,
     resume_from: Checkpoint | None = None,
     val_loader: DataLoader | None = None,
+    stage: str | None = None,
 ) -> TrainingResult:
     """Train for `config.epochs` total epochs, checkpointing after each.
 
@@ -371,6 +401,15 @@ def fit(
         result.best_epoch = resume_from.best_epoch
         result.best_metric = resume_from.best_metric
         start_epoch = resume_from.epoch + 1
+        if checkpoint_dir is not None:
+            # A resumed run may train zero further epochs; the files written by
+            # the interrupted run are still this run's checkpoints.
+            last_path = Path(checkpoint_dir) / LAST_CHECKPOINT_NAME
+            best_path = Path(checkpoint_dir) / BEST_CHECKPOINT_NAME
+            if last_path.exists():
+                result.last_checkpoint = last_path
+            if result.best_epoch is not None and best_path.exists():
+                result.best_checkpoint = best_path
         logger.info("resuming from %s at epoch %d", resume_from.path, start_epoch)
 
     def checkpoint(name: str) -> Path:
@@ -386,6 +425,7 @@ def fit(
             loader=loader,
             best_epoch=result.best_epoch,
             best_metric=result.best_metric,
+            stage=stage,
         )
 
     for epoch in range(start_epoch, config.epochs + 1):

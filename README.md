@@ -66,7 +66,7 @@ once the previous one passes its acceptance gate; see [docs/layers/](docs/layers
 | 6 | Preprocessing + CLAHE | PASS |
 | 7 | Training loop | PASS |
 | 8 | Validation | PASS |
-| 9 | Fine-tuning | not started |
+| 9 | Fine-tuning | PASS |
 | 10 | Evaluation | not started |
 | 11 | Prediction API | not started |
 | 12 | YOLO integration | deferred by design |
