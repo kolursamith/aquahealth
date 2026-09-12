@@ -46,6 +46,7 @@ CONTRACT_KEYS = {
     "confidence",
     "risk",
     "message",
+    "healthy",
     "ranked_predictions",
     "warnings",
     "error",
@@ -371,3 +372,27 @@ def test_app_loads_the_real_predictor_when_a_checkpoint_exists(monkeypatch, chec
     assert not at.exception
     assert any(checkpoint_path.name in c.value for c in at.caption)
     assert at.expander[0].label == "Classes known to the loaded model (4)"
+
+
+def test_healthy_fish_prediction_is_flagged_and_worded_distinctly(predictor, monkeypatch):
+    """Whatever the synthetic classes are, a top class named "Healthy Fish" must set
+    `healthy` and use the "no disease detected" wording; any other class must not."""
+    monkeypatch.setattr(predictor, "class_names", ["Healthy Fish", "beta", "gamma", "delta"])
+    monkeypatch.setattr(
+        predictor, "probabilities", lambda rgb: torch.tensor([0.9, 0.05, 0.03, 0.02])
+    )
+    healthy = predictor.predict(_class_image(0))
+    assert healthy.ok and healthy.predicted_class == "Healthy Fish" and healthy.healthy is True
+    assert healthy.risk == "HIGH" and "no disease detected" in healthy.message
+    assert healthy.to_dict()["healthy"] is True
+
+    monkeypatch.setattr(
+        predictor, "probabilities", lambda rgb: torch.tensor([0.05, 0.9, 0.03, 0.02])
+    )
+    disease = predictor.predict(_class_image(0))
+    assert disease.predicted_class == "beta" and disease.healthy is False
+    assert disease.risk == "HIGH" and "disease indication" in disease.message
+
+    monkeypatch.setattr(predictor, "probabilities", lambda rgb: torch.tensor([0.4, 0.3, 0.2, 0.1]))
+    unsure = predictor.predict(_class_image(0))
+    assert unsure.healthy is True and unsure.risk == "LOW" and "uncertain" in unsure.message

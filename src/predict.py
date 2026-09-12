@@ -18,7 +18,10 @@ with `status="error"`. Problems that make prediction impossible at all
 Frontend contract (superset of the original one):
     predicted_class, confidence, risk, message   — unchanged keys
     ranked_predictions, model_version, preprocessing_version, api_version,
-    status, warnings, error, device              — added
+    status, warnings, error, device, healthy     — added
+`risk` follows confidence alone (<50% LOW, 50-80% MODERATE, >80% HIGH);
+`healthy` is True when the top class is "Healthy Fish", and the message then
+says "no disease detected" instead of "disease indication".
 
 Owner: Student 1 + Student 2
 """
@@ -42,7 +45,7 @@ from src.config import CHECKPOINT_PATH
 from src.device import resolve_device
 from src.model import logits_to_probabilities
 from src.preprocessing import build_eval_transform
-from src.risk_engine import get_risk_level, get_risk_message
+from src.risk_engine import get_risk_level, get_risk_message, is_healthy
 from src.train import Checkpoint, load_checkpoint
 from src.utils import get_logger
 
@@ -87,6 +90,7 @@ class PredictionResult:
     confidence: float | None = None
     risk: str | None = None
     message: str | None = None
+    healthy: bool = False
     ranked_predictions: list[RankedPrediction] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     error: str | None = None
@@ -268,7 +272,8 @@ class Predictor:
             predicted_class=ranked[0].class_name,
             confidence=confidence,
             risk=risk,
-            message=get_risk_message(risk),
+            message=get_risk_message(risk, ranked[0].class_name),
+            healthy=is_healthy(ranked[0].class_name),
             ranked_predictions=ranked,
             warnings=warnings,
         )

@@ -1,4 +1,8 @@
-"""Converts model confidence into a risk level for the frontend.
+"""Converts model confidence into a risk level and a message for the frontend.
+
+The risk level is a function of confidence only (how sure the model is). The
+message also depends on *what* was predicted: a confident "Healthy Fish" is a
+reassuring finding, not a "disease indication", and must read distinctly.
 
 Owner: Student 2
 """
@@ -9,10 +13,18 @@ RISK_LOW = "LOW"
 RISK_MODERATE = "MODERATE"
 RISK_HIGH = "HIGH"
 
+HEALTHY_CLASS = "Healthy Fish"
+
 RISK_MESSAGES = {
     RISK_LOW: "Low-confidence prediction; result is uncertain.",
     RISK_MODERATE: "Moderate-confidence disease indication.",
     RISK_HIGH: "High-confidence disease indication.",
+}
+
+HEALTHY_MESSAGES = {
+    RISK_LOW: "Low-confidence prediction; result is uncertain.",
+    RISK_MODERATE: "Moderate-confidence: no disease detected (Healthy Fish).",
+    RISK_HIGH: "High-confidence: no disease detected (Healthy Fish).",
 }
 
 
@@ -33,5 +45,12 @@ def get_risk_level(confidence: float) -> str:
     return RISK_HIGH
 
 
-def get_risk_message(risk: str) -> str:
+def is_healthy(predicted_class: str | None) -> bool:
+    return predicted_class == HEALTHY_CLASS
+
+
+def get_risk_message(risk: str, predicted_class: str | None = None) -> str:
+    """Message for a risk level; a Healthy Fish prediction gets its own wording."""
+    if is_healthy(predicted_class):
+        return HEALTHY_MESSAGES[risk]
     return RISK_MESSAGES[risk]

@@ -15,13 +15,13 @@ from src.predict import (
     RankedPrediction,
     load_input,
 )
-from src.risk_engine import get_risk_level, get_risk_message
+from src.risk_engine import get_risk_level, get_risk_message, is_healthy
 
 MOCK_MODEL_VERSION = "mock (no checkpoint loaded)"
 MOCK_RANKING = (
     ("Aeromoniasis", 0.87),
-    ("Healthy", 0.08),
-    ("Fin_Rot", 0.05),
+    ("Healthy Fish", 0.08),
+    ("Bacterial Red Disease", 0.05),
 )
 
 
@@ -55,7 +55,8 @@ def predict(image: ImageInput) -> dict[str, Any]:
         predicted_class=ranked[0].class_name,
         confidence=ranked[0].probability,
         risk=risk,
-        message=get_risk_message(risk),
+        message=get_risk_message(risk, ranked[0].class_name),
+        healthy=is_healthy(ranked[0].class_name),
         ranked_predictions=ranked,
         warnings=warnings,
     ).to_dict()

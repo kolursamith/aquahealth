@@ -46,10 +46,13 @@ Stage-by-stage (from `metrics.csv`):
   right budget for this stage at these learning rates.
 - **Each stage boundary caused a transient regression.** Head→partial: train loss 0.64 → 0.86,
   val F1 0.772 → 0.756. Partial→full: train loss 0.12 → 0.30, val loss 0.32 → 0.45, val F1
-  0.900 → 0.857, despite the full stage starting from the partial-stage best weights. The runner
-  rebuilds the optimizer at each stage (fresh AdamW moments) and unfreezes new blocks; the
-  logs show the effect but cannot isolate the cause. Partial recovered in 2 epochs; full never
-  recovered to its starting point (best 0.871 at its last epoch).
+  0.900 → 0.857, despite the full stage starting from the partial-stage best weights. Two things
+  change at a boundary: the optimizer is rebuilt (fresh AdamW moments) and, more importantly,
+  the newly unfrozen blocks switch from `eval()` to `train()` mode (`src/train.py`, frozen blocks
+  keep their BatchNorm statistics fixed), so their BatchNorm running statistics start re-adapting
+  to augmented training batches. The size of the drop is therefore largely independent of the
+  learning rate (EXP-003 shows the same drop at lr 1e-5). Partial recovered in 2 epochs; full
+  never recovered to its starting point (best 0.871 at its last epoch).
 
 ## 3. Overfitting
 
