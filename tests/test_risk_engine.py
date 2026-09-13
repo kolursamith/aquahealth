@@ -44,3 +44,29 @@ def test_healthy_fish_message_is_distinct_from_disease_message(risk):
         assert healthy != disease
         assert "no disease detected" in healthy and "Healthy Fish" in healthy
         assert "disease indication" in disease
+
+
+@pytest.mark.parametrize(
+    "confidence,expected", [(0.499, "LOW"), (0.50, "MODERATE"), (0.80, "MODERATE"), (0.801, "HIGH")]
+)
+def test_release_threshold_cases_49_9_50_80_80_1(confidence, expected):
+    """The four boundary cases named in the release checklist."""
+    assert get_risk_level(confidence) == expected
+
+
+def test_recommendation_is_class_specific_and_low_confidence_asks_for_a_better_photo():
+    from src.manifest import CANONICAL_CLASSES
+    from src.risk_engine import (
+        HEALTHY_CLASS,
+        LOW_CONFIDENCE_RECOMMENDATION,
+        RECOMMENDATIONS,
+        get_recommendation,
+    )
+
+    assert set(RECOMMENDATIONS) == set(CANONICAL_CLASSES), "every class has guidance"
+    assert get_recommendation("EUS Disease", "LOW") == LOW_CONFIDENCE_RECOMMENDATION
+    assert get_recommendation("EUS Disease", "HIGH") == RECOMMENDATIONS["EUS Disease"]
+    assert "No disease indicated" in get_recommendation(HEALTHY_CLASS, "MODERATE")
+    assert "consult" in get_recommendation("unknown class", "HIGH")
+    for text in RECOMMENDATIONS.values():
+        assert "diagnos" not in text.lower() or "not" in text.lower(), "no diagnosis claims"

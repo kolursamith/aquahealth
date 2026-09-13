@@ -259,3 +259,18 @@ Consequently: no LSTM/BiLSTM experiment is justified by the papers (there is no 
 - **Bounding boxes**: none of the papers provides or uses them for our dataset, and the AquaHealth audit found no annotation files. No YOLO training is supported by the papers or the data.
 
 Sequence construction (for the LSTM/BiLSTM question): **no paper constructs a sequence**. Every method consumes one image and produces one label (or one anomaly score). An LSTM would have nothing to iterate over.
+
+## Execution status (audit 2026-09-12 23:15 IST)
+
+**PAPER TECHNIQUES IDENTIFIED: 18. PAPER TECHNIQUES ACTUALLY EXECUTED (an AquaHealth experiment exists): 5.**
+
+| Paper | Technique | Experiment | Execution status |
+|---|---|---|---|
+| P1 | no-CLAHE preprocessing | EXP-002 | ran 22:28–≤22:43 IST; outcome UNVERIFIED |
+| P1 | two-phase Adam fine-tuning | EXP-003 | run 1 probably completed (artifacts overwritten); run 3 RUNNING |
+| P4 | SGD 0.01 + step decay | EXP-004 | COMPLETED on Colab; observed val Macro-F1 0.9330 (artifacts on Drive) |
+| P4 | flip/crop/jitter augmentation | EXP-005 | COMPLETED on Colab; observed val Macro-F1 0.9335 (artifacts on Drive) |
+| P3 | Adam 3e-5 (+ best-checkpoint selection) | EXP-006 | COMPLETED on Colab; final value not observed |
+| all others (13) | see `execution_status` column in the CSV | — | NOT EXECUTED |
+
+Published paper results quoted above are PUBLISHED PAPER RESULTS — NOT AQUAHEALTH RESULTS.

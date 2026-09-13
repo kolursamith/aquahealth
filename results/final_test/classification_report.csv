@@ -1,0 +1,11 @@
+class,precision,recall,f1,support
+Bacterial Red Disease,0.983051,0.935484,0.958678,62
+Aeromoniasis,0.940299,0.954545,0.947368,66
+Bacterial Gill Disease,0.968750,0.939394,0.953846,66
+EUS Disease,0.951613,0.893939,0.921875,66
+Saprolegniasis,0.967213,1.000000,0.983333,59
+Parasitic Disease,0.965517,0.888889,0.925620,63
+White Tail Disease,0.859155,1.000000,0.924242,61
+Healthy Fish,0.940299,0.954545,0.947368,66
+macro avg,0.946987,0.945850,0.945291,509
+weighted avg,,,0.944986,509

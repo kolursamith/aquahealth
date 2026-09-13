@@ -69,6 +69,12 @@ results/**/*.pt
 !results/final/*.json
 !results/final/*.csv
 !results/final/*.md
+# Official one-shot test evaluation (Gate 8): every artifact is evidence.
+!results/final_test/*.json
+!results/final_test/*.csv
+!results/final_test/*.md
+!results/final_test/*.txt
+!results/final_test/*.png
 
 # Streamlit / app runtime
 app/assets/*
@@ -86,3 +92,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Local copy of Google Drive experiment outputs (checkpoints, zip); never committed.
+drive_export/
