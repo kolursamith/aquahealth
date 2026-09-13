@@ -1,0 +1,13 @@
+                        precision  recall  f1-score  support
+Bacterial Red Disease       0.769   0.806     0.787       62
+Aeromoniasis                0.845   0.909     0.876       66
+Bacterial Gill Disease      0.931   0.818     0.871       66
+EUS Disease                 0.877   0.758     0.813       66
+Saprolegniasis              0.903   0.933     0.918       60
+Parasitic Disease           0.875   0.875     0.875       64
+White Tail Disease          0.897   0.984     0.938       62
+Healthy Fish                0.940   0.955     0.947       66
+
+accuracy                                      0.879      512
+macro avg                   0.880   0.880     0.878      512
+weighted avg                0.880   0.879     0.878      512

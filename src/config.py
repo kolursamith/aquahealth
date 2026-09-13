@@ -4,21 +4,19 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
-# EXPECTED class list from the project brief — NOT yet verified against the
-# real dataset. scripts/audit_dataset.py must confirm the actual class
-# directories, counts and names before any training run; this list is then
-# corrected to match the data, never the other way round. The classifier
-# head (src/model.build_classifier) takes num_classes as an explicit argument
-# and does not read this constant.
+# Class list verified against the real dataset by scripts/build_split_manifest.py:
+# the canonical order of the frozen split manifest (src.manifest.CANONICAL_CLASSES).
+# Trained checkpoints carry their own copy and the predictor uses that; the
+# classifier head (src/model.build_classifier) takes num_classes explicitly.
 CLASS_NAMES = [
+    "Bacterial Red Disease",
     "Aeromoniasis",
-    "Bacterial_Gill_Disease",
-    "Columnaris",
-    "Dropsy",
-    "Fin_Rot",
-    "Healthy",
+    "Bacterial Gill Disease",
+    "EUS Disease",
     "Saprolegniasis",
-    "White_Spot",
+    "Parasitic Disease",
+    "White Tail Disease",
+    "Healthy Fish",
 ]
 NUM_CLASSES = len(CLASS_NAMES)
 

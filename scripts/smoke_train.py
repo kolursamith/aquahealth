@@ -19,6 +19,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import torch  # noqa: E402
+import torchvision  # noqa: E402
 
 from src.augmentation import build_train_transform  # noqa: E402
 from src.dataset import build_dataloader  # noqa: E402
@@ -94,22 +95,16 @@ def main(argv: list[str] | None = None) -> int:
     val_ds = build_split_dataset(
         "val", transform=build_eval_transform(preprocess), manifest_path=args.manifest
     )
-    test_ds = build_split_dataset(
-        "test", transform=build_eval_transform(preprocess), manifest_path=args.manifest
-    )
-    missing = train_ds.missing_files() + val_ds.missing_files() + test_ds.missing_files()
+    missing = train_ds.missing_files() + val_ds.missing_files()
     check(
         not missing,
-        f"all {len(rows)} manifest files exist on disk (missing: {len(missing)})",
+        f"all train/val manifest files exist on disk (missing: {len(missing)})",
         report,
     )
-    train_paths = {s.path for s in train_ds.samples}
-    check(
-        not (train_paths & {s.path for s in val_ds.samples})
-        and not (train_paths & {s.path for s in test_ds.samples}),
-        "no file overlap between train and val/test",
-        report,
-    )
+    train_paths = {r.filepath for r in rows if r.split == "train"}
+    other_paths = {r.filepath for r in rows if r.split != "train"}
+    check(not (train_paths & other_paths), "no file overlap between train and val/test", report)
+    report["test_split_read"] = False
 
     # --- preprocessing contract ---
     train_stages = transform_stage_names(train_ds.transform)
@@ -128,9 +123,8 @@ def main(argv: list[str] | None = None) -> int:
         report,
     )
     check(
-        not contains_random_transform(val_ds.transform)
-        and not contains_random_transform(test_ds.transform),
-        "val/test pipelines contain NO augmentation",
+        not contains_random_transform(val_ds.transform),
+        "val pipeline (identical for test/inference) contains NO augmentation",
         report,
     )
     check(
@@ -194,11 +188,21 @@ def main(argv: list[str] | None = None) -> int:
         loss = torch.nn.functional.cross_entropy(logits.float(), labels)
     scaler.scale(loss).backward()
     grads = [p.grad for p in model.parameters() if p.requires_grad]
+    trainable_before = [p.detach().clone() for p in model.parameters() if p.requires_grad]
     scaler.step(optimizer)
     scaler.update()
     if device.type == "cuda":
         torch.cuda.synchronize()
     step_s = time.perf_counter() - t0
+    trainable_after = [p.detach() for p in model.parameters() if p.requires_grad]
+    parameters_changed = any(
+        not torch.equal(a, b) for a, b in zip(trainable_before, trainable_after, strict=True)
+    )
+    with (
+        torch.inference_mode(),
+        torch.autocast(device_type=device.type, dtype=autocast_dtype(device), enabled=config.amp),
+    ):
+        post_loss = float(torch.nn.functional.cross_entropy(model(images).float(), labels))
     report["step"] = {
         "loss": float(loss.detach()),
         "seconds": round(step_s, 3),
@@ -215,22 +219,53 @@ def main(argv: list[str] | None = None) -> int:
         "loss finite and near ln(8) at init",
         report,
     )
-    check(
-        all(g is not None and torch.isfinite(g).all() for g in grads),
-        "all trainable params have finite gradients",
-        report,
-    )
+    grads_finite = all(g is not None and bool(torch.isfinite(g).all()) for g in grads)
+    check(grads_finite, "all trainable params have finite gradients", report)
     check(logits.device.type == device.type, f"computation ran on {device.type}", report)
+    check(parameters_changed, "trainable parameters changed after optimizer.step()", report)
+    check(bool(torch.isfinite(torch.tensor(post_loss))), "post-update loss is finite", report)
+    gpu_memory = "n/a (not CUDA)"
     if device.type == "cuda":
-        check(
-            torch.cuda.max_memory_allocated() > 0,
-            f"GPU memory used: {torch.cuda.max_memory_allocated() / 1024**3:.2f} GB",
-            report,
-        )
+        used = torch.cuda.max_memory_allocated()
+        gpu_memory = f"{used / 1024**3:.2f} GB peak allocated"
+        check(used > 0, f"GPU memory used: {gpu_memory}", report)
+    elif device.type == "mps":
+        gpu_memory = f"{torch.mps.driver_allocated_memory() / 1024**3:.2f} GB driver allocated"
+    report["step"].update({"post_update_loss": post_loss, "parameters_changed": parameters_changed})
+    report["gpu_memory"] = gpu_memory
 
     ok = all(c["ok"] for c in report["checks"])
     report["status"] = "PASS" if ok else "FAIL"
-    print(f"\nSMOKE TEST {report['status']}")
+    gpu_name = report.get("gpu", {}).get("name", f"{device.type} (no CUDA device)")
+    print(
+        "\n===== GATE 1 REPORT =====\n"
+        f"GPU: {gpu_name}\n"
+        f"CUDA: {facts.cuda_available}\n"
+        f"Python: {sys.version.split()[0]}\n"
+        f"PyTorch: {facts.version}\n"
+        f"TorchVision: {torchvision.__version__}\n"
+        f"Dataset: {args.manifest} (sha256 {digest[:12]})\n"
+        f"Total usable: {len(rows)}\n"
+        f"Train: {sum(counts['train'].values())}\n"
+        f"Validation: {sum(counts['val'].values())}\n"
+        f"Test: {sum(counts['test'].values())} (not read)\n"
+        "Class mapping: "
+        + ", ".join(f"{i}={name}" for i, name in enumerate(CANONICAL_CLASSES))
+        + "\n"
+        f"Batch shape: {tuple(images.shape)} {images.dtype}, labels {tuple(labels.shape)}\n"
+        f"Model: torchvision EfficientNet-B0 (ImageNet weights) + Linear(1280, 8); "
+        f"{summary.total_parameters:,} params, {summary.trainable_parameters:,} trainable\n"
+        f"Device: {device}\n"
+        f"Logits shape: {tuple(logits.shape)}\n"
+        f"Initial loss: {float(loss.detach()):.4f}\n"
+        f"Post-update loss: {post_loss:.4f}\n"
+        f"Gradients finite: {'YES' if grads_finite else 'NO'}\n"
+        f"Parameters changed: {'YES' if parameters_changed else 'NO'}\n"
+        f"GPU memory: {gpu_memory}\n"
+        "REAL DATA USED: YES (frozen manifest, actual image files)\n"
+        "TEST SET READ: NO\n"
+        f"SMOKE TEST: {report['status']}"
+    )
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(report, indent=2, default=str))

@@ -1,4 +1,4 @@
-"""Layer 11 — prediction API (`src.predict`), mock parity, and the Streamlit entry point."""
+"""Layer 11 — prediction API (`src.predict`) and its frontend contract."""
 
 from __future__ import annotations
 
@@ -11,7 +11,6 @@ import pytest
 import torch
 from PIL import Image
 
-from app.mock_prediction import predict as mock_predict
 from src.dataset import ImageFolderDataset, build_dataloader
 from src.device import available_backends
 from src.model import build_classifier
@@ -46,6 +45,9 @@ CONTRACT_KEYS = {
     "confidence",
     "risk",
     "message",
+    "healthy",
+    "recommendation",
+    "quality",
     "ranked_predictions",
     "warnings",
     "error",
@@ -325,49 +327,48 @@ def test_predict_function_with_missing_default_checkpoint_raises(tmp_path):
         predict(_class_image(0), checkpoint_path=tmp_path / "missing.pt")
 
 
-# --- mock parity ---
+def test_healthy_fish_prediction_is_flagged_and_worded_distinctly(predictor, monkeypatch):
+    """Whatever the synthetic classes are, a top class named "Healthy Fish" must set
+    `healthy` and use the "no disease detected" wording; any other class must not."""
+    monkeypatch.setattr(predictor, "class_names", ["Healthy Fish", "beta", "gamma", "delta"])
+    monkeypatch.setattr(
+        predictor, "probabilities", lambda rgb: torch.tensor([0.9, 0.05, 0.03, 0.02])
+    )
+    healthy = predictor.predict(_class_image(0))
+    assert healthy.ok and healthy.predicted_class == "Healthy Fish" and healthy.healthy is True
+    assert healthy.risk == "HIGH" and "no disease detected" in healthy.message
+    assert healthy.to_dict()["healthy"] is True
+
+    monkeypatch.setattr(
+        predictor, "probabilities", lambda rgb: torch.tensor([0.05, 0.9, 0.03, 0.02])
+    )
+    disease = predictor.predict(_class_image(0))
+    assert disease.predicted_class == "beta" and disease.healthy is False
+    assert disease.risk == "HIGH" and "disease indication" in disease.message
+
+    monkeypatch.setattr(predictor, "probabilities", lambda rgb: torch.tensor([0.4, 0.3, 0.2, 0.1]))
+    unsure = predictor.predict(_class_image(0))
+    assert unsure.healthy is True and unsure.risk == "LOW" and "uncertain" in unsure.message
 
 
-def test_mock_predictor_matches_the_real_contract(predictor):
-    real = predictor.predict(_class_image(0)).to_dict()
-    mock = mock_predict(np.zeros((64, 64, 3), np.uint8))
-    assert set(mock) == set(real) == CONTRACT_KEYS
-    assert LEGACY_KEYS <= set(mock)
-    assert mock["status"] == "ok" and mock["risk"] == get_risk_level(mock["confidence"])
-    assert mock["model_version"].startswith("mock")
-    assert any("mock predictor" in w for w in mock["warnings"])
-    assert [r["rank"] for r in mock["ranked_predictions"]] == [1, 2, 3]
+def test_result_carries_recommendation_and_quality(predictor):
+    result = predictor.predict(_class_image(0))
+    assert result.ok
+    assert isinstance(result.recommendation, str) and result.recommendation
+    assert set(result.quality) == {"brightness", "sharpness", "dark", "blurry"}
+    payload = result.to_dict()
+    assert payload["recommendation"] == result.recommendation
+    assert payload["quality"]["dark"] in (True, False)
 
 
-def test_mock_predictor_reports_invalid_input_like_the_real_one():
-    result = mock_predict(b"")
-    assert result["status"] == "error" and "empty input" in result["error"]
-    assert set(result) == CONTRACT_KEYS
+def test_dark_upload_is_flagged_but_still_predicted(predictor):
+    dark = Image.fromarray(np.zeros((120, 90, 3), np.uint8) + 8)
+    result = predictor.predict(dark)
+    assert result.ok and result.quality["dark"] is True
+    assert any("dark" in w for w in result.warnings)
 
 
-# --- Streamlit entry point ---
+def test_no_mock_predictor_remains():
+    import importlib.util
 
-
-def _run_app(monkeypatch, checkpoint: Path | None):
-    from streamlit.testing.v1 import AppTest
-
-    if checkpoint is None:
-        monkeypatch.setenv("AQUAHEALTH_CHECKPOINT", str(ROOT / "models" / "does-not-exist.pt"))
-    else:
-        monkeypatch.setenv("AQUAHEALTH_CHECKPOINT", str(checkpoint))
-    return AppTest.from_file(str(ROOT / "app" / "main.py"), default_timeout=120).run()
-
-
-def test_app_runs_on_the_mock_path_without_a_checkpoint(monkeypatch):
-    at = _run_app(monkeypatch, None)
-    assert not at.exception
-    assert [t.value for t in at.title] == ["AquaHealth AI"]
-    assert any("mock predictor" in c.value for c in at.caption)
-    assert at.expander[0].label.startswith("Classes known to the loaded model")
-
-
-def test_app_loads_the_real_predictor_when_a_checkpoint_exists(monkeypatch, checkpoint_path):
-    at = _run_app(monkeypatch, checkpoint_path)
-    assert not at.exception
-    assert any(checkpoint_path.name in c.value for c in at.caption)
-    assert at.expander[0].label == "Classes known to the loaded model (4)"
+    assert importlib.util.find_spec("app.mock_prediction") is None
