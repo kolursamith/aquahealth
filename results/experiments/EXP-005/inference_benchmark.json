@@ -1,0 +1,10 @@
+{
+  "device": "cuda",
+  "images": 100,
+  "ms_per_image_batch1": 10.941,
+  "total_parameters": 4017796,
+  "trainable_parameters": 4017796,
+  "best_stage": "full",
+  "best_epoch": 15,
+  "train_seconds": 1415.5
+}

@@ -1,0 +1,72 @@
+metric_value,metric_name,experiment_id,stage,epoch,dataset_split,checkpoint,source_file,source_line_or_log_reference,verified,notes
+0.624,val_f1_macro,EXP-001,head,1,val,,results/experiments/EXP-001/metrics.csv,line 2,YES,VALIDATION RESULT
+0.6935,val_f1_macro,EXP-001,head,2,val,,results/experiments/EXP-001/metrics.csv,line 3,YES,VALIDATION RESULT
+0.7255,val_f1_macro,EXP-001,head,3,val,,results/experiments/EXP-001/metrics.csv,line 4,YES,VALIDATION RESULT
+0.7445,val_f1_macro,EXP-001,head,4,val,,results/experiments/EXP-001/metrics.csv,line 5,YES,VALIDATION RESULT
+0.7724,val_f1_macro,EXP-001,head,5,val,,results/experiments/EXP-001/metrics.csv,line 6,YES,VALIDATION RESULT
+0.7562,val_f1_macro,EXP-001,partial,1,val,,results/experiments/EXP-001/metrics.csv,line 7,YES,VALIDATION RESULT
+0.8025,val_f1_macro,EXP-001,partial,2,val,,results/experiments/EXP-001/metrics.csv,line 8,YES,VALIDATION RESULT
+0.8352,val_f1_macro,EXP-001,partial,3,val,,results/experiments/EXP-001/metrics.csv,line 9,YES,VALIDATION RESULT
+0.8494,val_f1_macro,EXP-001,partial,4,val,,results/experiments/EXP-001/metrics.csv,line 10,YES,VALIDATION RESULT
+0.8632,val_f1_macro,EXP-001,partial,5,val,,results/experiments/EXP-001/metrics.csv,line 11,YES,VALIDATION RESULT
+0.8729,val_f1_macro,EXP-001,partial,6,val,,results/experiments/EXP-001/metrics.csv,line 12,YES,VALIDATION RESULT
+0.8841,val_f1_macro,EXP-001,partial,7,val,,results/experiments/EXP-001/metrics.csv,line 13,YES,VALIDATION RESULT
+0.8844,val_f1_macro,EXP-001,partial,8,val,,results/experiments/EXP-001/metrics.csv,line 14,YES,VALIDATION RESULT
+0.9004,val_f1_macro,EXP-001,partial,9,val,,results/experiments/EXP-001/metrics.csv,line 15,YES,VALIDATION RESULT
+0.8926,val_f1_macro,EXP-001,partial,10,val,,results/experiments/EXP-001/metrics.csv,line 16,YES,VALIDATION RESULT
+0.8573,val_f1_macro,EXP-001,full,1,val,,results/experiments/EXP-001/metrics.csv,line 17,YES,VALIDATION RESULT
+0.8499,val_f1_macro,EXP-001,full,2,val,,results/experiments/EXP-001/metrics.csv,line 18,YES,VALIDATION RESULT
+0.866,val_f1_macro,EXP-001,full,3,val,,results/experiments/EXP-001/metrics.csv,line 19,YES,VALIDATION RESULT
+0.8575,val_f1_macro,EXP-001,full,4,val,,results/experiments/EXP-001/metrics.csv,line 20,YES,VALIDATION RESULT
+0.8636,val_f1_macro,EXP-001,full,5,val,,results/experiments/EXP-001/metrics.csv,line 21,YES,VALIDATION RESULT
+0.8648,val_f1_macro,EXP-001,full,6,val,,results/experiments/EXP-001/metrics.csv,line 22,YES,VALIDATION RESULT
+0.8484,val_f1_macro,EXP-001,full,7,val,,results/experiments/EXP-001/metrics.csv,line 23,YES,VALIDATION RESULT
+0.8516,val_f1_macro,EXP-001,full,8,val,,results/experiments/EXP-001/metrics.csv,line 24,YES,VALIDATION RESULT
+0.8697,val_f1_macro,EXP-001,full,9,val,,results/experiments/EXP-001/metrics.csv,line 25,YES,VALIDATION RESULT
+0.8591,val_f1_macro,EXP-001,full,10,val,,results/experiments/EXP-001/metrics.csv,line 26,YES,VALIDATION RESULT
+0.859,val_f1_macro,EXP-001,full,11,val,,results/experiments/EXP-001/metrics.csv,line 27,YES,VALIDATION RESULT
+0.8504,val_f1_macro,EXP-001,full,12,val,,results/experiments/EXP-001/metrics.csv,line 28,YES,VALIDATION RESULT
+0.8608,val_f1_macro,EXP-001,full,13,val,,results/experiments/EXP-001/metrics.csv,line 29,YES,VALIDATION RESULT
+0.8585,val_f1_macro,EXP-001,full,14,val,,results/experiments/EXP-001/metrics.csv,line 30,YES,VALIDATION RESULT
+0.8706,val_f1_macro,EXP-001,full,15,val,,results/experiments/EXP-001/metrics.csv,line 31,YES,VALIDATION RESULT
+0.9004,val_accuracy,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,summary.accuracy,YES,VALIDATION RESULT (re-evaluation of the saved checkpoint)
+0.9018,val_precision_macro,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,summary.precision_macro,YES,VALIDATION RESULT (re-evaluation of the saved checkpoint)
+0.901,val_recall_macro,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,summary.recall_macro,YES,VALIDATION RESULT (re-evaluation of the saved checkpoint)
+0.9004,val_f1_macro,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,summary.f1_macro,YES,VALIDATION RESULT (re-evaluation of the saved checkpoint)
+0.9002,val_f1_weighted,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,summary.f1_weighted,YES,VALIDATION RESULT (re-evaluation of the saved checkpoint)
+0.3381,val_loss,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,summary.loss,YES,VALIDATION RESULT (re-evaluation of the saved checkpoint)
+0.8293,val_f1[Bacterial Red Disease],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.836 R 0.823 n=62
+0.8696,val_f1[Aeromoniasis],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.833 R 0.909 n=66
+0.928,val_f1[Bacterial Gill Disease],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.983 R 0.879 n=66
+0.8504,val_f1[EUS Disease],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.885 R 0.818 n=66
+0.9421,val_f1[Saprolegniasis],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.934 R 0.950 n=60
+0.8837,val_f1[Parasitic Disease],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.877 R 0.891 n=64
+0.9457,val_f1[White Tail Disease],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.910 R 0.984 n=62
+0.9545,val_f1[Healthy Fish],EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,metrics.per_class,YES,P 0.955 R 0.955 n=66
+0.0555,expected_calibration_error,EXP-001,partial,9,val,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/eval_val/metrics.json,confidence.expected_calibration_error,YES,10-bin ECE
+9.004,ms_per_image_batch1,EXP-001,partial,9,"val images (100), batch 1, cuda","Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/inference_benchmark.json,ms_per_image_batch1,YES,"T4 GPU, AMP off at inference; not a performance metric"
+4017796,total_parameters,EXP-001,,,,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/inference_benchmark.json,total_parameters,YES,
+3165988,trainable_parameters_at_best_stage,EXP-001,partial,,,"Drive: MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth (16 MB, not in git)",results/experiments/EXP-001/inference_benchmark.json,trainable_parameters,YES,
+1549.8,train_seconds,EXP-001,,,,,results/experiments/EXP-001/inference_benchmark.json,train_seconds,YES,= 25.8 min for 30 epochs
+2384,train_images,EXP-001,,,train,,results/experiments/EXP-001/config.json,train_images,YES,
+512,val_images,EXP-001,,,val,,results/experiments/EXP-001/config.json,val_images,YES,
+b7d1fccbb21e73a847e078aed921c02339505bc735199d311103f4d708021d43,manifest_sha256,EXP-001,,,,,results/experiments/EXP-001/config.json,manifest_sha256,YES,matches data/split_manifest.sha256
+3503,source_files_discovered,dataset,,,,,results/data_audit_report.md,'files discovered: 3503'; results/data_audit.csv has 3503 rows,YES,
+0,corrupt_unreadable,dataset,,,,,results/data_audit_report.md,'corrupt/unreadable: 0',YES,
+68,exact_duplicate_groups,dataset,,,,,results/data_audit_report.md,'exact-duplicate groups (SHA-256): 68 (142 images involved)',YES,74 duplicate copies dropped (142-68)
+334,near_duplicate_groups,dataset,,,,,results/data_audit_report.md,"'near-duplicate groups (dHash, distinct bytes): 334'",YES,
+8,label_conflict_groups,dataset,,,,,results/data_audit_report.md,'near-duplicate groups with conflicting labels: 8 (24 images excluded)',YES,24 rows status=label_conflict in results/data_audit.csv
+3405,manifest_rows,dataset,,,train+val+test,,data/split_manifest.csv,3406 lines incl. header,YES,3503 - 74 exact-dup copies - 24 label-conflict = 3405
+2384,train_images,dataset,,,train,,data/split_manifest.csv,count split==train,YES,
+512,val_images,dataset,,,val,,data/split_manifest.csv,count split==val,YES,
+509,test_images,dataset,,,test,,data/split_manifest.csv,count split==test,YES,never opened by any training/evaluation run so far
+b7d1fccbb21e73a847e078aed921c02339505bc735199d311103f4d708021d43,manifest_sha256,dataset,,,,,data/split_manifest.sha256,line 1,YES,
+2.0894,smoke_initial_loss,GATE-1 (Colab T4),,,train batch (64 images),,Colab cell output of scripts/smoke_train.py (not saved; session output lost on VM recycle),conversation record only,NO,TECHNICAL SMOKE-TEST VALUE - NOT PERFORMANCE RESULT; USER/SESSION-REPORTED - NEEDS ARTIFACT VERIFICATION (re-run smoke_train.py --json to create one)
+1.9826,smoke_post_update_loss,GATE-1 (Colab T4),,,train batch (64 images),,Colab cell output of scripts/smoke_train.py (not saved; session output lost on VM recycle),conversation record only,NO,TECHNICAL SMOKE-TEST VALUE - NOT PERFORMANCE RESULT; USER/SESSION-REPORTED - NEEDS ARTIFACT VERIFICATION (re-run smoke_train.py --json to create one)
+0.38 GB,smoke_peak_gpu_memory_allocated,GATE-1 (Colab T4),,,train batch (64 images),,Colab cell output of scripts/smoke_train.py (not saved; session output lost on VM recycle),conversation record only,NO,TECHNICAL SMOKE-TEST VALUE - NOT PERFORMANCE RESULT; USER/SESSION-REPORTED - NEEDS ARTIFACT VERIFICATION (re-run smoke_train.py --json to create one)
+"(64, 8)",smoke_logits_shape,GATE-1 (Colab T4),,,train batch (64 images),,Colab cell output of scripts/smoke_train.py (not saved; session output lost on VM recycle),conversation record only,NO,TECHNICAL SMOKE-TEST VALUE - NOT PERFORMANCE RESULT; USER/SESSION-REPORTED - NEEDS ARTIFACT VERIFICATION (re-run smoke_train.py --json to create one)
+2.0953,"smoke_initial_loss (local MPS run, batch 32)","GATE-1 (local, Apple MPS)",,,train batch (32 images),,results/smoke_local.json,step.loss,YES,"TECHNICAL SMOKE-TEST VALUE - NOT PERFORMANCE RESULT; local run, AMP off"
+10248,trainable_parameters_head_only,GATE-1 (local) / EXP-001 stage head,head,,,,results/smoke_local.json; results/experiments/EXP-001/metrics.csv,model.trainable_parameters; metrics.csv lines 2-6 col trainable_parameters,YES,"Linear(1280,8): 1280*8+8 = 10,248"
+4017796,total_parameters,GATE-1 (local) / EXP-001,,,,,results/smoke_local.json; results/experiments/EXP-001/inference_benchmark.json,model.total_parameters,YES,
+0.904,val accuracy / val f1_macro (3-decimal log rounding),EXP-004,full,2,val,not the selected checkpoint,Colab cell output (src.train log line 'epoch 2/15 ... val loss 0.2991 acc 0.904 f1_macro 0.904'); exact values in Drive EXP-004/metrics.csv (to be copied),conversation/log record,PARTIAL,"0.904 is an EXP-004 full-stage epoch-2 value, NOT an EXP-001 value and NOT EXP-004's best (0.9330 at full epoch 3)"
+0.9004,val_f1_macro (also val accuracy 0.9004 = 461/512),EXP-001,partial,9,val,MyDrive/AquaHealth/runs/experiments/EXP-001/best_model.pth,results/experiments/EXP-001/metrics.csv; eval_val/metrics.json,metrics.csv line 15 (val_f1_macro 0.9004223); eval summary.f1_macro 0.9004223,YES,VALIDATION RESULT; the only 0.9004 in the project

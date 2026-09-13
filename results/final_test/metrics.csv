@@ -1,0 +1,13 @@
+metric,value,split,samples,checkpoint,note
+accuracy,0.944990,test,509,models/final_model.pth,OFFICIAL TEST RESULT
+precision_macro,0.946987,test,509,models/final_model.pth,OFFICIAL TEST RESULT
+recall_macro,0.945850,test,509,models/final_model.pth,OFFICIAL TEST RESULT
+f1_macro,0.945291,test,509,models/final_model.pth,OFFICIAL TEST RESULT
+f1_weighted,0.944986,test,509,models/final_model.pth,OFFICIAL TEST RESULT
+loss,0.191650,test,509,models/final_model.pth,OFFICIAL TEST RESULT
+expected_calibration_error,0.012284,test,509,models/final_model.pth,10-bin ECE
+mean_confidence,0.949542,test,509,models/final_model.pth,
+mean_confidence_correct,0.967783,test,509,models/final_model.pth,
+mean_confidence_incorrect,0.636182,test,509,models/final_model.pth,
+misclassified_count,28,test,509,models/final_model.pth,
+correct_count,481,test,509,models/final_model.pth,

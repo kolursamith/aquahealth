@@ -1,0 +1,9 @@
+true\predicted,Bacterial Red Disease,Aeromoniasis,Bacterial Gill Disease,EUS Disease,Saprolegniasis,Parasitic Disease,White Tail Disease,Healthy Fish
+Bacterial Red Disease,58,1,0,1,0,0,2,0
+Aeromoniasis,0,63,1,0,0,0,2,0
+Bacterial Gill Disease,0,0,62,1,0,1,1,1
+EUS Disease,1,3,0,59,0,0,1,2
+Saprolegniasis,0,0,0,0,59,0,0,0
+Parasitic Disease,0,0,1,1,2,56,2,1
+White Tail Disease,0,0,0,0,0,0,61,0
+Healthy Fish,0,0,0,0,0,1,2,63
