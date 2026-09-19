@@ -1,16 +1,39 @@
-"""Owner: Student 3"""
+"""Upload zone. Returns raw bytes + name; the backend does the decoding and validation.
 
-import numpy as np
+Owner: Student 3
+"""
+
+from __future__ import annotations
+
+import io
+
 import streamlit as st
 from PIL import Image
 
+SUPPORTED = ["jpg", "jpeg", "png", "webp", "bmp"]
 
-def render_upload() -> np.ndarray | None:
-    """Render a file uploader and return the image as an RGB numpy array, or None."""
-    uploaded_file = st.file_uploader("Upload a fish image", type=["jpg", "jpeg", "png"])
-    if uploaded_file is None:
+
+def render_upload(key: str) -> tuple[bytes, str] | None:
+    uploaded = st.file_uploader(
+        "Drop fish image",
+        type=SUPPORTED,
+        key=key,
+        help="One fish per photo, side view, lesion visible, good light. JPG, PNG, WEBP or BMP.",
+        label_visibility="collapsed",
+    )
+    if uploaded is None:
         return None
+    return uploaded.getvalue(), uploaded.name
 
-    image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Uploaded image", use_container_width=True)
-    return np.array(image)
+
+def image_facts(data: bytes) -> dict[str, str]:
+    """Real metadata of the uploaded bytes (for the preview panel); empty on decode failure."""
+    try:
+        with Image.open(io.BytesIO(data)) as image:
+            return {
+                "Resolution": f"{image.width} × {image.height} px",
+                "Format": image.format or "unknown",
+                "File size": f"{len(data) / 1024:.0f} KB",
+            }
+    except Exception:  # noqa: BLE001 - the backend reports the real decode error to the user
+        return {"File size": f"{len(data) / 1024:.0f} KB"}

@@ -31,11 +31,24 @@ def _noise_image(width: int = 400, height: int = 300, seed: int = 0) -> Image.Im
         {"horizontal_flip": 1.5},
         {"rotation_degrees": -1},
         {"brightness": -0.1},
+        {"saturation": -0.1},
     ],
 )
 def test_augment_config_rejects_invalid_values(kwargs):
     with pytest.raises(ValueError):
         AugmentConfig(**kwargs)
+
+
+def test_saturation_jitter_is_off_by_default_and_configurable():
+    from torchvision.transforms import v2
+
+    def jitter(transform):
+        return next(t for t in transform.transforms if isinstance(t, v2.ColorJitter))
+
+    assert AugmentConfig().saturation == 0.0
+    assert jitter(build_train_transform()).saturation is None
+    lo, hi = jitter(build_train_transform(augment=AugmentConfig(saturation=0.2))).saturation
+    assert (lo, hi) == pytest.approx((0.8, 1.2))
 
 
 # --- output contract ---

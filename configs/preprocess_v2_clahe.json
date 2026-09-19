@@ -1,0 +1,12 @@
+{
+  "description": "Preprocessing block for the multi-dataset experiment: the existing CLAHE (LAB-L, clip 2.0, tile 8x8) -> Resize 256 -> CenterCrop 224 -> ImageNet normalisation, exactly as src/preprocessing.py implements it. Copy into an experiment config's `preprocess` key.",
+  "preprocess": {
+    "image_size": 224,
+    "resize_size": 256,
+    "resize_mode": "crop",
+    "clahe": {
+      "clip_limit": 2.0,
+      "tile_grid_size": 8
+    }
+  }
+}

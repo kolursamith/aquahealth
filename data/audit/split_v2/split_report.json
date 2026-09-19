@@ -1,0 +1,75 @@
+{
+  "strategy": "group-aware stratified assignment (src/split_v2.py::assign_groups, the baseline rule of src/manifest.py generalised): unit = clean-manifest group_id (exact/near duplicates \u222a same specimen), stratum = (unified class, majority source of the group), largest-remainder quotas, largest groups first to the most deficient part",
+  "seed": 42,
+  "test_ratio": 0.2,
+  "ratio_provenance": "not fixed by any project document; the team method note gives 80/20 development/test as an example (see data/audit/split_policy_proposal.md)",
+  "clean_manifest_sha256": "544ebc791db5ce30af77b059e5e639146841d375ee283d6780fbfcbe862c19c9",
+  "clean_total": 7435,
+  "clean_included": 5942,
+  "excluded_from_clean_manifest": {
+    "LABEL_CONFLICT_GROUP": 47,
+    "EXACT_DUPLICATE": 162,
+    "LABEL_UNRESOLVED": 1277,
+    "LABEL_EXCLUDED": 7
+  },
+  "development": {
+    "images": 4658,
+    "groups": 2647,
+    "per_class": {
+      "Aeromoniasis": 388,
+      "Bacterial Gill Disease": 612,
+      "Bacterial Red Disease": 879,
+      "EUS Disease": 630,
+      "Healthy Fish": 1068,
+      "Parasitic Disease": 369,
+      "Saprolegniasis": 353,
+      "White Tail Disease": 359
+    },
+    "per_source": {
+      "current_freshwater": 2719,
+      "kaptai": 44,
+      "mendeley": 1614,
+      "roboflow": 281
+    }
+  },
+  "final_test": {
+    "images": 1284,
+    "groups": 654,
+    "per_class": {
+      "Aeromoniasis": 97,
+      "Bacterial Gill Disease": 156,
+      "Bacterial Red Disease": 227,
+      "EUS Disease": 161,
+      "Healthy Fish": 372,
+      "Parasitic Disease": 92,
+      "Saprolegniasis": 89,
+      "White Tail Disease": 90
+    },
+    "per_source": {
+      "current_freshwater": 682,
+      "kaptai": 9,
+      "mendeley": 523,
+      "roboflow": 70
+    },
+    "share": 0.2161
+  },
+  "per_class_share_in_test": {
+    "Aeromoniasis": 0.2,
+    "Bacterial Gill Disease": 0.203,
+    "Bacterial Red Disease": 0.205,
+    "EUS Disease": 0.204,
+    "Healthy Fish": 0.258,
+    "Parasitic Disease": 0.2,
+    "Saprolegniasis": 0.201,
+    "White Tail Disease": 0.2
+  },
+  "group_constraints": {
+    "groups_straddling_partitions": 0,
+    "largest_group_in_test": 259,
+    "specimen_groups_in_test": 17
+  },
+  "split_manifest_sha256": [
+    "a2e9c5005a9666868e8a4d782dc4799fb8878afb97212525488afaef76472ad1  development.csv",
+    "1a2f6aea1caefbe40e5781db7ec15ed38912beb502172a8a07c7c9fb5f8f8069  final_test.csv"
+  ]
+}

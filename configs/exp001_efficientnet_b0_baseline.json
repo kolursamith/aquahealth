@@ -1,0 +1,12 @@
+{
+  "description": "EXP-001 EfficientNet-B0 baseline: existing AquaHealth preprocessing (CLAHE on, resize 256 -> centre-crop 224, ImageNet normalisation), existing train-only augmentation, existing Layer 9 staged fine-tuning (head -> last 3 blocks -> all), AdamW, selection on validation Macro-F1. Values are the existing repository defaults [C], not paper-derived.",
+  "preprocess": {"image_size": 224, "resize_size": 256, "resize_mode": "crop", "clahe": {"clip_limit": 2.0, "tile_grid_size": 8}},
+  "augment": {"crop_scale": [0.8, 1.0], "crop_ratio": [0.9, 1.1], "horizontal_flip": 0.5, "rotation_degrees": 15.0, "brightness": 0.2, "contrast": 0.2},
+  "stages": [
+    {"name": "head", "epochs": 5, "trainable_blocks": 0, "learning_rate": 0.001},
+    {"name": "partial", "epochs": 10, "trainable_blocks": 3, "learning_rate": 0.0003, "backbone_learning_rate": 0.00003},
+    {"name": "full", "epochs": 15, "trainable_blocks": "all", "learning_rate": 0.0003, "backbone_learning_rate": 0.00001}
+  ],
+  "optimizer": {"optimizer": "adamw", "weight_decay": 0.0001, "momentum": 0.9, "lr_step_size": null, "lr_gamma": 0.1, "amp": false},
+  "batch_size": 32
+}

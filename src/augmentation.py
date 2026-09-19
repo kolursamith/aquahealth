@@ -33,14 +33,15 @@ class AugmentConfig:
     rotation_degrees: float = 15.0
     brightness: float = 0.2
     contrast: float = 0.2
+    saturation: float = 0.0  # 0 = off (default); P4 uses ±0.2
 
     def __post_init__(self) -> None:
         if not 0.0 < self.crop_scale[0] <= self.crop_scale[1] <= 1.0:
             raise ValueError(f"crop_scale must satisfy 0 < lo <= hi <= 1, got {self.crop_scale}")
         if not 0.0 <= self.horizontal_flip <= 1.0:
             raise ValueError(f"horizontal_flip must be a probability, got {self.horizontal_flip}")
-        if self.rotation_degrees < 0 or self.brightness < 0 or self.contrast < 0:
-            raise ValueError("rotation_degrees, brightness and contrast must be >= 0")
+        if min(self.rotation_degrees, self.brightness, self.contrast, self.saturation) < 0:
+            raise ValueError("rotation_degrees, brightness, contrast, saturation must be >= 0")
 
 
 def build_train_transform(
@@ -60,7 +61,11 @@ def build_train_transform(
         ),
         v2.RandomHorizontalFlip(p=augment.horizontal_flip),
         v2.RandomRotation(augment.rotation_degrees, interpolation=InterpolationMode.BILINEAR),
-        v2.ColorJitter(brightness=augment.brightness, contrast=augment.contrast),
+        v2.ColorJitter(
+            brightness=augment.brightness,
+            contrast=augment.contrast,
+            saturation=augment.saturation,
+        ),
     ]
     stages += tensor_transforms(config)
     return v2.Compose(stages)

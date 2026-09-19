@@ -1,0 +1,13 @@
+{
+  "device": "mps",
+  "platform": "macOS-14.8.1-arm64-arm-64bit",
+  "torch": "2.14.0",
+  "images": 50,
+  "ms_per_image_batch1_model_only": 13.52,
+  "ms_per_image_batch1_full_predict_incl_preprocess_and_quality": 16.71,
+  "t4_reference_ms_per_image_batch1": 10.483,
+  "t4_reference_source": "results/experiments/EXP-004/inference_benchmark.json (Colab Tesla T4, training run)",
+  "benchmark_images": "train split (first 60), not test",
+  "total_parameters": 4017796,
+  "checkpoint_sha256": "3045a949ff54f383383cae2130d865eb9b832f1070724fb0495cd8b1ea0c0dae"
+}

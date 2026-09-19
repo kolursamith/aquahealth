@@ -18,7 +18,13 @@ with `status="error"`. Problems that make prediction impossible at all
 Frontend contract (superset of the original one):
     predicted_class, confidence, risk, message   — unchanged keys
     ranked_predictions, model_version, preprocessing_version, api_version,
-    status, warnings, error, device              — added
+    status, warnings, error, device, healthy,
+    recommendation, quality                      — added
+`risk` follows confidence alone (<50% LOW, 50-80% MODERATE, >80% HIGH);
+`healthy` is True when the top class is "Healthy Fish", and the message then
+says "no disease detected" instead of "disease indication"; `recommendation`
+is the farmer-facing next step (src/risk_engine.py); `quality` carries the
+brightness/blur screen of the input (src/image_quality.py), advisory only.
 
 Owner: Student 1 + Student 2
 """
@@ -40,9 +46,10 @@ from torchvision.transforms import v2
 
 from src.config import CHECKPOINT_PATH
 from src.device import resolve_device
+from src.image_quality import assess_quality
 from src.model import logits_to_probabilities
 from src.preprocessing import build_eval_transform
-from src.risk_engine import get_risk_level, get_risk_message
+from src.risk_engine import get_recommendation, get_risk_level, get_risk_message, is_healthy
 from src.train import Checkpoint, load_checkpoint
 from src.utils import get_logger
 
@@ -87,6 +94,9 @@ class PredictionResult:
     confidence: float | None = None
     risk: str | None = None
     message: str | None = None
+    healthy: bool = False
+    recommendation: str | None = None
+    quality: dict[str, Any] | None = None
     ranked_predictions: list[RankedPrediction] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     error: str | None = None
@@ -131,7 +141,11 @@ def _decode_bytes(data: bytes, warnings: list[str]) -> Image.Image:
         with Image.open(io.BytesIO(data)) as image:
             image.load()
             return _pil_to_rgb(image, warnings)
-    except (UnidentifiedImageError, OSError, ValueError) as exc:
+    except UnidentifiedImageError as exc:
+        raise InvalidImageError(
+            "could not decode image: the file is not a readable image (unsupported or corrupt)"
+        ) from exc
+    except (OSError, ValueError) as exc:
         raise InvalidImageError(f"could not decode image: {exc}") from exc
 
 
@@ -242,6 +256,8 @@ class Predictor:
         target = self.checkpoint.preprocess.image_size
         if min(rgb.size) < target:
             warnings.append(f"image {rgb.size[0]}x{rgb.size[1]} is smaller than {target}; upscaled")
+        quality = assess_quality(rgb)
+        warnings.extend(quality.warnings)
 
         try:
             probs = self.probabilities(rgb)
@@ -268,7 +284,10 @@ class Predictor:
             predicted_class=ranked[0].class_name,
             confidence=confidence,
             risk=risk,
-            message=get_risk_message(risk),
+            message=get_risk_message(risk, ranked[0].class_name),
+            healthy=is_healthy(ranked[0].class_name),
+            recommendation=get_recommendation(ranked[0].class_name, risk),
+            quality=quality.to_dict(),
             ranked_predictions=ranked,
             warnings=warnings,
         )
