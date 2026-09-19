@@ -72,6 +72,10 @@ class CleanRow:
     included: bool
     exclusion_reason: str
     representative_image_id: str  # the kept copy, for excluded duplicates
+    leakage_flags: str = ""  # ';'-joined: exact_duplicate_group, near_duplicate_group,
+    #                          cross_dataset_group, specimen_group, filename_reveals_label,
+    #                          pre_augmented_filename
+    preprocessing_status: str = "raw (CLAHE/resize applied on the fly by src/preprocessing.py)"
 
 
 CLEAN_COLUMNS: tuple[str, ...] = tuple(f.name for f in fields(CleanRow))
@@ -203,8 +207,52 @@ def build_clean_manifest(
                 representative_image_id=representative,
             )
         )
+    annotate_leakage_flags(rows)
     validate_clean_manifest(rows)
     return rows
+
+
+_LABEL_WORDS = (
+    "aeromoniasis",
+    "gill",
+    "eus",
+    "saprolegniasis",
+    "fungal",
+    "parasit",
+    "argulus",
+    "white tail",
+    "tail",
+    "healthy",
+    "fresh",
+    "red",
+    "disease",
+    "infected",
+)
+
+
+def annotate_leakage_flags(rows: list[CleanRow]) -> None:
+    """Per-image flags a later split / analysis must respect. Purely descriptive."""
+    members: dict[str, list[CleanRow]] = defaultdict(list)
+    for r in rows:
+        members[r.group_id].append(r)
+    for r in rows:
+        flags = []
+        if r.exact_dup_group:
+            flags.append("exact_duplicate_group")
+        if len({m.sha256 for m in members[r.group_id]}) > 1 and any(
+            m.dhash == r.dhash and m.sha256 != r.sha256 for m in members[r.group_id]
+        ):
+            flags.append("near_duplicate_group")
+        if len({m.source_dataset for m in members[r.group_id]}) > 1:
+            flags.append("cross_dataset_group")
+        if r.specimen_id:
+            flags.append("specimen_group")
+        name = r.original_filename.lower().replace("_", " ").replace("-", " ")
+        if any(w in name for w in _LABEL_WORDS):
+            flags.append("filename_reveals_label")
+        if "aug" in name or "flip" in name or "rot" in name:
+            flags.append("pre_augmented_filename")
+        r.leakage_flags = ";".join(flags)
 
 
 def validate_clean_manifest(rows: list[CleanRow]) -> None:

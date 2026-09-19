@@ -54,7 +54,15 @@ class LabelMapping:
             )
 
 
-LABEL_MAPPING_COLUMNS: tuple[str, ...] = tuple(f.name for f in fields(LabelMapping))
+REVIEW_STATUS = {
+    "EXACT_MATCH": "accepted",
+    "SUPPORTED_MAPPING": "accepted",
+    "UNRESOLVED": "ambiguous (requires review)",
+    "EXCLUDED": "excluded",
+}
+LABEL_MAPPING_COLUMNS: tuple[str, ...] = tuple(f.name for f in fields(LabelMapping)) + (
+    "review_status",
+)
 
 _PROJECT_MAP = "src/manifest.py::SOURCE_FOLDER_TO_CLASS (project's agreed mapping)"
 
@@ -224,9 +232,12 @@ def write_label_mapping_csv(path: Path, mappings: Iterable[LabelMapping] = LABEL
         writer = csv.DictWriter(handle, fieldnames=list(LABEL_MAPPING_COLUMNS))
         writer.writeheader()
         for m in mappings:
-            writer.writerow(asdict(m))
+            writer.writerow({**asdict(m), "review_status": REVIEW_STATUS[m.mapping_status]})
 
 
 def read_label_mapping_csv(path: Path) -> list[LabelMapping]:
     with Path(path).open(newline="") as handle:
-        return [LabelMapping(**row) for row in csv.DictReader(handle)]
+        return [
+            LabelMapping(**{k: v for k, v in row.items() if k != "review_status"})
+            for row in csv.DictReader(handle)
+        ]

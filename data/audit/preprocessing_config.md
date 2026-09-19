@@ -45,7 +45,7 @@ Evidence so far: EXP-002 (CLAHE off) val Macro-F1 0.9182 vs EXP-001 (CLAHE on) 0
 
 ## Corrupted-image handling
 
-- status: **reported** — ImageDecodeError: could not decode image /var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmpiqkwuv8u/corrupt.jpg: cannot identify image file '/var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmpiqkwuv8u/corrupt.jpg'
+- status: **reported** — ImageDecodeError: could not decode image /var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmp_q7o080k/corrupt.jpg: cannot identify image file '/var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmp_q7o080k/corrupt.jpg'
 - the master-manifest probe records undecodable files with status `corrupt` (0 found in the five datasets); the training loader raises instead of skipping
 
 **CLAHE has not been applied to the dataset on disk.** It runs inside the transform of any experiment whose config sets `preprocess.clahe` (`configs/preprocess_v2_clahe.json`).
