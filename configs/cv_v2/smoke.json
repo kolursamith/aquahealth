@@ -1,0 +1,23 @@
+{
+  "description": "INFRASTRUCTURE SMOKE TEST — NOT A PERFORMANCE RESULT. Same pipeline as default.json with 2 epochs (1 head + 1 full) so the Colab GPU path (data, CLAHE, model, forward/backward, optimiser, validation, metrics, checkpoints, resume) can be exercised in minutes on a small sample.",
+  "epochs": 2,
+  "batch_size": 16,
+  "optimizer": "adamw",
+  "learning_rate": 0.0003,
+  "backbone_learning_rate": 0.00003,
+  "weight_decay": 0.0001,
+  "momentum": 0.9,
+  "scheduler": "cosine",
+  "lr_step_size": 5,
+  "lr_gamma": 0.1,
+  "strategy": "head_then_full",
+  "head_epochs": 1,
+  "early_stopping_patience": null,
+  "selection_metric": "f1_macro",
+  "pretrained": true,
+  "dropout": 0.2,
+  "amp": true,
+  "num_workers": 2,
+  "preprocess_config": "configs/preprocess_v2_clahe.json",
+  "augment": {"crop_scale": [0.8, 1.0], "crop_ratio": [0.9, 1.1], "horizontal_flip": 0.5, "rotation_degrees": 15.0, "brightness": 0.2, "contrast": 0.2, "saturation": 0.0}
+}

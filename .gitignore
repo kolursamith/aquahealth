@@ -37,6 +37,19 @@ data/original/*
 # The frozen split manifest and its hash are committed on purpose.
 !data/split_manifest.csv
 !data/split_manifest.sha256
+# Phase-2 raw datasets: data/raw/<key> are symlinks into the delivery drop
+# (scripts/link_raw_datasets.py); only the README is tracked.
+data/raw/*
+!data/raw/README.md
+# Phase-2 audit outputs (inventory, label mapping, master manifest, duplicate
+# report) are committed: they document the combined dataset, like data_audit.csv.
+!data/audit/*.csv
+!data/audit/*.md
+!data/audit/**/*.csv
+!data/audit/**/*.md
+!data/audit/**/*.sha256
+# data/combined_v2 is reserved; images never go into git.
+!data/combined_v2/README.md
 
 # Model checkpoints
 models/**/*.pth
@@ -69,6 +82,16 @@ results/**/*.pt
 !results/final/*.json
 !results/final/*.csv
 !results/final/*.md
+# Phase-12 CV experiments (results/v2): the matrix and each experiment's small records
+# are committed; checkpoints (*.pt) and logs are not.
+!results/v2/*.csv
+!results/v2/experiments/**/config.json
+!results/v2/experiments/**/history.csv
+!results/v2/experiments/**/metrics.json
+!results/v2/experiments/**/confusion_matrix.csv
+!results/v2/experiments/**/run_summary.json
+!results/v2/experiments/**/status.json
+results/v2/smoke/
 # Official one-shot test evaluation (Gate 8): every artifact is evidence.
 !results/final_test/*.json
 !results/final_test/*.csv
@@ -95,3 +118,6 @@ Thumbs.db
 
 # Local copy of Google Drive experiment outputs (checkpoints, zip); never committed.
 drive_export/
+
+# GAN outputs (checkpoints, synthetic images, per-fold manifests): generated, never committed.
+data/gan/
