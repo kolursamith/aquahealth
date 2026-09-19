@@ -1,0 +1,21 @@
+# 10-fold cross-validation manifests (Phase 9)
+
+- source: `data/audit/split_v2/development.csv` (4658 images); `final_test.csv` was not read
+- strategy: group-aware stratified K-fold — `src/split_v2.py::assign_folds` over `assign_groups` (unit = clean-manifest group_id, stratum = unified class | majority source), seed 42; every image is validation exactly once
+- sklearn: not installed / not used (its StratifiedGroupKFold would ignore the source stratum); the project's own baseline rule is generalised instead
+- files: `folds.csv`, `fold_XX_train.csv`, `fold_XX_validation.csv`, digests in `folds.sha256`
+
+| fold | train | validation | validation classes | validation sources | groups |
+|---|---|---|---|---|---|
+| 1 | 3811 | 847 | Aeromoniasis=40; Bacterial Gill Disease=64; Bacterial Red Disease=92; EUS Disease=96; Healthy Fish=443; Parasitic Disease=39; Saprolegniasis=36; White Tail Disease=37 | current_freshwater=278; kaptai=5; mendeley=532; roboflow=32 | groups=259; specimen_groups=6; largest_group=396; groups_shared_with_train=0 |
+| 2 | 4028 | 630 | Aeromoniasis=40; Bacterial Gill Disease=63; Bacterial Red Disease=81; EUS Disease=67; Healthy Fish=269; Parasitic Disease=37; Saprolegniasis=36; White Tail Disease=37 | current_freshwater=277; kaptai=5; mendeley=319; roboflow=29 | groups=263; specimen_groups=6; largest_group=222; groups_shared_with_train=0 |
+| 3 | 4245 | 413 | Aeromoniasis=39; Bacterial Gill Disease=62; Bacterial Red Disease=90; EUS Disease=67; Healthy Fish=45; Parasitic Disease=37; Saprolegniasis=36; White Tail Disease=37 | current_freshwater=272; kaptai=6; mendeley=105; roboflow=30 | groups=262; specimen_groups=6; largest_group=30; groups_shared_with_train=0 |
+| 4 | 4247 | 411 | Aeromoniasis=39; Bacterial Gill Disease=62; Bacterial Red Disease=89; EUS Disease=66; Healthy Fish=45; Parasitic Disease=37; Saprolegniasis=36; White Tail Disease=37 | current_freshwater=275; kaptai=3; mendeley=103; roboflow=30 | groups=267; specimen_groups=6; largest_group=29; groups_shared_with_train=0 |
+| 5 | 4255 | 403 | Aeromoniasis=39; Bacterial Gill Disease=60; Bacterial Red Disease=88; EUS Disease=63; Healthy Fish=45; Parasitic Disease=37; Saprolegniasis=35; White Tail Disease=36 | current_freshwater=268; kaptai=8; mendeley=99; roboflow=28 | groups=266; specimen_groups=6; largest_group=26; groups_shared_with_train=0 |
+| 6 | 4259 | 399 | Aeromoniasis=39; Bacterial Gill Disease=60; Bacterial Red Disease=88; EUS Disease=59; Healthy Fish=45; Parasitic Disease=37; Saprolegniasis=35; White Tail Disease=36 | current_freshwater=272; kaptai=5; mendeley=95; roboflow=27 | groups=267; specimen_groups=6; largest_group=26; groups_shared_with_train=0 |
+| 7 | 4258 | 400 | Aeromoniasis=39; Bacterial Gill Disease=63; Bacterial Red Disease=88; EUS Disease=58; Healthy Fish=44; Parasitic Disease=37; Saprolegniasis=35; White Tail Disease=36 | current_freshwater=275; kaptai=2; mendeley=97; roboflow=26 | groups=269; specimen_groups=7; largest_group=24; groups_shared_with_train=0 |
+| 8 | 4269 | 389 | Aeromoniasis=38; Bacterial Gill Disease=59; Bacterial Red Disease=86; EUS Disease=56; Healthy Fish=44; Parasitic Disease=36; Saprolegniasis=35; White Tail Disease=35 | current_freshwater=268; kaptai=5; mendeley=90; roboflow=26 | groups=264; specimen_groups=6; largest_group=23; groups_shared_with_train=0 |
+| 9 | 4274 | 384 | Aeromoniasis=38; Bacterial Gill Disease=60; Bacterial Red Disease=89; EUS Disease=48; Healthy Fish=44; Parasitic Disease=36; Saprolegniasis=35; White Tail Disease=34 | current_freshwater=266; kaptai=3; mendeley=87; roboflow=28 | groups=264; specimen_groups=6; largest_group=21; groups_shared_with_train=0 |
+| 10 | 4276 | 382 | Aeromoniasis=37; Bacterial Gill Disease=59; Bacterial Red Disease=88; EUS Disease=50; Healthy Fish=44; Parasitic Disease=36; Saprolegniasis=34; White Tail Disease=34 | current_freshwater=268; kaptai=2; mendeley=87; roboflow=25 | groups=266; specimen_groups=7; largest_group=21; groups_shared_with_train=0 |
+
+Nothing was trained; no GAN images exist; the frozen test set is untouched.
