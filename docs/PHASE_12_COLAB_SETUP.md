@@ -6,21 +6,49 @@ scripts (nothing is implemented inside the notebook).
 
 ## Start
 1. Open the notebook in Colab, set *Runtime → Change runtime type → GPU* (T4 or better).
-2. Section 1 clones the repository (`REPO_URL`, `BRANCH` at the top of the cell) into
+2. Section 1 clones the repository (`REPO_URL`, `BRANCH = develop` at the top of the cell) into
    `/content/aquahealth` and installs `requirements/experiments.txt` only (torch 2.14.0,
    torchvision 0.29.0, opencv-headless, numpy, pillow, matplotlib — the existing pins; no new dependency).
-3. Section 2 asserts CUDA; the notebook stops there without a GPU.
+3. Section 2 runs the GPU smoke test and the environment pre-flight; the notebook stops there without a GPU.
 
-## Dataset mounting
-- Upload the delivered `Dataset/` folder once to Google Drive: `MyDrive/AquaHealth/Dataset/` with the
-  five deliveries exactly as they were delivered (`train_split/`, `test_split&validation/`, `test.csv`,
-  `Fresh Water Fish Dataset/`, `Fish Disease.v1i.folder/`, `MatsyaDx-BD …/MatsyaDx-BD/`,
-  `SalmonScan …/SalmonScan/`). Nothing is renamed; the `.7z`/`.zip` originals may stay next to the folders.
-- Section 3 mounts Drive, copies the folder to the VM disk (`/content/aquahealth_data/Dataset`, ~5.6 GB;
-  faster epochs, redone after a runtime reset) and runs `scripts/link_raw_datasets.py --source …`, which
-  recreates `data/raw/<key>` exactly as on the local machine.
-- Images are never in git. Manifests are: `data/audit/split_v2/`, `data/audit/cv_v2/` (with `.sha256`
-  guards) and `results/v2/experiment_matrix.csv`.
+## Dataset access (Layer 2): `AQUAHEALTH_COLAB_DATASET_ROOT`
+The local machine keeps the raw delivery (`/…/AI_TECHTAHON_DOCUMENTS/Dataset`, outside git); the
+clean manifest `data/audit/clean_manifest.csv` is the authoritative description of the dataset. Colab
+gets the images through one configurable root, the environment variable
+**`AQUAHEALTH_COLAB_DATASET_ROOT`** — never a hard-coded path and not necessarily Google Drive:
+
+1. **Clean bundle (recommended, ~5.5 GB).** Locally:
+   `python scripts/build_colab_bundle.py --out /some/dir/aquahealth_bundle --tar`
+   copies *exactly* the manifest's 5,942 included images (development + frozen final test; excluded
+   duplicates / unresolved labels are not copied) to `<out>/data/raw/<key>/…` — the same relative
+   paths the committed manifests use — and writes `bundle_manifest.csv` (image_id, filepath, sha256,
+   source, class, label, group_id, split, fold) plus `bundle.sha256`, which pins the bundle to the
+   digests of `clean_manifest.csv`, `development.csv`, `final_test.csv` and `folds.csv`. Nothing is
+   sampled at random. Upload the tar wherever you like (Drive, bucket, direct upload), extract it on
+   the VM and point the variable at the extracted folder. (`--hardlink` builds it instantly on the
+   same volume; such a bundle shares inodes with the raw files — never edit its files.)
+2. **Full delivery drop.** Point the variable at the delivered `Dataset/` folder; `attach` delegates
+   to `scripts/link_raw_datasets.py --source`.
+
+On Colab (notebook sections 3–4):
+```bash
+export AQUAHEALTH_COLAB_DATASET_ROOT=/content/aquahealth_data/aquahealth_bundle
+python scripts/colab_dataset.py info      # layout: bundle | delivery; fails (exit 3) if unset/missing
+python scripts/colab_dataset.py attach    # data/raw/<key> -> root (symlinks only)
+python scripts/colab_dataset.py verify --hash all   # exit 1 = STOP, never regenerate on Colab
+```
+`verify` checks: manifest present; split and fold digests; bundle pins equal the runtime's manifest
+digests (manifest identity); bundle rows == included rows with identical filepath/sha256/class/label/
+group_id/split/fold/source; every image exists; count == 5,942; image SHA-256 == manifest (all, or a
+seeded sample with `--hash sample`); labels canonical; development rows carry a fold and test rows none;
+no group in two folds or across development/final_test. Verified locally against the real bundle:
+18/18 checks, 5,942/5,942 hashes.
+
+Runtime pre-flight without a fold: `python scripts/colab_preflight.py --env-only --require-cuda`
+(Python, platform, torch/torchvision/numpy/pillow/opencv/matplotlib versions and pins, CUDA/GPU/VRAM,
+repository digests; scikit-learn/timm/transformers are reported as *not required* — the code base does
+not import them). GPU smoke: `python scripts/gpu_smoke.py --require-cuda` (tensor to GPU, forward,
+backward, optimizer step of a tiny network; peak memory and runtime; exit 2 without CUDA).
 
 ## How manifests locate images
 Every manifest row has `filepath` relative to the repository root (`data/raw/<key>/…`), so the same

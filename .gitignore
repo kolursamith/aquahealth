@@ -91,6 +91,9 @@ results/**/*.pt
 !results/v2/experiments/**/confusion_matrix.csv
 !results/v2/experiments/**/run_summary.json
 !results/v2/experiments/**/status.json
+# Phase-10 GAN registry (one line per fold: architecture, seed, counts, digests) is tracked;
+# the images, checkpoints and per-fold manifests under data/gan/ are not.
+!results/v2/gan/registry.csv
 results/v2/smoke/
 # Official one-shot test evaluation (Gate 8): every artifact is evidence.
 !results/final_test/*.json
@@ -121,3 +124,7 @@ drive_export/
 
 # GAN outputs (checkpoints, synthetic images, per-fold manifests): generated, never committed.
 data/gan/
+
+# Layer 2: a Colab bundle built inside the repository by mistake is never committed.
+aquahealth_bundle*/
+*.tar
