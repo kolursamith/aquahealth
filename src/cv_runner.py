@@ -54,6 +54,7 @@ from src.model_factory import (
     set_train_mode,
     trainable_summary,
 )
+from src.multi_dataset import DATASET_CONFIG_VERSION
 from src.preprocessing import CLAHEConfig, PreprocessConfig, build_eval_transform
 from src.split_v2 import CV_DIR_NAME, SPLIT_DIR_NAME
 from src.train import _restore_rng_state, _rng_state, autocast_dtype, build_scaler, is_improvement
@@ -521,6 +522,16 @@ def save_checkpoint(
             "fold": record["fold"],
             "data_arm": record["data_arm"],
             "seed": record["seed"],
+            "dataset_config_version": record["dataset_config_version"],
+            "optimizer": record["training"]["optimizer"],
+            "scheduler": record["training"]["scheduler"],
+            "manifest_sha256": {
+                "train": record["manifests"]["train_sha256"],
+                "validation": record["manifests"]["validation_sha256"],
+            },
+            "preprocessing_sha256": record["preprocessing"]["config_sha256"],
+            "git_commit": record["git_commit"],
+            "environment": record["environment"],
             "class_names": list(CANONICAL_CLASSES),
             "best_val_f1_macro": (
                 best_metric if record["training"]["selection_metric"] == "f1_macro" else None
@@ -740,7 +751,10 @@ def run_experiment(args: RunArgs) -> dict[str, Any]:
         "device": str(device),
         "environment": environment_record(device),
         "git_commit": git_commit(Path(args.repo_root)),
+        "dataset_config_version": DATASET_CONFIG_VERSION,
         "manifests": {
+            "split_dir": SPLIT_DIR_NAME,
+            "cv_dir": CV_DIR_NAME,
             "train_path": str(train_path),
             "train_sha256": file_sha256(train_path),
             "validation_path": str(validation_path),

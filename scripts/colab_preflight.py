@@ -198,10 +198,45 @@ def dataset_report(repo_root: Path, data_dir: Path, fold: int, data_arm: str) ->
     return report
 
 
+def model_report(model_key: str, require_cuda: bool) -> dict[str, Any]:
+    """Build the model (no pretrained download) and prove it maps (N, 3, 224, 224) to
+    (N, num_classes) finite logits on the device that training will use."""
+    from src.manifest import CANONICAL_CLASSES
+    from src.model_factory import build_model
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    report: dict[str, Any] = {
+        "model": model_key,
+        "device": str(device),
+        "num_classes": len(CANONICAL_CLASSES),
+        "input_shape": [2, 3, 224, 224],
+    }
+    try:
+        model = build_model(model_key, len(CANONICAL_CLASSES), pretrained=False).to(device).eval()
+        with torch.no_grad():
+            logits = model(torch.randn(2, 3, 224, 224, device=device))
+        report["output_shape"] = list(logits.shape)
+        report["parameters"] = sum(p.numel() for p in model.parameters())
+        report["ok"] = (
+            tuple(logits.shape) == (2, len(CANONICAL_CLASSES))
+            and bool(torch.isfinite(logits).all())
+            and (device.type == "cuda" or not require_cuda)
+        )
+    except Exception as exc:  # any failure is a preflight failure, reported not raised
+        report["error"] = repr(exc)
+        report["ok"] = False
+    return report
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--fold", type=int, default=None)
     parser.add_argument("--data-arm", choices=DATA_ARMS, default=None)
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="also build this model and check (N,3,224,224) -> (N,num_classes) logits",
+    )
     parser.add_argument(
         "--env-only",
         action="store_true",
@@ -221,6 +256,8 @@ def main(argv: list[str] | None = None) -> int:
     }
     if not args.env_only:
         report["dataset"] = dataset_report(args.repo_root, args.data_dir, args.fold, args.data_arm)
+    if args.model:
+        report["model"] = model_report(args.model, args.require_cuda)
     report["ready"] = all(section["ok"] for section in report.values() if isinstance(section, dict))
     print(json.dumps(report, indent=2))
     if not report["cuda"]["ok"]:

@@ -430,6 +430,21 @@ def test_with_gan_arm_trains_on_real_plus_synthetic_and_validates_on_fold(repo):
     assert record["manifests"]["train_path"].endswith("data/gan/fold_01/fold_01_train_gan.csv")
     assert record["manifests"]["validation_path"].endswith("cv_v3/fold_01_validation.csv")
     assert record["isolation"]["train_synthetic"] == 2
+    # dataset configuration version and the reproducibility metadata travel with the checkpoint
+    assert record["dataset_config_version"] == "v3"
+    assert (
+        record["manifests"]["split_dir"] == "split_v3" and record["manifests"]["cv_dir"] == "cv_v3"
+    )
+    ckpt = torch.load(
+        repo / "results/v2/experiments/cnn_bilstm_fold01_with_gan/best.pt",
+        map_location="cpu",
+        weights_only=False,
+    )
+    assert ckpt["dataset_config_version"] == "v3" and ckpt["seed"] == record["seed"]
+    assert ckpt["optimizer"] == "adamw" and ckpt["scheduler"] in ("cosine", "none", "step")
+    assert ckpt["manifest_sha256"]["train"] == record["manifests"]["train_sha256"]
+    assert ckpt["preprocessing_sha256"] == record["preprocessing"]["config_sha256"]
+    assert ckpt["environment"]["torch"] == torch.__version__ and "python" in ckpt["environment"]
 
 
 def test_efficientnet_baseline_runs_through_the_same_runner(repo):
