@@ -11,8 +11,11 @@ can straddle two parts. The stratum is (unified class, majority source dataset
 of the group), so every class and every contributing source is represented in
 each part where its group counts allow.
 
-    data/audit/split_v2/development.csv, final_test.csv    SPLIT_COLUMNS
-    data/audit/split_v2/split_manifest.sha256              digest of both files
+    data/audit/split_v3/development.csv, final_test.csv    SPLIT_COLUMNS
+    data/audit/split_v3/split_manifest.sha256              digest of both files
+
+(split_v3 / cv_v3 = dataset configuration v3, four sources, MatsyaDx-BD excluded;
+the v2 partition is archived under data/audit/archive/v2_mendeley/.)
 
 `final_test.csv` is frozen once written: the builder refuses to overwrite it.
 """
@@ -30,7 +33,7 @@ from src.config import SEED
 from src.dataset_cleaning import CleanRow
 from src.manifest import CANONICAL_CLASSES, file_sha256, largest_remainder_quota
 
-SPLIT_DIR_NAME = "split_v2"
+SPLIT_DIR_NAME = "split_v3"  # dataset configuration v3 (four sources)
 DEVELOPMENT = "development"
 FINAL_TEST = "final_test"
 DEFAULT_TEST_RATIO = (
@@ -299,7 +302,7 @@ def split_summary(
 
 # --- K-fold cross-validation on the development partition (Phase 9) ---------------------
 
-CV_DIR_NAME = "cv_v2"
+CV_DIR_NAME = "cv_v3"  # dataset configuration v3 (four sources)
 DEFAULT_FOLDS = 10
 
 

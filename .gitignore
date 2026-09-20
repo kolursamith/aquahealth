@@ -133,3 +133,6 @@ data/gan/
 # Layer 2: a Colab bundle built inside the repository by mistake is never committed.
 aquahealth_bundle*/
 *.tar
+
+# Quarantined unofficial GAN outputs (v2 data / local MPS): never committed, never used.
+data/gan_archive_unofficial/

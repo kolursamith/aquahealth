@@ -46,7 +46,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_split_manifest import assign_duplicate_groups  # noqa: E402
 
 real_data = pytest.mark.skipif(
-    not (AUDIT / MASTER_MANIFEST_NAME).is_file() or not (RAW / "mendeley").exists(),
+    not (AUDIT / MASTER_MANIFEST_NAME).is_file()
+    or not all((RAW / s.key).exists() for s in DATASET_SOURCES),
     reason="real manifests or raw links absent",
 )
 
@@ -133,7 +134,8 @@ def test_clahe_does_not_modify_raw_files(tmp_path):
 
 
 @real_data
-def test_all_five_sources_discovered_and_counts_match_manifest():
+def test_all_four_active_sources_discovered_and_counts_match_manifest():
+    # dataset configuration v3: MatsyaDx-BD / Mendeley excluded (data/audit/DATASET_CONFIG_V3.md)
     master = read_master_manifest(AUDIT / MASTER_MANIFEST_NAME)
     counts = Counter(r.source_dataset for r in master)
     assert set(counts) == {s.key for s in DATASET_SOURCES}
@@ -141,9 +143,9 @@ def test_all_five_sources_discovered_and_counts_match_manifest():
         "current_freshwater": 3503,
         "kaptai": 133,
         "roboflow": 454,
-        "mendeley": 2137,
         "paper_dataset": 1208,
     }
+    assert "mendeley" not in counts and not (RAW / "mendeley").exists()
     assert all((ROOT / r.filepath).is_file() for r in master)  # every path resolves
 
 
@@ -168,7 +170,12 @@ def test_clean_manifest_excludes_duplicate_copies_and_keeps_groups_indivisible()
     clean = read_clean_manifest(AUDIT / CLEAN_MANIFEST_NAME)
     validate_clean_manifest(clean)
     included = [r for r in clean if r.included]
-    assert len(clean) == 7435 and len(included) == 5942
+    assert len(clean) == 5298 and len(included) == 3805  # v3
+    assert Counter(r.source_dataset for r in included) == {
+        "current_freshwater": 3401,
+        "kaptai": 53,
+        "roboflow": 351,
+    }
     by_sha = defaultdict(list)
     for r in clean:
         by_sha[r.sha256].append(r)
@@ -199,5 +206,5 @@ def test_duplicate_pairs_never_straddle_group_boundaries():
     clean = {r.image_id: r for r in read_clean_manifest(AUDIT / CLEAN_MANIFEST_NAME)}
     with (AUDIT / "duplicate_report.csv").open() as handle:
         pairs = list(csv.DictReader(handle))
-    assert len(pairs) == 1405
+    assert len(pairs) == 1131  # v3 (1,405 in the archived v2 report)
     assert all(clean[p["image_a"]].group_id == clean[p["image_b"]].group_id for p in pairs)

@@ -5,10 +5,10 @@
 
 Reads data/audit/clean_manifest.csv (included rows only) and writes
 
-    data/audit/split_v2/development.csv        everything not in the test set
-    data/audit/split_v2/final_test.csv         FROZEN — never train / tune / select / GAN on it
-    data/audit/split_v2/split_manifest.sha256  digests of both files
-    data/audit/split_v2/split_report.json / .md
+    data/audit/split_v3/development.csv        everything not in the test set
+    data/audit/split_v3/final_test.csv         FROZEN — never train / tune / select / GAN on it
+    data/audit/split_v3/split_manifest.sha256  digests of both files
+    data/audit/split_v3/split_report.json / .md
 
 Refuses to overwrite an existing final_test.csv (like scripts/build_split_manifest.py
 for the baseline). The old baseline split data/split_manifest.csv is not read or

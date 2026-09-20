@@ -40,12 +40,11 @@ Evidence so far: EXP-002 (CLAHE off) val Macro-F1 0.9182 vs EXP-001 (CLAHE on) 0
 | class_Healthy_Fish | current_freshwater | Healthy Fish | 640x640 | 66.664 → 71.233 (×1.069) | 3x224x224 torch.float32 | 1.1422 / 1.3224 | `data/audit/clahe_samples/class_Healthy_Fish.png` |
 | source_current_freshwater | current_freshwater | Bacterial Red Disease | 224x224 | 48.121 → 48.705 (×1.012) | 3x224x224 torch.float32 | -0.5184 / 0.8783 | `data/audit/clahe_samples/source_current_freshwater.png` |
 | source_kaptai | kaptai | EUS Disease | 150x150 | 49.474 → 57.834 (×1.169) | 3x224x224 torch.float32 | 0.3953 / 0.943 | `data/audit/clahe_samples/source_kaptai.png` |
-| source_mendeley | mendeley | Bacterial Gill Disease | 4000x3000 | 46.432 → 53.368 (×1.149) | 3x224x224 torch.float32 | 0.297 / 0.9727 | `data/audit/clahe_samples/source_mendeley.png` |
 | source_roboflow | roboflow | Healthy Fish | 640x640 | 69.501 → 72.943 (×1.05) | 3x224x224 torch.float32 | -0.5413 / 1.1599 | `data/audit/clahe_samples/source_roboflow.png` |
 
 ## Corrupted-image handling
 
-- status: **reported** — ImageDecodeError: could not decode image /var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmp_q7o080k/corrupt.jpg: cannot identify image file '/var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmp_q7o080k/corrupt.jpg'
+- status: **reported** — ImageDecodeError: could not decode image /var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmpelhazzd_/corrupt.jpg: cannot identify image file '/var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmpelhazzd_/corrupt.jpg'
 - the master-manifest probe records undecodable files with status `corrupt` (0 found in the five datasets); the training loader raises instead of skipping
 
 **CLAHE has not been applied to the dataset on disk.** It runs inside the transform of any experiment whose config sets `preprocess.clahe` (`configs/preprocess_v2_clahe.json`).

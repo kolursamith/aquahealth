@@ -1,0 +1,73 @@
+{
+  "strategy": "group-aware stratified assignment (src/split_v2.py::assign_groups, the baseline rule of src/manifest.py generalised): unit = clean-manifest group_id (exact/near duplicates \u222a same specimen), stratum = (unified class, majority source of the group), largest-remainder quotas, largest groups first to the most deficient part",
+  "seed": 42,
+  "test_ratio": 0.2,
+  "ratio_provenance": "not fixed by any project document; the team method note gives 80/20 development/test as an example (see data/audit/split_policy_proposal.md)",
+  "clean_manifest_sha256": "e90b43a0c5a5cf9ea61ec3140c048d1e8ef854874492eaeafaeed04b56c86b68",
+  "clean_total": 5298,
+  "clean_included": 3805,
+  "excluded_from_clean_manifest": {
+    "LABEL_CONFLICT_GROUP": 47,
+    "EXACT_DUPLICATE": 162,
+    "LABEL_UNRESOLVED": 1277,
+    "LABEL_EXCLUDED": 7
+  },
+  "development": {
+    "images": 3044,
+    "groups": 2585,
+    "per_class": {
+      "Aeromoniasis": 388,
+      "Bacterial Gill Disease": 395,
+      "Bacterial Red Disease": 362,
+      "EUS Disease": 368,
+      "Healthy Fish": 450,
+      "Parasitic Disease": 369,
+      "Saprolegniasis": 353,
+      "White Tail Disease": 359
+    },
+    "per_source": {
+      "current_freshwater": 2721,
+      "kaptai": 45,
+      "roboflow": 278
+    }
+  },
+  "final_test": {
+    "images": 761,
+    "groups": 637,
+    "per_class": {
+      "Aeromoniasis": 97,
+      "Bacterial Gill Disease": 98,
+      "Bacterial Red Disease": 91,
+      "EUS Disease": 91,
+      "Healthy Fish": 113,
+      "Parasitic Disease": 92,
+      "Saprolegniasis": 89,
+      "White Tail Disease": 90
+    },
+    "per_source": {
+      "current_freshwater": 680,
+      "kaptai": 8,
+      "roboflow": 73
+    },
+    "share": 0.2
+  },
+  "per_class_share_in_test": {
+    "Aeromoniasis": 0.2,
+    "Bacterial Gill Disease": 0.199,
+    "Bacterial Red Disease": 0.201,
+    "EUS Disease": 0.198,
+    "Healthy Fish": 0.201,
+    "Parasitic Disease": 0.2,
+    "Saprolegniasis": 0.201,
+    "White Tail Disease": 0.2
+  },
+  "group_constraints": {
+    "groups_straddling_partitions": 0,
+    "largest_group_in_test": 4,
+    "specimen_groups_in_test": 0
+  },
+  "split_manifest_sha256": [
+    "68b5f8f7cd60f0fda6ecad2241f27a1fa2af4c0c35ceca9fcfc5ba4d940e6599  development.csv",
+    "baa330347a89305212b08ac4c79a1bb6a98cdd7447172f4aa3aea113c16cb7a2  final_test.csv"
+  ]
+}

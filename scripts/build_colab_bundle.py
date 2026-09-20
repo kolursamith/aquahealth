@@ -3,11 +3,12 @@
 
     python scripts/build_colab_bundle.py --out /path/to/aquahealth_bundle [--tar] [--hardlink]
 
-Copies exactly the *included* images of data/audit/clean_manifest.csv (the 5,942 verified
-images, development + frozen final test) into `<out>/data/raw/<key>/…` — the same relative
-paths the committed manifests use — and writes `bundle_manifest.csv` (image_id, filepath,
-sha256, source, class, label, group_id, split, fold) and `bundle.sha256`, which pins the
-bundle to the digests of clean_manifest.csv, development.csv, final_test.csv and folds.csv.
+Copies exactly the *included* images of data/audit/clean_manifest.csv (3,805 in dataset
+configuration v3: development + frozen final test) into `<out>/data/raw/<key>/…` — the
+same relative paths the committed manifests use — and writes `bundle_manifest.csv`
+(image_id, filepath, sha256, source, class, label, group_id, split, fold) and
+`bundle.sha256`, which pins the bundle to the digests of clean_manifest.csv,
+development.csv, final_test.csv and folds.csv.
 Nothing is chosen at random and no raw file is modified. Excluded images (duplicates,
 unresolved labels) are not copied. `--tar` additionally writes `<out>.tar` for upload.
 """

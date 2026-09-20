@@ -492,8 +492,9 @@ def write_duplicate_report(
         "## Policy applied (as annotation)",
         "",
         "- exact duplicates: keep the first by sorted `filepath` (so a `current_freshwater` copy "
-        "wins over any other dataset's copy, then `kaptai`, `mendeley`, `paper_dataset`, "
-        "`roboflow`), drop the rest — `DROP_EXACT_DUPLICATE`",
+        "wins over any other dataset's copy, then "
+        + ", ".join(f"`{k}`" for k in sorted(s.key for s in DATASET_SOURCES)[1:])
+        + "), drop the rest — `DROP_EXACT_DUPLICATE`",
         "- near-duplicate groups whose mapped members disagree on the unified label: "
         "`EXCLUDE_LABEL_CONFLICT` (unmapped members of such a group: `REVIEW_LABEL_CONFLICT`)",
         "- other near-duplicate groups: `KEEP_GROUPED` (must land in one split)",

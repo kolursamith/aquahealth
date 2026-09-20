@@ -91,8 +91,8 @@ def repo(tmp_path):
         _write_image(tmp_path / s.filepath, i)
     audit = tmp_path / "data" / "audit"
     write_clean_manifest(clean, audit / CLEAN_MANIFEST_NAME)
-    write_split(split, audit / "split_v2")
-    write_folds(folds, audit / "cv_v2", 3)
+    write_split(split, audit / "split_v3")
+    write_folds(folds, audit / "cv_v3", 3)
     train, _ = fold_members(folds, 1)
     synthetic = []
     for k, cls in enumerate(["EUS Disease", "Healthy Fish"]):
@@ -162,11 +162,11 @@ def test_efficientnet_baseline_and_all_hybrids_construct_through_the_factory():
 
 def test_manifest_paths_for_both_arms_and_validation(tmp_path):
     train, val = manifest_paths(tmp_path, 1, "without_gan")
-    assert train == tmp_path / "audit" / "cv_v2" / "fold_01_train.csv"
-    assert val == tmp_path / "audit" / "cv_v2" / "fold_01_validation.csv"
+    assert train == tmp_path / "audit" / "cv_v3" / "fold_01_train.csv"
+    assert val == tmp_path / "audit" / "cv_v3" / "fold_01_validation.csv"
     train, val = manifest_paths(tmp_path, 1, "with_gan")
     assert train == tmp_path / "gan" / "fold_01" / "fold_01_train_gan.csv"
-    assert val == tmp_path / "audit" / "cv_v2" / "fold_01_validation.csv"
+    assert val == tmp_path / "audit" / "cv_v3" / "fold_01_validation.csv"
     with pytest.raises(ValueError):
         manifest_paths(tmp_path, 1, "with_test")
 
@@ -180,7 +180,7 @@ def _rows(repo: Path, fold: int, arm: str):
 
 
 def _test_ids(repo: Path) -> set[str]:
-    with (repo / "data" / "audit" / "split_v2" / "final_test.csv").open() as handle:
+    with (repo / "data" / "audit" / "split_v3" / "final_test.csv").open() as handle:
         return {r["image_id"] for r in csv.DictReader(handle)}
 
 
@@ -204,7 +204,7 @@ def test_guards_reject_every_violation(repo):
     train_path, val_path, train, val = _rows(repo, 1, "without_gan")
     test_ids = _test_ids(repo)
     common = dict(train_path=train_path, validation_path=val_path, test_ids=test_ids)
-    final_test = repo / "data" / "audit" / "split_v2" / "final_test.csv"
+    final_test = repo / "data" / "audit" / "split_v3" / "final_test.csv"
     # final test as training / validation manifest
     with pytest.raises(LeakageError, match="not the without_gan manifest"):
         check_isolation(
@@ -428,7 +428,7 @@ def test_with_gan_arm_trains_on_real_plus_synthetic_and_validates_on_fold(repo):
         (repo / "results/v2/experiments/cnn_bilstm_fold01_with_gan/config.json").read_text()
     )
     assert record["manifests"]["train_path"].endswith("data/gan/fold_01/fold_01_train_gan.csv")
-    assert record["manifests"]["validation_path"].endswith("cv_v2/fold_01_validation.csv")
+    assert record["manifests"]["validation_path"].endswith("cv_v3/fold_01_validation.csv")
     assert record["isolation"]["train_synthetic"] == 2
 
 

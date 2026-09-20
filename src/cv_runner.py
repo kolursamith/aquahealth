@@ -510,7 +510,7 @@ def save_checkpoint(
 ) -> None:
     torch.save(
         {
-            "format": "cv_v2",
+            "format": "cv_v3",
             "model_state": model.state_dict(),
             "optimizer_state": optimizer.state_dict(),
             "scheduler_state": scheduler.state_dict() if scheduler is not None else None,

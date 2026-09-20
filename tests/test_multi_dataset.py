@@ -26,6 +26,7 @@ from src.label_harmonization import (
 from src.manifest import CANONICAL_CLASSES, SOURCE_FOLDER_TO_CLASS, file_sha256, perceptual_dhash
 from src.multi_dataset import (
     DATASET_SOURCES,
+    EXCLUDED_SOURCES,
     MASTER_COLUMNS,
     ImageRecord,
     discover_all,
@@ -41,6 +42,11 @@ from src.multi_dataset import (
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
+# The fixture below still ships a MatsyaDx-BD folder so the matsyadx walker (specimen
+# metadata) stays tested; in dataset configuration v3 that source is EXCLUDED, so the
+# link script never links it and discovery only sees it when asked for it explicitly.
+ALL_LAYOUTS = DATASET_SOURCES + EXCLUDED_SOURCES
+MENDELEY = next(s for s in EXCLUDED_SOURCES if s.key == "mendeley")
 sys.path.insert(0, str(SCRIPTS))
 
 from build_master_dataset import (  # noqa: E402
@@ -123,17 +129,28 @@ def _link(drop: Path, repo: Path) -> Path:
     return repo / "data" / "raw"
 
 
+def _link_excluded(drop: Path, raw: Path) -> Path:
+    """What the link script deliberately does NOT do: expose the excluded source, so the
+    historical matsyadx walker can be exercised on the fixture."""
+    link = raw / MENDELEY.key
+    if not link.exists():
+        link.symlink_to((drop / MENDELEY.delivered_subdir).resolve(), target_is_directory=True)
+    return raw
+
+
 # --- registry and mapping table ---
 
 
-def test_registry_covers_the_five_agreed_keys():
+def test_registry_covers_the_four_active_keys_and_records_the_excluded_one():
+    # dataset configuration v3: MatsyaDx-BD / Mendeley is excluded by project decision
     assert [s.key for s in DATASET_SOURCES] == [
         "current_freshwater",
         "kaptai",
         "roboflow",
-        "mendeley",
         "paper_dataset",
     ]
+    assert [s.key for s in EXCLUDED_SOURCES] == ["mendeley"]
+    assert "EXCLUDED" in MENDELEY.notes and "v3" in MENDELEY.notes
 
 
 def test_mapping_table_is_consistent_with_the_project_classes():
@@ -183,7 +200,8 @@ def test_link_script_is_idempotent_and_handles_the_renamed_test_folder(delivery,
     assert (raw / "current_freshwater" / "test_split").resolve() == (
         delivery / "test_split&validation"
     ).resolve()
-    assert (raw / "kaptai").is_symlink() and (raw / "mendeley").is_symlink()
+    assert (raw / "kaptai").is_symlink() and (raw / "paper_dataset").is_symlink()
+    assert not (raw / "mendeley").exists()  # excluded source is never linked
     before = {p: p.resolve() for p in raw.rglob("*") if p.is_symlink()}
     _link(delivery, repo)  # second run: nothing changes
     assert {p: p.resolve() for p in raw.rglob("*") if p.is_symlink()} == before
@@ -192,7 +210,10 @@ def test_link_script_is_idempotent_and_handles_the_renamed_test_folder(delivery,
 def test_discovery_preserves_provenance_and_reports_non_images(delivery, tmp_path):
     repo = tmp_path / "repo"
     raw = _link(delivery, repo)
-    records, others = discover_all(raw, repo)
+    active, _ = discover_all(raw, repo)
+    assert len(active) == 9 and not any(r.source_dataset == "mendeley" for r in active)
+    _link_excluded(delivery, raw)
+    records, others = discover_all(raw, repo, sources=ALL_LAYOUTS)
     assert len(records) == 10
     by_id = {r.image_id: r for r in records}
     assert len(by_id) == 10
@@ -218,11 +239,11 @@ def test_discovery_preserves_provenance_and_reports_non_images(delivery, tmp_pat
 
 def test_matsyadx_metadata_disagreement_is_an_error(delivery, tmp_path):
     repo = tmp_path / "repo"
-    raw = _link(delivery, repo)
+    raw = _link_excluded(delivery, _link(delivery, repo))
     meta = raw / "mendeley" / "metadata.csv"
     meta.write_text(meta.read_text().replace("Fish_1\n", "Fish_9\n"))
     with pytest.raises(ValueError, match="metadata.csv disagrees"):
-        discover_source(DATASET_SOURCES[3], raw, repo)
+        discover_source(MENDELEY, raw, repo)
 
 
 def test_image_id_is_deterministic_and_path_specific():
@@ -282,8 +303,8 @@ def test_hamming_distance():
 
 
 def _analysed(delivery: Path, repo: Path) -> list[ImageRecord]:
-    raw = _link(delivery, repo)
-    records, _ = discover_all(raw, repo)
+    raw = _link_excluded(delivery, _link(delivery, repo))
+    records, _ = discover_all(raw, repo, sources=ALL_LAYOUTS)
     apply_label_mapping(records)
     for r in records:
         probe(r, repo)
@@ -359,7 +380,7 @@ def test_unmapped_class_is_reported_not_guessed(delivery, tmp_path):
 def test_inventory_counts_from_records(delivery, tmp_path):
     repo = tmp_path / "repo"
     records = _analysed(delivery, repo)
-    rows = inventory_rows(records, repo / "data" / "raw")
+    rows = inventory_rows(records, repo / "data" / "raw", sources=ALL_LAYOUTS)
     cur = {
         (r["split_or_structure"], r["original_class"]): r
         for r in rows
@@ -407,7 +428,8 @@ def test_build_master_dataset_script_end_to_end(delivery, tmp_path):
     ):
         assert (audit / name).is_file(), name
     manifest = read_master_manifest(audit / "master_dataset.csv")
-    assert len(manifest) == 10
+    assert len(manifest) == 9  # the four active sources; the fixture's MatsyaDx-BD is excluded
+    assert not any(r.source_dataset == "mendeley" for r in manifest)
     assert {r.mapping_status for r in manifest} >= {"EXACT_MATCH", "UNRESOLVED"}
     with (audit / "duplicate_report.csv").open() as handle:
         pairs = list(csv.DictReader(handle))

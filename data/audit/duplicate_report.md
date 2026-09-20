@@ -4,9 +4,9 @@ Definitions are the repository's established ones (`scripts/build_split_manifest
 
 ## Totals
 
-- images inspected: 7435 (7435 decodable, 0 corrupt)
+- images inspected: 5298 (5298 decodable, 0 corrupt)
 - exact-duplicate groups (SHA-256): 171 — 185 pairs, 89 of them cross-dataset
-- near-duplicate groups (dHash, distinct bytes): 693 — 1220 pairs, 386 of them cross-dataset
+- near-duplicate groups (dHash, distinct bytes): 540 — 946 pairs, 386 of them cross-dataset
 - near-duplicate groups whose mapped members carry conflicting unified labels: 12
 - pairs involving an unresolved/excluded label (evidence for Phase 3, no action taken): 104
 
@@ -17,25 +17,20 @@ Definitions are the repository's established ones (`scripts/build_split_manifest
 | current_freshwater | current_freshwater | 80 | 457 |
 | current_freshwater | kaptai | 0 | 68 |
 | current_freshwater | roboflow | 89 | 288 |
-| current_freshwater | mendeley | 0 | 0 |
 | current_freshwater | paper_dataset | 0 | 3 |
 | kaptai | kaptai | 16 | 1 |
 | kaptai | roboflow | 0 | 26 |
-| kaptai | mendeley | 0 | 0 |
 | kaptai | paper_dataset | 0 | 0 |
 | roboflow | roboflow | 0 | 65 |
-| roboflow | mendeley | 0 | 0 |
 | roboflow | paper_dataset | 0 | 1 |
-| mendeley | mendeley | 0 | 274 |
-| mendeley | paper_dataset | 0 | 0 |
 | paper_dataset | paper_dataset | 0 | 37 |
 
 ## Recorded `dedup_action` per image (annotation only)
 
 | action | images |
 |---|---|
-| KEEP | 5690 |
-| KEEP_GROUPED | 1519 |
+| KEEP | 3906 |
+| KEEP_GROUPED | 1166 |
 | DROP_EXACT_DUPLICATE | 178 |
 | EXCLUDE_LABEL_CONFLICT | 47 |
 | REVIEW_LABEL_CONFLICT | 1 |
@@ -63,19 +58,19 @@ Distance 0 is the established near-duplicate definition above. Distances > 0 are
 
 | distance | all pairs | cross-dataset pairs |
 |---|---|---|
-| 0 | 1405 | 475 |
-| 1 | 937 | 161 |
-| 2 | 851 | 63 |
-| 3 | 773 | 22 |
-| 4 | 745 | 17 |
-| 5 | 745 | 25 |
-| 6 | 727 | 43 |
-| 7 | 825 | 85 |
-| 8 | 923 | 97 |
+| 0 | 1131 | 475 |
+| 1 | 469 | 161 |
+| 2 | 290 | 63 |
+| 3 | 195 | 22 |
+| 4 | 181 | 16 |
+| 5 | 207 | 24 |
+| 6 | 246 | 40 |
+| 7 | 359 | 71 |
+| 8 | 485 | 81 |
 
 ## Policy applied (as annotation)
 
-- exact duplicates: keep the first by sorted `filepath` (so a `current_freshwater` copy wins over any other dataset's copy, then `kaptai`, `mendeley`, `paper_dataset`, `roboflow`), drop the rest — `DROP_EXACT_DUPLICATE`
+- exact duplicates: keep the first by sorted `filepath` (so a `current_freshwater` copy wins over any other dataset's copy, then `kaptai`, `paper_dataset`, `roboflow`), drop the rest — `DROP_EXACT_DUPLICATE`
 - near-duplicate groups whose mapped members disagree on the unified label: `EXCLUDE_LABEL_CONFLICT` (unmapped members of such a group: `REVIEW_LABEL_CONFLICT`)
 - other near-duplicate groups: `KEEP_GROUPED` (must land in one split)
 - everything else: `KEEP`; undecodable files: `CORRUPT`

@@ -31,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.config import ROOT_DIR  # noqa: E402
 from src.dataset import IMAGE_EXTENSIONS  # noqa: E402
 from src.dataset_cleaning import CLEAN_MANIFEST_NAME, read_clean_manifest  # noqa: E402
-from src.multi_dataset import DATASET_SOURCES  # noqa: E402
+from src.multi_dataset import DATASET_SOURCES, EXCLUDED_SOURCES  # noqa: E402
 
 CURRENT_KEY = "current_freshwater"
 CURRENT_SUBDIRS = ("", "Fresh_water_disease")
@@ -84,6 +84,12 @@ def check_delivery(drop: Path, repo_root: Path) -> dict[str, Any]:
     report: dict[str, Any] = {"drop": str(drop), "keys": {}, "errors": [], "ok": False}
     top_level = sorted(p.name for p in drop.iterdir() if not p.name.startswith("."))
     report["top_level_entries"] = top_level
+    # an EXCLUDED source's folder may still sit in the drop: recorded, never read
+    report["excluded_present"] = {
+        s.key: str(drop / s.delivered_subdir)
+        for s in EXCLUDED_SOURCES
+        if (drop / s.delivered_subdir).exists()
+    }
     for source in DATASET_SOURCES:
         key = source.key
         entry: dict[str, Any] = {"name": source.name, "delivered_subdir": source.delivered_subdir}
@@ -154,6 +160,8 @@ def main(argv: list[str] | None = None) -> int:
             f" (included {e['inventory_included']:5d})  rows {e['manifest_rows_resolved']:>10s}"
             f"  included {e['included_rows_resolved']:>10s}  -> {list(e['resolved'].values())[0]}"
         )
+    for key, path in report["excluded_present"].items():
+        print(f"[ignored] {key:14s} EXCLUDED source (dataset configuration v3) present at {path}")
     print("RESULT:", "DELIVERY MAPPED" if report["ok"] else "NOT VERIFIED")
     return 0 if report["ok"] else 1
 

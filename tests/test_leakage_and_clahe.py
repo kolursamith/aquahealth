@@ -31,7 +31,7 @@ from src.leakage_audit import (
     leakage_report,
 )
 from src.manifest import MANIFEST_PATH, verify_manifest_digest
-from src.multi_dataset import MASTER_MANIFEST_NAME, read_master_manifest
+from src.multi_dataset import EXCLUDED_KEYS, MASTER_MANIFEST_NAME, read_master_manifest
 from src.preprocessing import CLAHE, CLAHEConfig, PreprocessConfig, build_eval_transform
 from tests.test_dataset_cleaning import build_master_records
 
@@ -216,19 +216,21 @@ def test_validate_clahe_script_end_to_end(tmp_path):
 
 @pytest.mark.skipif(not (AUDIT / MASTER_MANIFEST_NAME).is_file(), reason="master manifest absent")
 def test_real_master_and_clean_manifests_load():
+    # dataset configuration v3: four active sources, MatsyaDx-BD/Mendeley excluded
     master = read_master_manifest(AUDIT / MASTER_MANIFEST_NAME)
-    assert len(master) == 7435
+    assert len(master) == 5298
     assert {r.status for r in master} == {"ok"}
     assert {r.source_dataset for r in master} == {
         "current_freshwater",
         "kaptai",
         "roboflow",
-        "mendeley",
         "paper_dataset",
     }
+    assert not any(r.source_dataset in EXCLUDED_KEYS for r in master)
     assert all(len(r.sha256) == 64 and len(r.dhash) == 16 for r in master)
     clean = read_clean_manifest(AUDIT / CLEAN_MANIFEST_NAME)
     validate_clean_manifest(clean)
-    assert len(clean) == 7435 and sum(r.included for r in clean) == 5942
+    assert len(clean) == 5298 and sum(r.included for r in clean) == 3805
+    assert not any(r.source_dataset in EXCLUDED_KEYS for r in clean)
     # the old baseline manifest is untouched
     assert verify_manifest_digest(MANIFEST_PATH).startswith("b7d1fccbb21e73a8")

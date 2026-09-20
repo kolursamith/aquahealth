@@ -67,8 +67,12 @@ def target_leakage(rows: list[CleanRow]) -> dict[str, Any]:
             "folder_path": "label source by construction (folder = class); never read as a feature",
             "filename": "see per_dataset; only the decoded image reaches the model "
             "(src/dataset.py, src/manifest.py load pixels only)",
-            "metadata_csv": "mendeley/metadata.csv carries health_condition (= label), "
-            "fish_category, specimen_id; used for provenance and grouping only",
+            "metadata_csv": (
+                "mendeley/metadata.csv carries health_condition (= label), fish_category, "
+                "specimen_id; used for provenance and grouping only"
+                if "mendeley" in per_dataset
+                else "no active dataset ships a metadata table (MatsyaDx-BD excluded in v3)"
+            ),
             "test_csv": "current_freshwater/test.csv carries the label of the flat test_split; "
             "used only to assign original_class",
         },
@@ -316,16 +320,18 @@ def findings_rows(
             f"specimen identifiers exist only for {specimen_datasets or 'no dataset'}; "
             f"{d['specimen_groups']} specimen-bearing groups joined by group_id. For "
             f"{[x for x in datasets if x not in specimen_datasets]}: {NOT_ESTABLISHED}",
-            "master_dataset.csv specimen_id (from mendeley/metadata.csv); other deliveries carry "
-            "no "
-            "fish identity",
+            "master_dataset.csv specimen_id (only a dataset that ships one, e.g. a metadata.csv); "
+            "the active deliveries carry no fish identity"
+            if not specimen_datasets
+            else "master_dataset.csv specimen_id (from the dataset's metadata.csv); other "
+            "deliveries carry no fish identity",
             sum(len(m) for m in by_group.values() if any(x.specimen_id for x in m)),
             classes_of([g for g, m in by_group.items() if any(x.specimen_id for x in m)]),
             "keep specimens inside one partition via group_id; for datasets without ids only "
             "exact/perceptual screening is possible (documented limitation)",
             "partially testable: resolved where ids exist; " + NOT_ESTABLISHED + " elsewhere. "
-            "Open decision: dHash chaining merges different mendeley specimens into groups of "
-            f"up to {d['largest_group']} images (conservative but coarse)",
+            f"dHash chaining joins near-duplicates into groups of up to {d['largest_group']} "
+            "images (conservative but coarse)",
         ),
         row(
             "4 target leakage",
@@ -333,7 +339,11 @@ def findings_rows(
             + ", ".join(
                 f"{k}: {v['filename_reveals_label_pct']}%" for k, v in t["per_dataset"].items()
             )
-            + ", and in mendeley/metadata.csv (health_condition)",
+            + (
+                ", and in mendeley/metadata.csv (health_condition)"
+                if "mendeley" in t["per_dataset"]
+                else "; no active dataset ships a label-bearing metadata table"
+            ),
             "leakage_report.json target_leakage.per_dataset; src/dataset.py & src/manifest.py "
             "decode pixels only; no path/filename/metadata feature exists in the pipeline",
             sum(v["filename_reveals_label"] for v in t["per_dataset"].values()),
@@ -344,8 +354,13 @@ def findings_rows(
         ),
         row(
             "5 suspicious metadata / features",
-            "mendeley metadata columns location, capture_condition, image_format, preprocessing, "
-            "notes are constant (single value each) — no discriminative metadata; "
+            (
+                "mendeley metadata columns location, capture_condition, image_format, "
+                "preprocessing, notes are constant (single value each) — no discriminative "
+                "metadata; "
+                if "mendeley" in datasets
+                else "no metadata table in the active datasets; "
+            )
             + (
                 "EXIF present: "
                 + ", ".join(
@@ -358,8 +373,8 @@ def findings_rows(
                 if exif
                 else "EXIF not scanned"
             ),
-            "mendeley/metadata.csv column values (Phase 1 inventory); Pillow getexif() header scan "
-            "of every clean image",
+            "dataset metadata column values (Phase 1 inventory, where a dataset ships any); "
+            "Pillow getexif() header scan of every clean image",
             sum(v["with_exif"] for v in exif.values()) if exif else 0,
             "all",
             "EXIF is not read by the pipeline (src/dataset.py::load_image = Pillow decode + "
@@ -375,8 +390,8 @@ def findings_rows(
             "6 class <-> image-resolution shortcut",
             f"resolution alone predicts the class with an in-sample upper bound of "
             f"{res['resolution']['feature_only_accuracy_upper_bound']} vs majority baseline "
-            f"{res['resolution']['majority_class_baseline']}; e.g. Aeromoniasis is mostly 128x128, "
-            f"MatsyaDx classes are 4000x3000/3000x4000 only",
+            f"{res['resolution']['majority_class_baseline']}; see resolution_by_class_top4 "
+            "(classes differ in their dominant resolutions, e.g. Aeromoniasis is mostly 128x128)",
             "leakage_report.json suspicious_features.predictability / resolution_by_class_top4",
             len(included),
             sorted({r.unified_class for r in included}),

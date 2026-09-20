@@ -97,7 +97,7 @@ def write_dedup_md(path: Path, s: dict[str, Any]) -> None:
             ],
         ),
         "",
-        "## Duplicate groups (all five datasets together)",
+        "## Duplicate groups (all active datasets together)",
         "",
         *_table(
             ["quantity", "value"],

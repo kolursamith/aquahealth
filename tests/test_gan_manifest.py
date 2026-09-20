@@ -136,7 +136,7 @@ def test_gan_manifest_lists_every_synthetic_image_with_provenance(fold_setup):  
             assert int(m["fold"]) == fold and m["class"] == s["unified_class"]
             assert int(m["generation_seed"]) == TINY.seed
             assert json.loads(m["generation_config"]) == record.config
-            assert m["training_source"] == f"data/audit/cv_v2/fold_{fold:02d}_train.csv"
+            assert m["training_source"] == f"data/audit/cv_v3/fold_{fold:02d}_train.csv"
             assert m["training_source_sha256"] == _sha(repo / m["training_source"])
             assert m["path"] == s["filepath"] and (repo / m["path"]).is_file()
             assert m["sha256"] == _sha(repo / m["path"])
@@ -246,7 +246,7 @@ def test_verifier_detects_changed_training_source(fold_setup):  # noqa: F811
     failed = _failed(_verify(repo, images="none"))
     assert "fold 01: training source is fold_01_train.csv and unchanged" in failed
     # and a fold manifest edited after the fact breaks the digest-guarded readers
-    fold_file = repo / "data" / "audit" / "cv_v2" / "fold_01_train.csv"
+    fold_file = repo / "data" / "audit" / "cv_v3" / "fold_01_train.csv"
     text = fold_file.read_text()
     fold_file.write_text(text + "\n")
     assert "split and fold manifests verify" in _failed(_verify(repo, images="none"))

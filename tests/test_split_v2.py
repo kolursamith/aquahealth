@@ -192,7 +192,7 @@ def test_real_split_is_valid_disjoint_and_frozen():
     validate_split(split, clean)
     dev = {s.image_id for s in split if s.split == DEVELOPMENT}
     test = {s.image_id for s in split if s.split == FINAL_TEST}
-    assert len(dev) == 4658 and len(test) == 1284 and not (dev & test)
+    assert len(dev) == 3044 and len(test) == 761 and not (dev & test)  # dataset configuration v3
     # no known duplicate pair crosses the partitions (exact SHA-256 or identical dHash)
     part = {s.image_id: s.split for s in split}
     with (AUDIT / "duplicate_report.csv").open() as handle:
@@ -263,7 +263,7 @@ def test_fold_files_round_trip_with_digests(tmp_path):
         read_folds(tmp_path)
 
 
-CV_DIR = ROOT / "data" / "audit" / "cv_v2"
+CV_DIR = ROOT / "data" / "audit" / "cv_v3"
 
 
 @pytest.mark.skipif(not (CV_DIR / "folds.csv").is_file(), reason="folds not built")
@@ -289,7 +289,7 @@ def test_real_folds_cover_development_exactly_and_never_touch_test():
     assert crossing == []  # no known duplicate pair crosses train/validation in any fold
     for fold in range(1, 11):
         train, validation = fold_members(rows, fold)
-        assert len(train) + len(validation) == 4658
+        assert len(train) + len(validation) == 3044
         with (CV_DIR / f"fold_{fold:02d}_validation.csv").open() as handle:
             assert sum(1 for _ in csv.DictReader(handle)) == len(validation)
         assert {r.unified_class for r in validation} == {r.unified_class for r in train}

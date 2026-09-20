@@ -1,5 +1,7 @@
 # Training-fold-only GAN augmentation — Layer 3 record (Phase 10)
 
+**Dataset configuration v3** (four sources; MatsyaDx-BD/Mendeley excluded — `data/audit/DATASET_CONFIG_V3.md`): folds from `data/audit/cv_v3/`, frozen test `data/audit/split_v3/final_test.csv`.
+
 Implementation: `src/gan_augmentation.py`; drivers `scripts/run_gan_fold.py` (one
 fold) and `scripts/run_gan_all_folds.py` (every fold + `GAN_MANIFEST.csv` +
 verification); verifier `scripts/verify_gan_outputs.py`; configuration
@@ -58,11 +60,11 @@ in D). Non-saturating BCE-with-logits loss, Adam for both networks.
 | seed | 42 (`src/config.py::SEED`) — `set_seed`, seeded DataLoader shuffle, seeded latent generator for generation |
 | class conditioning | yes — label embedding (100-d) concatenated to z in G; 8 one-hot label maps concatenated to the image in D; generation asks for a class explicitly |
 | output format | PNG, RGB, 64 × 64, tanh output mapped to [0, 255]; `data/gan/fold_XX/train/<class>/synthetic_NNNNN.png` |
-| generation count | class-aware per fold (§4), computed from the fold's real class counts: fold 1 = 1,971, fold 2 = 1,806, folds 3–10 = 2,474–2,487 each; **23,616 planned over 10 folds** (largest class of each fold gets 0). Actual counts: `results/v2/gan/registry.csv` |
+| generation count | class-aware per fold (§4), computed by `plan_synthetic_counts` from each v3 fold's real class counts: 495 / 491 / 504 / 504 / 500 / 500 / 507 / 503 / 501 / 499 = **5,004 planned over 10 folds** (Healthy Fish, the largest class in every fold, gets 0; the v2 estimate of 23,616 no longer applies). Actual counts: `results/v2/gan/registry.csv` |
 | one model per | CV fold (10 models), trained on that fold's training rows only |
 | dependencies | torch + torchvision only (none added) |
 
-Why this and not more: a training fold holds 3.8–4.3 k images over 8 classes
+Why this and not more: a training fold holds 2.7 k images (v3) over 8 classes
 (≈ 340–1,000 per class) — too few for one model per class, so one conditional
 model per fold learns all classes from the fold's pooled data; it trains in
 minutes on Apple MPS / a Colab T4; and it is honest about what it is: at this
@@ -74,7 +76,7 @@ external dependency and far more compute, and no document asks for it.
 ## 3. Isolation — how "training data only" is enforced (not just intended)
 
 ```
-data/audit/cv_v2/fold_XX_train.csv  ──►  FoldTrainingImages  ──►  cDCGAN (fold XX)  ──►  data/gan/fold_XX/train/<class>/synthetic_NNNNN.png
+data/audit/cv_v3/fold_XX_train.csv  ──►  FoldTrainingImages  ──►  cDCGAN (fold XX)  ──►  data/gan/fold_XX/train/<class>/synthetic_NNNNN.png
                                           │  aborts if any offered id ∈ forbidden
 forbidden ids = fold_XX_validation ∪ final_test (built from the digest-verified manifests; the files are read for ids only, never as images)
 ```
@@ -104,7 +106,7 @@ per-class counts (`synthetic_per_class`) or a fixed target
 | `data/gan/fold_XX/fold_XX_train_gan.csv` | WITH-GAN training list (real rows `synthetic=False` + synthetic rows `synthetic=True`); the WITHOUT-GAN arm is `fold_XX_train.csv` itself |
 | `data/gan/fold_XX/summary.json` | counts, paths, config file, smoke flag |
 | `results/v2/gan/registry.csv` (tracked) | one line per fold: architecture, latent_dim, resolution, epochs, batch_size, optimizer, learning_rate, betas, seed, device, **GPU name, CUDA version**, real images + per class, generated count + per class, source training fold + SHA-256, forbidden ids checked, generator SHA-256, synthetic/with-GAN manifest SHA-256s, torch version, start, seconds, smoke flag |
-| `results/v2/gan/GAN_MANIFEST.csv` (tracked) | **one line per synthetic image across every fold**: `synthetic_id`, `fold`, `class`, `label`, `generation_seed`, `generation_config` (JSON of the GANConfig), `config_file`, `training_source` (`data/audit/cv_v2/fold_XX_train.csv`), `training_source_sha256`, `path`, `sha256` (of the PNG), `width`, `height`, `format`, `source_dataset` (= `gan`), `generator_checkpoint`, `generator_sha256`, `architecture`, `device`, `gpu_name`, `generated_at`, `index` — built by `build_gan_manifest` from the per-fold manifests and run records; a row whose generator digest differs from its fold's run record is refused |
+| `results/v2/gan/GAN_MANIFEST.csv` (tracked) | **one line per synthetic image across every fold**: `synthetic_id`, `fold`, `class`, `label`, `generation_seed`, `generation_config` (JSON of the GANConfig), `config_file`, `training_source` (`data/audit/cv_v3/fold_XX_train.csv`), `training_source_sha256`, `path`, `sha256` (of the PNG), `width`, `height`, `format`, `source_dataset` (= `gan`), `generator_checkpoint`, `generator_sha256`, `architecture`, `device`, `gpu_name`, `generated_at`, `index` — built by `build_gan_manifest` from the per-fold manifests and run records; a row whose generator digest differs from its fold's run record is refused |
 | `results/v2/gan/verification.json` (tracked) | the `verify_gan_outputs` report (§6b) over every completed fold |
 | `results/v2/gan/generation_summary.json` (tracked) | device, GPU, CUDA, torch version, config file, folds requested/completed, total images, per-fold status / training seconds / wall seconds |
 

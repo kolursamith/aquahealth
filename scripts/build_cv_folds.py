@@ -3,19 +3,19 @@
 
     python scripts/build_cv_folds.py [--folds 10] [--seed 42]
 
-Reads data/audit/split_v2/development.csv through src.split_v2.read_development
+Reads data/audit/split_v3/development.csv through src.split_v2.read_development
 (digest-verified; final_test.csv is never opened) and writes
 
-    data/audit/cv_v2/folds.csv                       image -> validation fold (1..K)
-    data/audit/cv_v2/fold_XX_train.csv               K x
-    data/audit/cv_v2/fold_XX_validation.csv          K x
-    data/audit/cv_v2/folds.sha256                    digests of every file above
+    data/audit/cv_v3/folds.csv                       image -> validation fold (1..K)
+    data/audit/cv_v3/fold_XX_train.csv               K x
+    data/audit/cv_v3/fold_XX_validation.csv          K x
+    data/audit/cv_v3/folds.sha256                    digests of every file above
     data/audit/cv_report.csv                         fold, counts, class/source distribution,
                                                      group information, seed
-    data/audit/cv_v2/cv_report.md
+    data/audit/cv_v3/cv_report.md
 
-Folds are group-aware (clean-manifest group_id: exact/near duplicates and, for
-MatsyaDx-BD, the same specimen never straddle train/validation) and stratified
+Folds are group-aware (clean-manifest group_id: exact/near duplicates and, where a
+dataset states specimen ids, the same specimen never straddle train/validation) and stratified
 by (unified class | majority source), using src.split_v2.assign_groups — the
 baseline split rule generalised. scikit-learn is not a project dependency and
 its StratifiedGroupKFold would not honour the (class, source) strata, so the

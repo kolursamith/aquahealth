@@ -6,7 +6,7 @@ supplied paper or project document specifies a GAN architecture (the project's
 paper matrix records "cGAN — no support"; the PRD dropped cGAN), so the choice
 is ours and is made for these reasons, all recorded in every run record:
 
-- data: a training fold holds ~3.8-4.3k images over 8 classes (340-1,000 per
+- data: a training fold holds ~2.7k images over 8 classes (v3; ~310-500 per
   class) — too few for a class-per-model design; one conditional model per fold
   learns all classes from the fold's pooled data;
 - compute: local Apple MPS / Colab T4, torch + torchvision only (no new

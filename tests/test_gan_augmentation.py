@@ -70,8 +70,8 @@ def fold_setup(tmp_path):
     _write_images(split, tmp_path)
     audit = tmp_path / "data" / "audit"
     write_clean_manifest(clean, audit / CLEAN_MANIFEST_NAME)
-    write_split(split, audit / "split_v2")
-    write_folds(folds, audit / "cv_v2", 3)
+    write_split(split, audit / "split_v3")
+    write_folds(folds, audit / "cv_v3", 3)
     return tmp_path, folds, final_test
 
 
@@ -153,7 +153,7 @@ def test_train_generate_and_record_provenance(fold_setup):
     forbidden = forbidden_ids_for_fold(folds, 2, final_test)
     dataset = FoldTrainingImages(train, forbidden_ids=forbidden, repo_root=repo, image_size=16)
     out = repo / "data" / "gan" / "fold_02"
-    manifest = repo / "data" / "audit" / "cv_v2" / "fold_02_train.csv"
+    manifest = repo / "data" / "audit" / "cv_v3" / "fold_02_train.csv"
     checkpoint, record = train_gan(
         dataset,
         fold=2,
@@ -305,7 +305,7 @@ def test_run_gan_fold_script_end_to_end(fold_setup):
     # the validation/test files were not modified
     from src.split_v2 import read_folds, verify_split_digest
 
-    read_folds(repo / "data" / "audit" / "cv_v2")
-    verify_split_digest(repo / "data" / "audit" / "split_v2")
+    read_folds(repo / "data" / "audit" / "cv_v3")
+    verify_split_digest(repo / "data" / "audit" / "split_v3")
     second = subprocess.run(cmd, capture_output=True, text=True)
     assert second.returncode == 2

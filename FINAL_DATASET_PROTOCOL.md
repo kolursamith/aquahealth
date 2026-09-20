@@ -1,4 +1,69 @@
-# FINAL DATASET PROTOCOL — Layer 1 gate (dataset / split / 10-fold CV)
+# FINAL DATASET PROTOCOL — dataset configuration v3 (four sources; MatsyaDx-BD/Mendeley excluded)
+
+**Dataset configuration v3 excludes MatsyaDx-BD/Mendeley** (project decision, 2026-09-20).
+Measured on 2026-09-20 by re-running the Phase 1–9 scripts on `develop` against the
+local delivery drop with the `mendeley` source removed from
+`src/multi_dataset.py::DATASET_SOURCES` (kept in `EXCLUDED_SOURCES`). Methodology,
+taxonomy, label mapping, duplicate definitions, split rule and seed are unchanged;
+no count below was edited by hand. Full record: `data/audit/DATASET_CONFIG_V3.md`;
+the v2 artefacts are archived unchanged under `data/audit/archive/v2_mendeley/`.
+
+## v3.1 Raw — four sources, 5,298 images (`dataset_inventory.csv`)
+
+| key | delivery folder | images | corrupt |
+|---|---|---|---|
+| current_freshwater | `Fresh_water_disease/` (3,200 train_split + 303 test_split) | **3,503** | 0 |
+| kaptai | `Fresh Water Fish Dataset/` | **133** | 0 |
+| roboflow | `Fish Disease.v1i.folder/` | **454** | 0 |
+| paper_dataset | `SalmonScan …/SalmonScan/` | **1,208** | 0 |
+| **total** | | **5,298** | 0 |
+
+## v3.2 Clean corpus (`clean_manifest.csv`, `dedup_report.json`)
+
+**Included: 3,805** (current_freshwater 3,401 · kaptai 53 · roboflow 351 · paper_dataset 0).
+Excluded 1,493: unresolved label 1,277 (paper_dataset 1,208 + kaptai 69) · exact duplicate 162 ·
+label-conflict group 47 · excluded class 7. Exact duplicate groups 171 (88 cross-dataset);
+near-duplicate groups 540 (211 cross-dataset); label-conflict groups 12 (48 images); corrupt 0.
+Per class: Aeromoniasis 485 · Bacterial Gill 493 · Bacterial Red 453 · EUS 459 · Healthy 563 ·
+Parasitic 461 · Saprolegniasis 442 · White Tail 449.
+
+## v3.3 Leakage (`leakage_report.json`)
+
+3,222 leakage groups (485 multi-image, 1,068 images); 180 groups span datasets; 200 span the
+vendors' own splits; largest group 6; 0 included groups with mixed labels; specimen ids: none
+in the active sources. Resolution-shortcut upper bound 0.271 vs 0.148 baseline (documented,
+open). EXIF orientation tags: 27 kaptai images (decision open, unchanged from v2).
+
+## v3.4 Frozen split (`split_v3/`, seed 42, test ratio 0.20, group-aware, class|source strata)
+
+development **3,044** (2,585 groups) · **final_test 761** (637 groups); per-class test share
+0.198–0.201; groups straddling partitions 0. Digests (`split_v3/split_manifest.sha256`):
+`68b5f8f7…6599  development.csv`, **`baa33034…6599  final_test.csv`** (frozen).
+
+## v3.5 10-fold CV (`cv_v3/`, seed 42)
+
+Validation 315 / 311 / 308 / 308 / 304 / 304 / 303 / 299 / 297 / 295 (train 2,729–2,749);
+every class and source in every fold; groups shared with train 0/10 folds. Digests in
+`cv_v3/folds.sha256`.
+
+## v3.6 CLAHE (unchanged)
+
+LAB, L channel, clipLimit 2.0, tileGridSize (8, 8), before resize/crop — `configs/preprocess_v2_clahe.json`,
+applied inside the transform, never to files on disk.
+
+## v3.7 Known unresolved (carried over, not silently fixed)
+
+resolution/class shortcut; EXIF orientation decision (27 kaptai files); 1,277 unresolved labels
+(all of SalmonScan + 69 kaptai).
+
+---
+
+# HISTORICAL — dataset configuration v2 (five sources incl. MatsyaDx-BD), superseded 2026-09-20
+
+The section below is the v2 gate record as measured on 2026-09-19. Its artefacts live under
+`data/audit/archive/v2_mendeley/`. Nothing in it applies to v3.
+
+## (v2) FINAL DATASET PROTOCOL — Layer 1 gate (dataset / split / 10-fold CV)
 
 Measured on 2026-09-19 against the filesystem and the committed Phase 1–9
 artefacts on `develop` (`ebad68f`). Nothing was trained; no GAN exists; no

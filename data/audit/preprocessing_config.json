@@ -87,7 +87,7 @@
       "output_std": 0.8783,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0891,
+      "seconds": 0.1063,
       "sheet": "data/audit/clahe_samples/class_Bacterial_Red_Disease.png",
       "status": "ok"
     },
@@ -108,7 +108,7 @@
       "output_std": 1.5219,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0015,
+      "seconds": 0.0013,
       "sheet": "data/audit/clahe_samples/class_Aeromoniasis.png",
       "status": "ok"
     },
@@ -129,7 +129,7 @@
       "output_std": 1.3769,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0045,
+      "seconds": 0.0041,
       "sheet": "data/audit/clahe_samples/class_EUS_Disease.png",
       "status": "ok"
     },
@@ -150,7 +150,7 @@
       "output_std": 1.1566,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0015,
+      "seconds": 0.0013,
       "sheet": "data/audit/clahe_samples/class_Saprolegniasis.png",
       "status": "ok"
     },
@@ -171,7 +171,7 @@
       "output_std": 1.0817,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0013,
+      "seconds": 0.0012,
       "sheet": "data/audit/clahe_samples/class_Bacterial_Gill_Disease.png",
       "status": "ok"
     },
@@ -213,7 +213,7 @@
       "output_std": 1.1732,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0017,
+      "seconds": 0.0011,
       "sheet": "data/audit/clahe_samples/class_White_Tail_Disease.png",
       "status": "ok"
     },
@@ -234,7 +234,7 @@
       "output_std": 1.3224,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.004,
+      "seconds": 0.0042,
       "sheet": "data/audit/clahe_samples/class_Healthy_Fish.png",
       "status": "ok"
     },
@@ -255,7 +255,7 @@
       "output_std": 0.8783,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.002,
+      "seconds": 0.0021,
       "sheet": "data/audit/clahe_samples/source_current_freshwater.png",
       "status": "ok"
     },
@@ -276,29 +276,8 @@
       "output_std": 0.943,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0013,
+      "seconds": 0.0015,
       "sheet": "data/audit/clahe_samples/source_kaptai.png",
-      "status": "ok"
-    },
-    {
-      "sample_for": "source_mendeley",
-      "image_id": "mendeley-0001b9a9d730",
-      "source_dataset": "mendeley",
-      "unified_class": "Bacterial Gill Disease",
-      "original_path": "Bacterial Gill Diseases/Grass_carp_(Ctenopharyngodon idella)/Fish_1/IMG20260207073000.jpg",
-      "input_width": 4000,
-      "input_height": 3000,
-      "l_std_before": 46.432,
-      "l_std_after": 53.368,
-      "l_std_ratio": 1.149,
-      "output_shape": "3x224x224",
-      "output_dtype": "torch.float32",
-      "output_mean": 0.297,
-      "output_std": 0.9727,
-      "denorm_min": 0.0,
-      "denorm_max": 1.0,
-      "seconds": 0.088,
-      "sheet": "data/audit/clahe_samples/source_mendeley.png",
       "status": "ok"
     },
     {
@@ -318,7 +297,7 @@
       "output_std": 1.1599,
       "denorm_min": 0.0,
       "denorm_max": 1.0,
-      "seconds": 0.0055,
+      "seconds": 0.004,
       "sheet": "data/audit/clahe_samples/source_roboflow.png",
       "status": "ok"
     }
@@ -326,7 +305,7 @@
   "corrupt_file_handling": {
     "status": "reported",
     "exception": "ImageDecodeError",
-    "message": "could not decode image /var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmp_q7o080k/corrupt.jpg: cannot identify image file '/var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmp_q7o080k/corrupt.jpg'"
+    "message": "could not decode image /var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmpelhazzd_/corrupt.jpg: cannot identify image file '/var/folders/4f/f06lwyf14hgcn5cynr3fb6rw0000gn/T/tmpelhazzd_/corrupt.jpg'"
   },
   "torch": "2.14.0",
   "opencv": "5.0.0"

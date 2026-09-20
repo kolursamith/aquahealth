@@ -7,8 +7,8 @@
 Models: efficientnet_b0 (the historical baseline architecture) and the five hybrids
 (cnn_vit_lstm, yolo_efficientnet, cnn_bilstm, resnet_attention, yolo_transformer),
 all through src/model_factory.build_model. Data arms: without_gan
-(data/audit/cv_v2/fold_XX_train.csv) / with_gan (data/gan/fold_XX/fold_XX_train_gan.csv);
-validation is always data/audit/cv_v2/fold_XX_validation.csv. The frozen
+(data/audit/cv_v3/fold_XX_train.csv) / with_gan (data/gan/fold_XX/fold_XX_train_gan.csv);
+validation is always data/audit/cv_v3/fold_XX_validation.csv. The frozen
 final_test.csv is read for ids only, to enforce the isolation guards.
 
 Output: results/v2/experiments/<experiment_id>/ (config.json, history.csv,

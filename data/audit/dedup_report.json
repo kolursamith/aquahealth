@@ -6,22 +6,21 @@
     "same_specimen": "joined under one group_id where the dataset states a specimen id"
   },
   "raw": {
-    "total": 7435,
+    "total": 5298,
     "per_dataset": {
       "current_freshwater": 3503,
       "kaptai": 133,
       "roboflow": 454,
-      "mendeley": 2137,
       "paper_dataset": 1208
     },
     "corrupt": 0,
     "mapped_label_per_class": {
-      "Bacterial Red Disease": 1127,
+      "Bacterial Red Disease": 474,
       "Aeromoniasis": 498,
-      "Bacterial Gill Disease": 777,
-      "EUS Disease": 814,
+      "Bacterial Gill Disease": 502,
+      "EUS Disease": 482,
       "Saprolegniasis": 465,
-      "Healthy Fish": 1532,
+      "Healthy Fish": 655,
       "Parasitic Disease": 475,
       "White Tail Disease": 463
     }
@@ -29,7 +28,7 @@
   "duplicates": {
     "exact_groups": 171,
     "exact_groups_cross_dataset": 88,
-    "near_groups_distinct_bytes": 693,
+    "near_groups_distinct_bytes": 540,
     "near_groups_cross_dataset": 211,
     "conflicting_label_groups": 12,
     "conflicting_label_group_images": 48
@@ -56,27 +55,25 @@
         "LABEL_CONFLICT_GROUP": 15,
         "EXACT_DUPLICATE": 88
       },
-      "mendeley": {},
       "paper_dataset": {
         "LABEL_UNRESOLVED": 1208
       }
     }
   },
   "clean": {
-    "total": 5942,
+    "total": 3805,
     "per_dataset": {
       "current_freshwater": 3401,
       "kaptai": 53,
-      "mendeley": 2137,
       "roboflow": 351
     },
     "per_class": {
-      "Bacterial Red Disease": 1106,
+      "Bacterial Red Disease": 453,
       "Aeromoniasis": 485,
-      "Bacterial Gill Disease": 768,
-      "EUS Disease": 791,
+      "Bacterial Gill Disease": 493,
+      "EUS Disease": 459,
       "Saprolegniasis": 442,
-      "Healthy Fish": 1440,
+      "Healthy Fish": 563,
       "Parasitic Disease": 461,
       "White Tail Disease": 449
     },
@@ -95,12 +92,6 @@
         "EUS Disease": 22,
         "Healthy Fish": 31
       },
-      "mendeley": {
-        "Bacterial Gill Disease": 275,
-        "Bacterial Red Disease": 653,
-        "EUS Disease": 332,
-        "Healthy Fish": 877
-      },
       "roboflow": {
         "Bacterial Red Disease": 39,
         "Aeromoniasis": 44,
@@ -111,9 +102,9 @@
         "White Tail Disease": 40
       }
     },
-    "leakage_groups": 3301,
-    "leakage_groups_multi_image": 564,
-    "largest_leakage_group": 396
+    "leakage_groups": 3222,
+    "leakage_groups_multi_image": 485,
+    "largest_leakage_group": 6
   },
   "unresolved": {
     "images_awaiting_label_decision": 1277,
@@ -132,329 +123,329 @@
         "source_dataset": "current_freshwater",
         "original_path": "test_split/Bacterial gill disease_Bacterial gill disease_33.jpg",
         "unified_class": "Bacterial Gill Disease",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "current_freshwater-bbd3e6b93e96",
         "source_dataset": "current_freshwater",
         "original_path": "test_split/EUS_EUS_156.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g644"
+        "near_dup_group": "g594"
       },
       {
         "image_id": "current_freshwater-9116d049d7a5",
         "source_dataset": "current_freshwater",
         "original_path": "test_split/EUS_EUS_293.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "current_freshwater-ae450e224135",
         "source_dataset": "current_freshwater",
         "original_path": "test_split/EUS_EUS_30.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g3350"
+        "near_dup_group": "g2667"
       },
       {
         "image_id": "current_freshwater-3f6a76c78564",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial Red disease/Bacterial Red disease_21.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g644"
+        "near_dup_group": "g594"
       },
       {
         "image_id": "current_freshwater-3e2f4be66e16",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial Red disease/Bacterial Red disease_36.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g6081"
+        "near_dup_group": "g4281"
       },
       {
         "image_id": "current_freshwater-da8550b31881",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial Red disease/Bacterial Red disease_5.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g4523"
+        "near_dup_group": "g3395"
       },
       {
         "image_id": "current_freshwater-07ef519848fc",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial Red disease/Bacterial Red disease_8.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g3350"
+        "near_dup_group": "g2667"
       },
       {
         "image_id": "current_freshwater-dedb66ee265b",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial diseases - Aeromoniasis/Bacterial diseases - Aeromoniasis_176.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g651"
+        "near_dup_group": "g601"
       },
       {
         "image_id": "current_freshwater-41ea58ca0f92",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial diseases - Aeromoniasis/Bacterial diseases - Aeromoniasis_37.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g5377"
+        "near_dup_group": "g3851"
       },
       {
         "image_id": "current_freshwater-55bb440e5ed9",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial diseases - Aeromoniasis/Bacterial diseases - Aeromoniasis_aug_132.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g6081"
+        "near_dup_group": "g4281"
       },
       {
         "image_id": "current_freshwater-0ac2ff816c8d",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial diseases - Aeromoniasis/Bacterial diseases - Aeromoniasis_aug_227.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g653"
+        "near_dup_group": "g603"
       },
       {
         "image_id": "current_freshwater-4f98cb298fa7",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial gill disease/Bacterial gill disease_41.jpg",
         "unified_class": "Bacterial Gill Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "current_freshwater-3954b039576e",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial gill disease/Bacterial gill disease_aug_147.jpg",
         "unified_class": "Bacterial Gill Disease",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "current_freshwater-23c838c255ca",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Bacterial gill disease/Bacterial gill disease_aug_254.jpg",
         "unified_class": "Bacterial Gill Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "current_freshwater-ef1ccd5cdf6e",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_106.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g4938"
+        "near_dup_group": "g3614"
       },
       {
         "image_id": "current_freshwater-629cbc5a719d",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_207.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g3663"
+        "near_dup_group": "g2869"
       },
       {
         "image_id": "current_freshwater-1df870a00186",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_214.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g5377"
+        "near_dup_group": "g3851"
       },
       {
         "image_id": "current_freshwater-5fceded36786",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_25.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g653"
+        "near_dup_group": "g603"
       },
       {
         "image_id": "current_freshwater-fd663238e1ab",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_31.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g3350"
+        "near_dup_group": "g2667"
       },
       {
         "image_id": "current_freshwater-40a09f2fbeca",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_aug_161.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "current_freshwater-eb68b7a08514",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/EUS/EUS_aug_79.jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g3663"
+        "near_dup_group": "g2869"
       },
       {
         "image_id": "current_freshwater-cc5d2f0f9e33",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Fungal diseases Saprolegniasis/Fungal diseases Saprolegniasis_82.jpeg",
         "unified_class": "Saprolegniasis",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "current_freshwater-40497c01832c",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Fungal diseases Saprolegniasis/Fungal diseases Saprolegniasis_aug_183.jpg",
         "unified_class": "Saprolegniasis",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "current_freshwater-c2c51017c92b",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Fungal diseases Saprolegniasis/Fungal diseases Saprolegniasis_aug_317.jpg",
         "unified_class": "Saprolegniasis",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "current_freshwater-e9e974bb0948",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Parasitic diseases/Parasitic diseases_190.jpg",
         "unified_class": "Parasitic Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "current_freshwater-81b6280b0a8b",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Viral diseases White tail disease/Viral diseases White tail disease_86.jpeg",
         "unified_class": "White Tail Disease",
-        "near_dup_group": "g4938"
+        "near_dup_group": "g3614"
       },
       {
         "image_id": "current_freshwater-289b5956c6e5",
         "source_dataset": "current_freshwater",
         "original_path": "train_split/Viral diseases White tail disease/Viral diseases White tail disease_aug_105.jpg",
         "unified_class": "White Tail Disease",
-        "near_dup_group": "g4938"
+        "near_dup_group": "g3614"
       },
       {
         "image_id": "kaptai-238121a21147",
         "source_dataset": "kaptai",
         "original_path": "EUS/EUS  (12).jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g2655"
+        "near_dup_group": "g2191"
       },
       {
         "image_id": "kaptai-5b0b101b2904",
         "source_dataset": "kaptai",
         "original_path": "EUS/EUS  (2).jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g651"
+        "near_dup_group": "g601"
       },
       {
         "image_id": "kaptai-f3bba2809f55",
         "source_dataset": "kaptai",
         "original_path": "EUS/EUS  (5).jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g4523"
+        "near_dup_group": "g3395"
       },
       {
         "image_id": "kaptai-a9fc05f7300f",
         "source_dataset": "kaptai",
         "original_path": "EUS/EUS  (7).jpg",
         "unified_class": "EUS Disease",
-        "near_dup_group": "g3350"
+        "near_dup_group": "g2667"
       },
       {
         "image_id": "roboflow-556d11cfd273",
         "source_dataset": "roboflow",
         "original_path": "test/Bacterial Red disease/Bacterial-Red-disease-7-_jpeg.rf.1d666a612fa8b59f6b53652808f56861.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g644"
+        "near_dup_group": "g594"
       },
       {
         "image_id": "roboflow-3a04813e9b40",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial Red disease/Bacterial-Red-disease-13-_jpg.rf.8d9d9458f572a4969a411aebf4ae815d.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g4523"
+        "near_dup_group": "g3395"
       },
       {
         "image_id": "roboflow-f0ec185d1c48",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial Red disease/Bacterial-Red-disease-15-_jpg.rf.d821c53393b7c3aad4fb74a4b244c5b6.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g3350"
+        "near_dup_group": "g2667"
       },
       {
         "image_id": "roboflow-c98d53ae5ba3",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial Red disease/Bacterial-Red-disease-3-_jpg.rf.23e52adf5a7ac46d710c6a4484f77f79.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g644"
+        "near_dup_group": "g594"
       },
       {
         "image_id": "roboflow-c7f9f6c9c7f5",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial Red disease/Bacterial-Red-disease-40-_jpg.rf.9c7e9f198ad68e496ac8e2b66a991d2c.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g6081"
+        "near_dup_group": "g4281"
       },
       {
         "image_id": "roboflow-740f94b7b5dc",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial diseases - Aeromoniasis/Bacterial-diseases-Aeromoniasis-12-_jpg.rf.838be4dc8b38264f75c0b3d8e1409dad.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g3663"
+        "near_dup_group": "g2869"
       },
       {
         "image_id": "roboflow-ff72055e9b51",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial diseases - Aeromoniasis/Bacterial-diseases-Aeromoniasis-15-_jpg.rf.edec24ece0e4fa14f7e0bb812329dc67.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g5377"
+        "near_dup_group": "g3851"
       },
       {
         "image_id": "roboflow-ec680cbbb21e",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial diseases - Aeromoniasis/Bacterial-diseases-Aeromoniasis-3-_png.rf.03d47b537d4062bfe389406a20cc6e30.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g6081"
+        "near_dup_group": "g4281"
       },
       {
         "image_id": "roboflow-6238ce8d8b36",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial diseases - Aeromoniasis/Bacterial-diseases-Aeromoniasis-39-_jpg.rf.0a63210715bef67d9a0adff7bcd72bfe.jpg",
         "unified_class": "Aeromoniasis",
-        "near_dup_group": "g651"
+        "near_dup_group": "g601"
       },
       {
         "image_id": "roboflow-5853754c1399",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial gill disease/Bacterial-gill-disease-20-_jpg.rf.fe56f7a406a0702447e677cd2705af9a.jpg",
         "unified_class": "Bacterial Gill Disease",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "roboflow-6ce956ec0779",
         "source_dataset": "roboflow",
         "original_path": "train/Bacterial gill disease/Bacterial-gill-disease-26-_jpg.rf.efaaeb47f667534d5db5f272668fd9ee.jpg",
         "unified_class": "Bacterial Gill Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "roboflow-3d4ae5ca3488",
         "source_dataset": "roboflow",
         "original_path": "train/Fungal diseases Saprolegniasis/Fungal-diseases-Saprolegniasis-8-_jpeg.rf.d5c879ae00c42b0e93ab80405a27b482.jpg",
         "unified_class": "Saprolegniasis",
-        "near_dup_group": "g2490"
+        "near_dup_group": "g2078"
       },
       {
         "image_id": "roboflow-af0268a776e3",
         "source_dataset": "roboflow",
         "original_path": "train/Parasitic diseases/Parasitic-diseases-2-_jpg.rf.23f7ff863b0dc00e057f606753b05994.jpg",
         "unified_class": "Parasitic Disease",
-        "near_dup_group": "g1948"
+        "near_dup_group": "g1688"
       },
       {
         "image_id": "roboflow-8dfa03319b0d",
         "source_dataset": "roboflow",
         "original_path": "train/Viral diseases White tail disease/Viral-diseases-White-tail-disease-10-_jpeg.rf.84c1cf72997815fca39e5b5180da2d10.jpg",
         "unified_class": "White Tail Disease",
-        "near_dup_group": "g4938"
+        "near_dup_group": "g3614"
       },
       {
         "image_id": "roboflow-98a92c3effa4",
         "source_dataset": "roboflow",
         "original_path": "valid/Bacterial Red disease/Bacterial-Red-disease-5-_jpeg.rf.edfe46da9dfb870a2cac9fff763c6636.jpg",
         "unified_class": "Bacterial Red Disease",
-        "near_dup_group": "g2655"
+        "near_dup_group": "g2191"
       }
     ]
   }

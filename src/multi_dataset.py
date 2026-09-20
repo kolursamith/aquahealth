@@ -36,6 +36,10 @@ from src.manifest import file_sha256, perceptual_dhash
 RAW_ROOT_NAME = "raw"
 AUDIT_DIR_NAME = "audit"
 MASTER_MANIFEST_NAME = "master_dataset.csv"
+# Dataset configuration v3 (2026-09-20): four active sources. MatsyaDx-BD / Mendeley
+# is permanently excluded (project decision, see data/audit/DATASET_CONFIG_V3.md);
+# its v2 audit artefacts are kept under data/audit/archive/v2_mendeley/.
+DATASET_CONFIG_VERSION = "v3"
 
 # Files the delivered datasets are known to contain besides images; recorded,
 # never silently ignored. Anything else is reported as unexpected.
@@ -59,6 +63,8 @@ class DatasetSource:
 # The keys follow the structure agreed for the new experiment. `delivered_subdir`
 # is the folder name as it exists in the download drop (relative to the drop
 # root); `current_freshwater` is assembled from three entries by the link script.
+# ACTIVE sources only (dataset configuration v3): everything below is walked,
+# hashed, cleaned, split and trained on. Excluded sources are in EXCLUDED_SOURCES.
 DATASET_SOURCES: tuple[DatasetSource, ...] = (
     DatasetSource(
         key="current_freshwater",
@@ -87,16 +93,6 @@ DATASET_SOURCES: tuple[DatasetSource, ...] = (
         "454 images, auto-orient + resize 640x640 (stretch), no augmentation.",
     ),
     DatasetSource(
-        key="mendeley",
-        name="MatsyaDx-BD",
-        layout="matsyadx",
-        delivered_subdir="MatsyaDx-BD An image dataset of freshwater fish di/MatsyaDx-BD",
-        documentation=("metadata.csv",),
-        notes="<health_condition>/<fish_category>/<specimen>/<image> plus metadata.csv "
-        "(image_id, health_condition, fish_category, specimen_id, ...). The four "
-        "per-class .7z archives next to the folders are the delivered originals.",
-    ),
-    DatasetSource(
         key="paper_dataset",
         name="SalmonScan",
         layout="class_folders",
@@ -109,7 +105,25 @@ DATASET_SOURCES: tuple[DatasetSource, ...] = (
     ),
 )
 
+# Sources that were part of an earlier configuration and are now EXCLUDED by
+# project decision. Never walked, linked, hashed or split; kept so the historical
+# audit (data/audit/archive/) stays interpretable and so a stray data/raw/<key>
+# entry can be recognised and refused.
+EXCLUDED_SOURCES: tuple[DatasetSource, ...] = (
+    DatasetSource(
+        key="mendeley",
+        name="MatsyaDx-BD",
+        layout="matsyadx",
+        delivered_subdir="MatsyaDx-BD An image dataset of freshwater fish di/MatsyaDx-BD",
+        documentation=("metadata.csv",),
+        notes="EXCLUDED in dataset configuration v3 (2026-09-20, project decision): "
+        "removed from every manifest, split, fold, GAN and evaluation. Was "
+        "<health_condition>/<fish_category>/<specimen>/<image> plus metadata.csv.",
+    ),
+)
+
 SOURCE_BY_KEY: dict[str, DatasetSource] = {s.key: s for s in DATASET_SOURCES}
+EXCLUDED_KEYS: frozenset[str] = frozenset(s.key for s in EXCLUDED_SOURCES)
 
 
 @dataclass

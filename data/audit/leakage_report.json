@@ -3,7 +3,7 @@
     "channels": {
       "folder_path": "label source by construction (folder = class); never read as a feature",
       "filename": "see per_dataset; only the decoded image reaches the model (src/dataset.py, src/manifest.py load pixels only)",
-      "metadata_csv": "mendeley/metadata.csv carries health_condition (= label), fish_category, specimen_id; used for provenance and grouping only",
+      "metadata_csv": "no active dataset ships a metadata table (MatsyaDx-BD excluded in v3)",
       "test_csv": "current_freshwater/test.csv carries the label of the flat test_split; used only to assign original_class"
     },
     "per_dataset": {
@@ -28,13 +28,6 @@
           "argulus (10).jpg",
           "argulus (2).jpg"
         ]
-      },
-      "mendeley": {
-        "images": 2137,
-        "filename_reveals_label": 0,
-        "filename_reveals_label_pct": 0.0,
-        "label_in_folder_path": true,
-        "examples": []
       },
       "paper_dataset": {
         "images": 1208,
@@ -62,49 +55,20 @@
     "verdict": "labels exist in paths/filenames/metadata but no pipeline component feeds them to a model; keep it that way (no filename- or path-derived features)"
   },
   "duplicate_leakage": {
-    "included_images": 5942,
-    "leakage_groups": 3301,
-    "multi_image_groups": 564,
-    "images_in_multi_image_groups": 3205,
+    "included_images": 3805,
+    "leakage_groups": 3222,
+    "multi_image_groups": 485,
+    "images_in_multi_image_groups": 1068,
     "groups_spanning_datasets": 180,
     "groups_spanning_delivered_splits": 200,
-    "specimen_groups": 79,
-    "largest_group": 396,
+    "specimen_groups": 0,
+    "largest_group": 6,
     "group_size_histogram": {
       "2": 405,
       "3": 65,
-      "4": 15,
-      "5": 2,
-      "6": 2,
-      "7": 3,
-      "8": 4,
-      "9": 4,
-      "10": 7,
-      "11": 4,
-      "12": 6,
-      "13": 2,
-      "14": 7,
-      "15": 4,
-      "16": 3,
-      "17": 2,
-      "18": 2,
-      "19": 2,
-      "20": 1,
-      "21": 3,
-      "22": 1,
-      "23": 1,
-      "24": 1,
-      "26": 5,
-      "28": 1,
-      "29": 3,
-      "30": 2,
-      "31": 1,
-      "38": 1,
-      "41": 1,
-      "59": 1,
-      "222": 1,
-      "259": 1,
-      "396": 1
+      "4": 13,
+      "5": 1,
+      "6": 1
     },
     "included_group_with_mixed_labels": 0,
     "excluded_exact_copies": 162,
@@ -113,29 +77,29 @@
   "suspicious_features": {
     "predictability": {
       "source_dataset": {
-        "distinct_values": 4,
-        "majority_class_baseline": 0.2423,
-        "feature_only_accuracy_upper_bound": 0.2425
+        "distinct_values": 3,
+        "majority_class_baseline": 0.148,
+        "feature_only_accuracy_upper_bound": 0.1482
       },
       "resolution": {
-        "distinct_values": 38,
-        "majority_class_baseline": 0.2423,
-        "feature_only_accuracy_upper_bound": 0.3514
+        "distinct_values": 36,
+        "majority_class_baseline": 0.148,
+        "feature_only_accuracy_upper_bound": 0.271
       },
       "extension": {
         "distinct_values": 3,
-        "majority_class_baseline": 0.2423,
-        "feature_only_accuracy_upper_bound": 0.2447
+        "majority_class_baseline": 0.148,
+        "feature_only_accuracy_upper_bound": 0.1516
       },
       "resolution+extension": {
-        "distinct_values": 41,
-        "majority_class_baseline": 0.2423,
-        "feature_only_accuracy_upper_bound": 0.3532
+        "distinct_values": 39,
+        "majority_class_baseline": 0.148,
+        "feature_only_accuracy_upper_bound": 0.2739
       },
       "source+resolution": {
-        "distinct_values": 39,
-        "majority_class_baseline": 0.2423,
-        "feature_only_accuracy_upper_bound": 0.3514
+        "distinct_values": 37,
+        "majority_class_baseline": 0.148,
+        "feature_only_accuracy_upper_bound": 0.271
       }
     },
     "resolution_by_class_top4": {
@@ -147,27 +111,25 @@
       },
       "Bacterial Gill Disease": {
         "640x640": 353,
-        "4000x3000": 232,
         "128x128": 74,
         "224x224": 66
       },
       "Bacterial Red Disease": {
-        "4000x3000": 598,
         "640x640": 296,
         "128x128": 86,
         "224x224": 71
       },
       "EUS Disease": {
         "640x640": 436,
-        "4000x3000": 231,
-        "3000x4000": 101,
-        "360x480": 5
+        "360x480": 5,
+        "150x150": 2,
+        "200x200": 2
       },
       "Healthy Fish": {
         "640x640": 532,
-        "3000x4000": 459,
-        "4000x3000": 418,
-        "480x360": 9
+        "480x360": 9,
+        "360x480": 8,
+        "216x68": 1
       },
       "Parasitic Disease": {
         "640x640": 263,
@@ -193,23 +155,19 @@
       },
       "Bacterial Gill Disease": {
         "current_freshwater": 439,
-        "mendeley": 275,
         "roboflow": 54
       },
       "Bacterial Red Disease": {
         "current_freshwater": 414,
-        "mendeley": 653,
         "roboflow": 39
       },
       "EUS Disease": {
         "current_freshwater": 437,
-        "kaptai": 22,
-        "mendeley": 332
+        "kaptai": 22
       },
       "Healthy Fish": {
         "current_freshwater": 440,
         "kaptai": 31,
-        "mendeley": 877,
         "roboflow": 92
       },
       "Parasitic Disease": {
@@ -252,21 +210,6 @@
       "rotated_by_tag": 0,
       "rotated_by_class": {},
       "camera_models": {}
-    },
-    "mendeley": {
-      "images": 2137,
-      "with_exif": 2137,
-      "with_orientation": 2137,
-      "rotated_by_tag": 658,
-      "rotated_by_class": {
-        "Bacterial Gill Disease": 43,
-        "Bacterial Red Disease": 55,
-        "EUS Disease": 101,
-        "Healthy Fish": 459
-      },
-      "camera_models": {
-        "OPPO OPPO A52": 2137
-      }
     },
     "roboflow": {
       "images": 351,

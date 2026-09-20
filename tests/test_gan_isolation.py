@@ -66,7 +66,7 @@ def _run_fold(repo: Path, folds, final_test, fold: int, counts: dict[str, int]):
         config=TINY,
         device=CPU,
         out_dir=out,
-        train_manifest=repo / "data" / "audit" / "cv_v2" / f"fold_{fold:02d}_train.csv",
+        train_manifest=repo / "data" / "audit" / "cv_v3" / f"fold_{fold:02d}_train.csv",
         forbidden_count=len(forbidden),
     )
     synthetic = generate(
@@ -156,8 +156,8 @@ def test_3_generated_data_belongs_only_to_training_fold(fold_setup):  # noqa: F8
     assert not ({r["image_id"] for r in rows} & {r.image_id for r in validation})
     assert all(int(r["fold"]) == -1 for r in rows if r["synthetic"] == "True")
     # the validation / test manifests are byte-identical to before (digest-guarded readers pass)
-    read_folds(repo / "data" / "audit" / "cv_v2")
-    verify_split_digest(repo / "data" / "audit" / "split_v2")
+    read_folds(repo / "data" / "audit" / "cv_v3")
+    verify_split_digest(repo / "data" / "audit" / "split_v3")
 
 
 # 4 ------------------------------------------------------------------------------------------
@@ -239,7 +239,7 @@ def test_6_generated_files_are_traceable(fold_setup, tmp_path):  # noqa: F811
         assert CANONICAL_CLASSES[row["label"]] == row["unified_class"]
         assert row["image_id"].startswith("gan-f03-")
     # the run record names the source training fold manifest and its digest
-    assert Path(record.train_manifest) == repo / "data" / "audit" / "cv_v2" / "fold_03_train.csv"
+    assert Path(record.train_manifest) == repo / "data" / "audit" / "cv_v3" / "fold_03_train.csv"
     assert record.train_manifest_sha256 == _sha(Path(record.train_manifest))
     assert record.checkpoint_sha256 == _sha(checkpoint)
     assert record.optimizer.startswith("Adam(")
@@ -303,7 +303,7 @@ def test_6_generated_files_are_traceable(fold_setup, tmp_path):  # noqa: F811
 
 def test_7_raw_data_remains_unchanged(fold_setup):  # noqa: F811
     repo, folds, final_test = fold_setup
-    split = read_split(repo / "data" / "audit" / "split_v2")
+    split = read_split(repo / "data" / "audit" / "split_v3")
     raw = sorted({repo / s.filepath for s in split})
     before = {p: (_sha(p), p.stat().st_size) for p in raw}
     manifests = sorted((repo / "data" / "audit").rglob("*.csv")) + sorted(

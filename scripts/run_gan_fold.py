@@ -13,8 +13,8 @@ real registry are never touched by an infrastructure check. Real GAN training ru
 Colab CUDA only (Layer 3 rule): pass `--require-cuda` and the script exits 2 rather than
 training on CPU/MPS. All ten folds: scripts/run_gan_all_folds.py.
 
-Reads data/audit/cv_v2/fold_XX_train.csv (through src.split_v2.read_folds, digest
-verified) and data/audit/split_v2/final_test.csv ONLY to build the forbidden-id
+Reads data/audit/cv_v3/fold_XX_train.csv (through src.split_v2.read_folds, digest
+verified) and data/audit/split_v3/final_test.csv ONLY to build the forbidden-id
 set; every training image is checked against that set before the GAN sees it.
 
 Writes, all under data/gan/fold_XX/ (git-ignored):

@@ -17,9 +17,9 @@ clean manifest `data/audit/clean_manifest.csv` is the authoritative description 
 gets the images through one configurable root, the environment variable
 **`AQUAHEALTH_COLAB_DATASET_ROOT`** — never a hard-coded path and not necessarily Google Drive:
 
-1. **Clean bundle (recommended, ~5.5 GB).** Locally:
+1. **Clean bundle (recommended, ~1 GB).** Locally:
    `python scripts/build_colab_bundle.py --out /some/dir/aquahealth_bundle --tar`
-   copies *exactly* the manifest's 5,942 included images (development + frozen final test; excluded
+   copies *exactly* the manifest's 3,805 included images (development + frozen final test; dataset configuration v3 excludes MatsyaDx-BD/Mendeley entirely; excluded
    duplicates / unresolved labels are not copied) to `<out>/data/raw/<key>/…` — the same relative
    paths the committed manifests use — and writes `bundle_manifest.csv` (image_id, filepath, sha256,
    source, class, label, group_id, split, fold) plus `bundle.sha256`, which pins the bundle to the
@@ -39,10 +39,10 @@ python scripts/colab_dataset.py verify --hash all   # exit 1 = STOP, never regen
 ```
 `verify` checks: manifest present; split and fold digests; bundle pins equal the runtime's manifest
 digests (manifest identity); bundle rows == included rows with identical filepath/sha256/class/label/
-group_id/split/fold/source; every image exists; count == 5,942; image SHA-256 == manifest (all, or a
+group_id/split/fold/source; every image exists; count == 3,805; image SHA-256 == manifest (all, or a
 seeded sample with `--hash sample`); labels canonical; development rows carry a fold and test rows none;
 no group in two folds or across development/final_test. Verified locally against the real bundle:
-18/18 checks, 5,942/5,942 hashes.
+18/18 checks, 3,805/3,805 hashes.
 
 Runtime pre-flight without a fold: `python scripts/colab_preflight.py --env-only --require-cuda`
 (Python, platform, torch/torchvision/numpy/pillow/opencv/matplotlib versions and pins, CUDA/GPU/VRAM,
@@ -75,7 +75,7 @@ aborts rather than falling back to CPU/MPS.
 ## Launch one experiment
 ```bash
 python scripts/run_cv_experiment.py --model cnn_vit_lstm --fold 1 --data-arm without_gan \
-    --config configs/cv_v2/default.json --require-cuda
+    --config configs/cv_v3/default.json --require-cuda
 ```
 `--model` ∈ {efficientnet_b0, cnn_vit_lstm, yolo_efficientnet, cnn_bilstm, resnet_attention,
 yolo_transformer}; `--data-arm` ∈ {without_gan, with_gan}; `--fold` 1–10. The experiment id is
