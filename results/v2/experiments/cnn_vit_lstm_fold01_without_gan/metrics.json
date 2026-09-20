@@ -1,0 +1,166 @@
+{
+  "experiment_id": "cnn_vit_lstm_fold01_without_gan",
+  "epoch": 29,
+  "split": "validation (fold)",
+  "summary": {
+    "loss": 0.44677727071065754,
+    "accuracy": 0.8984126984126984,
+    "precision_macro": 0.9015528721924071,
+    "recall_macro": 0.8964357438185041,
+    "f1_macro": 0.8961858832246191,
+    "f1_weighted": 0.8974614961704623,
+    "samples": 315,
+    "seconds": 4.23772534499949
+  },
+  "per_class": [
+    {
+      "name": "Bacterial Red Disease",
+      "precision": 0.9666666666666667,
+      "recall": 0.7631578947368421,
+      "f1": 0.8529411764705883,
+      "support": 38
+    },
+    {
+      "name": "Aeromoniasis",
+      "precision": 0.9,
+      "recall": 0.9,
+      "f1": 0.9,
+      "support": 40
+    },
+    {
+      "name": "Bacterial Gill Disease",
+      "precision": 0.9487179487179487,
+      "recall": 0.9024390243902439,
+      "f1": 0.9249999999999999,
+      "support": 41
+    },
+    {
+      "name": "EUS Disease",
+      "precision": 0.8888888888888888,
+      "recall": 0.8648648648648649,
+      "f1": 0.8767123287671232,
+      "support": 37
+    },
+    {
+      "name": "Saprolegniasis",
+      "precision": 0.8372093023255814,
+      "recall": 1.0,
+      "f1": 0.9113924050632911,
+      "support": 36
+    },
+    {
+      "name": "Parasitic Disease",
+      "precision": 0.8974358974358975,
+      "recall": 0.8974358974358975,
+      "f1": 0.8974358974358975,
+      "support": 39
+    },
+    {
+      "name": "White Tail Disease",
+      "precision": 0.8888888888888888,
+      "recall": 0.8648648648648649,
+      "f1": 0.8767123287671232,
+      "support": 37
+    },
+    {
+      "name": "Healthy Fish",
+      "precision": 0.8846153846153846,
+      "recall": 0.9787234042553191,
+      "f1": 0.9292929292929293,
+      "support": 47
+    }
+  ],
+  "confusion": [
+    [
+      29,
+      1,
+      0,
+      4,
+      2,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      36,
+      2,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      2,
+      37,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      32,
+      0,
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      36,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      2,
+      35,
+      2,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      2,
+      32,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      46
+    ]
+  ],
+  "class_names": [
+    "Bacterial Red Disease",
+    "Aeromoniasis",
+    "Bacterial Gill Disease",
+    "EUS Disease",
+    "Saprolegniasis",
+    "Parasitic Disease",
+    "White Tail Disease",
+    "Healthy Fish"
+  ],
+  "classification_report": "                        precision  recall  f1-score  support\nBacterial Red Disease       0.967   0.763     0.853       38\nAeromoniasis                0.900   0.900     0.900       40\nBacterial Gill Disease      0.949   0.902     0.925       41\nEUS Disease                 0.889   0.865     0.877       37\nSaprolegniasis              0.837   1.000     0.911       36\nParasitic Disease           0.897   0.897     0.897       39\nWhite Tail Disease          0.889   0.865     0.877       37\nHealthy Fish                0.885   0.979     0.929       47\n\naccuracy                                      0.898      315\nmacro avg                   0.902   0.896     0.896      315\nweighted avg                0.902   0.898     0.897      315"
+}

@@ -1,0 +1,149 @@
+{
+  "experiment_id": "cnn_vit_lstm_fold01_without_gan",
+  "model": "cnn_vit_lstm",
+  "model_key": "cnn_vit_lstm",
+  "fold": 1,
+  "data_arm": "without_gan",
+  "seed": 42,
+  "num_classes": 8,
+  "class_names": [
+    "Bacterial Red Disease",
+    "Aeromoniasis",
+    "Bacterial Gill Disease",
+    "EUS Disease",
+    "Saprolegniasis",
+    "Parasitic Disease",
+    "White Tail Disease",
+    "Healthy Fish"
+  ],
+  "image_size": 224,
+  "preprocessing": {
+    "config_path": "configs/preprocess_v2_clahe.json",
+    "config_sha256": "4c35039a73c0d8740c736de00339c240d405849b885b0231d4688a3508499ab7",
+    "resolved": {
+      "image_size": 224,
+      "resize_size": 256,
+      "resize_mode": "crop",
+      "clahe": {
+        "clip_limit": 2.0,
+        "tile_grid_size": 8
+      },
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    },
+    "implementation": "src/preprocessing.py (CLAHE on LAB-L, then resize/crop/normalise)"
+  },
+  "augmentation": {
+    "crop_scale": [
+      0.8,
+      1.0
+    ],
+    "crop_ratio": [
+      0.9,
+      1.1
+    ],
+    "horizontal_flip": 0.5,
+    "rotation_degrees": 15.0,
+    "brightness": 0.2,
+    "contrast": 0.2,
+    "saturation": 0.0
+  },
+  "training": {
+    "epochs": 30,
+    "batch_size": 32,
+    "optimizer": "adamw",
+    "learning_rate": 0.0003,
+    "backbone_learning_rate": 3e-05,
+    "weight_decay": 0.0001,
+    "momentum": 0.9,
+    "scheduler": "cosine",
+    "lr_step_size": 5,
+    "lr_gamma": 0.1,
+    "strategy": "head_then_full",
+    "head_epochs": 3,
+    "early_stopping_patience": 8,
+    "selection_metric": "f1_macro",
+    "pretrained": true,
+    "dropout": 0.2,
+    "amp": true,
+    "num_workers": 2,
+    "preprocess_config": "configs/preprocess_v2_clahe.json",
+    "augment": {
+      "crop_scale": [
+        0.8,
+        1.0
+      ],
+      "crop_ratio": [
+        0.9,
+        1.1
+      ],
+      "horizontal_flip": 0.5,
+      "rotation_degrees": 15.0,
+      "brightness": 0.2,
+      "contrast": 0.2,
+      "saturation": 0.0
+    },
+    "loss": "cross_entropy",
+    "early_stopping": {
+      "metric": "f1_macro",
+      "patience": 8
+    }
+  },
+  "device": "cuda",
+  "environment": {
+    "python": "3.13.15",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "torch": "2.14.0+cu130",
+    "torchvision": "0.29.0+cu130",
+    "cuda": {
+      "built": true,
+      "available": true,
+      "version": "13.0",
+      "device_count": 1,
+      "device_name": "Tesla T4",
+      "memory_gb": 14.56
+    },
+    "mps": {
+      "built": false,
+      "available": false
+    },
+    "device": "cuda",
+    "num_threads": 1
+  },
+  "git_commit": "f7ab1aca6ce7f73f5d3ef66bab8917d27b639d58",
+  "dataset_config_version": "v3",
+  "manifests": {
+    "split_dir": "split_v3",
+    "cv_dir": "cv_v3",
+    "train_path": "/content/aquahealth/data/audit/cv_v3/fold_01_train.csv",
+    "train_sha256": "f448186b3964123d7fe212560ee549b62c992b996104fd25a2b3f2e74bb556e5",
+    "validation_path": "/content/aquahealth/data/audit/cv_v3/fold_01_validation.csv",
+    "validation_sha256": "9d48f4c64c8e0a2cd8f0cf534023c20edb5f2a364e33977c571e11e6550d84b7",
+    "final_test_path": "/content/aquahealth/data/audit/split_v3/final_test.csv",
+    "final_test_sha256": "baa330347a89305212b08ac4c79a1bb6a98cdd7447172f4aa3aea113c16cb7a2"
+  },
+  "isolation": {
+    "train_rows": 2729,
+    "train_real": 2729,
+    "train_synthetic": 0,
+    "validation_rows": 315,
+    "final_test_ids_checked": 761,
+    "groups_straddling": 0
+  },
+  "smoke": false,
+  "subset": {
+    "train": 2729,
+    "validation": 315
+  },
+  "timestamp": "2026-09-20T12:38:43",
+  "reproducibility_note": "seeds set for python/numpy/torch and the loader generator; exact bitwise repeatability is not guaranteed on CUDA (cuDNN autotuning, atomics) or with AMP; the same seed reproduces the data order and initialisation",
+  "config_hash": "eadfc6348e7e9aca7f929441e268df6b32de355816d07ee0f4f20029a38a5a63"
+}

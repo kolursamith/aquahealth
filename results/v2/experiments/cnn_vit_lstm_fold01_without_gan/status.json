@@ -1,0 +1,7 @@
+{
+  "status": "COMPLETED",
+  "updated": "2026-09-20T13:09:24",
+  "experiment_id": "cnn_vit_lstm_fold01_without_gan",
+  "epoch": 30,
+  "best_epoch": 29
+}

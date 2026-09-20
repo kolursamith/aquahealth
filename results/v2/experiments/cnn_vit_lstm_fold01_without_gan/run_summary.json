@@ -1,0 +1,38 @@
+{
+  "experiment_id": "cnn_vit_lstm_fold01_without_gan",
+  "model_key": "cnn_vit_lstm",
+  "fold": 1,
+  "data_arm": "without_gan",
+  "seed": 42,
+  "device": "cuda",
+  "epochs_run": 30,
+  "epochs_configured": 30,
+  "stopped_early": false,
+  "best_epoch": 29,
+  "best_val_f1_macro": 0.8961858832246191,
+  "final_epoch_validation": {
+    "val_loss": 0.479284,
+    "val_accuracy": 0.895238,
+    "val_precision_macro": 0.9017,
+    "val_recall_macro": 0.894271,
+    "val_f1_macro": 0.893518,
+    "val_f1_weighted": 0.894856
+  },
+  "train_images": 2729,
+  "train_synthetic": 0,
+  "validation_images": 315,
+  "smoke": false,
+  "note": "",
+  "config_hash": "eadfc6348e7e9aca7f929441e268df6b32de355816d07ee0f4f20029a38a5a63",
+  "manifests": {
+    "split_dir": "split_v3",
+    "cv_dir": "cv_v3",
+    "train_path": "/content/aquahealth/data/audit/cv_v3/fold_01_train.csv",
+    "train_sha256": "f448186b3964123d7fe212560ee549b62c992b996104fd25a2b3f2e74bb556e5",
+    "validation_path": "/content/aquahealth/data/audit/cv_v3/fold_01_validation.csv",
+    "validation_sha256": "9d48f4c64c8e0a2cd8f0cf534023c20edb5f2a364e33977c571e11e6550d84b7",
+    "final_test_path": "/content/aquahealth/data/audit/split_v3/final_test.csv",
+    "final_test_sha256": "baa330347a89305212b08ac4c79a1bb6a98cdd7447172f4aa3aea113c16cb7a2"
+  },
+  "finished": "2026-09-20T13:09:24"
+}
