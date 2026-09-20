@@ -102,9 +102,10 @@ quarantined under `data/gan_archive_unofficial/` and is not an experiment.
 Per-fold planned synthetic images (class-aware: top-up to the fold's largest class, the
 largest class — Healthy Fish in every fold — gets 0, cap 1× real): fold 1 = 495, 2 = 491,
 3 = 504, 4 = 504, 5 = 500, 6 = 500, 7 = 507, 8 = 503, 9 = 501, 10 = 499 →
-**5,004 planned over 10 folds** (v2's 23,616 no longer applies). Actual generated counts are
-recorded per fold in `results/v2/gan/registry.csv` / `generation_summary.json` after the
-Colab CUDA run. Fold-1 forbidden ids = 315 validation + 761 final test = 1,076.
+**5,004 planned over 10 folds** (v2's 23,616 no longer applies). **Generated on Colab CUDA
+(Tesla T4, 2026-09-20): 495 / 491 / 504 / 504 / 500 / 500 / 507 / 503 / 501 / 499 = 5,004, failed 0;
+`verify_gan_outputs.py --images all` 229/229 checks VERIFIED** (`results/v2/gan/`,
+`docs/GAN_AUGMENTATION.md` §8). Fold-1 forbidden ids = 315 validation + 761 final test = 1,076.
 
 ## Reproducibility anchors
 

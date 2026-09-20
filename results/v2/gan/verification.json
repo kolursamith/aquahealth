@@ -1,0 +1,1380 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "check": "split and fold manifests verify",
+      "ok": true,
+      "detail": "3044 dev rows"
+    },
+    {
+      "check": "completed folds",
+      "ok": true,
+      "detail": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
+    {
+      "check": "fold 01: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: generator digest matches run record",
+      "ok": true,
+      "detail": "2023a19c8dd4"
+    },
+    {
+      "check": "fold 01: training source is fold_01_train.csv and unchanged",
+      "ok": true,
+      "detail": "f448186b3964"
+    },
+    {
+      "check": "fold 01: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1076 vs 1076"
+    },
+    {
+      "check": "fold 01: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2729 vs 2729"
+    },
+    {
+      "check": "fold 01: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 495
+    },
+    {
+      "check": "fold 01: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: no PNG outside fold_01/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 01: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "495 on disk, 495 rows"
+    },
+    {
+      "check": "fold 01: PNGs open as RGB 64x64 (all, 495 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 01: WITH-GAN real rows == fold_01_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: synthetic rows carry fold=-1 and data/gan/fold_01/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 01: registry count == synthetic rows",
+      "ok": true,
+      "detail": "495 vs 495"
+    },
+    {
+      "check": "fold 01: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 02: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: generator digest matches run record",
+      "ok": true,
+      "detail": "a3eb27dc7f2d"
+    },
+    {
+      "check": "fold 02: training source is fold_02_train.csv and unchanged",
+      "ok": true,
+      "detail": "f5ee082c3215"
+    },
+    {
+      "check": "fold 02: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1072 vs 1072"
+    },
+    {
+      "check": "fold 02: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2733 vs 2733"
+    },
+    {
+      "check": "fold 02: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 491
+    },
+    {
+      "check": "fold 02: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: no PNG outside fold_02/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 02: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "491 on disk, 491 rows"
+    },
+    {
+      "check": "fold 02: PNGs open as RGB 64x64 (all, 491 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 02: WITH-GAN real rows == fold_02_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: synthetic rows carry fold=-1 and data/gan/fold_02/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 02: registry count == synthetic rows",
+      "ok": true,
+      "detail": "491 vs 491"
+    },
+    {
+      "check": "fold 02: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 03: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: generator digest matches run record",
+      "ok": true,
+      "detail": "3d6efc524b9b"
+    },
+    {
+      "check": "fold 03: training source is fold_03_train.csv and unchanged",
+      "ok": true,
+      "detail": "b3f5d62497e4"
+    },
+    {
+      "check": "fold 03: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1069 vs 1069"
+    },
+    {
+      "check": "fold 03: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2736 vs 2736"
+    },
+    {
+      "check": "fold 03: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 504
+    },
+    {
+      "check": "fold 03: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: no PNG outside fold_03/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 03: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "504 on disk, 504 rows"
+    },
+    {
+      "check": "fold 03: PNGs open as RGB 64x64 (all, 504 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 03: WITH-GAN real rows == fold_03_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: synthetic rows carry fold=-1 and data/gan/fold_03/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 03: registry count == synthetic rows",
+      "ok": true,
+      "detail": "504 vs 504"
+    },
+    {
+      "check": "fold 03: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 04: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: generator digest matches run record",
+      "ok": true,
+      "detail": "cd1640684e70"
+    },
+    {
+      "check": "fold 04: training source is fold_04_train.csv and unchanged",
+      "ok": true,
+      "detail": "f6a0ddd0d98d"
+    },
+    {
+      "check": "fold 04: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1069 vs 1069"
+    },
+    {
+      "check": "fold 04: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2736 vs 2736"
+    },
+    {
+      "check": "fold 04: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 504
+    },
+    {
+      "check": "fold 04: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: no PNG outside fold_04/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 04: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "504 on disk, 504 rows"
+    },
+    {
+      "check": "fold 04: PNGs open as RGB 64x64 (all, 504 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 04: WITH-GAN real rows == fold_04_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: synthetic rows carry fold=-1 and data/gan/fold_04/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 04: registry count == synthetic rows",
+      "ok": true,
+      "detail": "504 vs 504"
+    },
+    {
+      "check": "fold 04: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 05: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: generator digest matches run record",
+      "ok": true,
+      "detail": "0ac349c18b68"
+    },
+    {
+      "check": "fold 05: training source is fold_05_train.csv and unchanged",
+      "ok": true,
+      "detail": "21f854701616"
+    },
+    {
+      "check": "fold 05: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1065 vs 1065"
+    },
+    {
+      "check": "fold 05: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2740 vs 2740"
+    },
+    {
+      "check": "fold 05: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 500
+    },
+    {
+      "check": "fold 05: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: no PNG outside fold_05/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 05: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "500 on disk, 500 rows"
+    },
+    {
+      "check": "fold 05: PNGs open as RGB 64x64 (all, 500 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 05: WITH-GAN real rows == fold_05_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: synthetic rows carry fold=-1 and data/gan/fold_05/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 05: registry count == synthetic rows",
+      "ok": true,
+      "detail": "500 vs 500"
+    },
+    {
+      "check": "fold 05: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 06: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: generator digest matches run record",
+      "ok": true,
+      "detail": "cbf0b417e7eb"
+    },
+    {
+      "check": "fold 06: training source is fold_06_train.csv and unchanged",
+      "ok": true,
+      "detail": "b0b92ea1e5af"
+    },
+    {
+      "check": "fold 06: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1065 vs 1065"
+    },
+    {
+      "check": "fold 06: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2740 vs 2740"
+    },
+    {
+      "check": "fold 06: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 500
+    },
+    {
+      "check": "fold 06: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: no PNG outside fold_06/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 06: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "500 on disk, 500 rows"
+    },
+    {
+      "check": "fold 06: PNGs open as RGB 64x64 (all, 500 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 06: WITH-GAN real rows == fold_06_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: synthetic rows carry fold=-1 and data/gan/fold_06/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 06: registry count == synthetic rows",
+      "ok": true,
+      "detail": "500 vs 500"
+    },
+    {
+      "check": "fold 06: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 07: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: generator digest matches run record",
+      "ok": true,
+      "detail": "ade723fbe5cc"
+    },
+    {
+      "check": "fold 07: training source is fold_07_train.csv and unchanged",
+      "ok": true,
+      "detail": "c3a1bf8dbb66"
+    },
+    {
+      "check": "fold 07: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1064 vs 1064"
+    },
+    {
+      "check": "fold 07: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2741 vs 2741"
+    },
+    {
+      "check": "fold 07: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 507
+    },
+    {
+      "check": "fold 07: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: no PNG outside fold_07/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 07: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "507 on disk, 507 rows"
+    },
+    {
+      "check": "fold 07: PNGs open as RGB 64x64 (all, 507 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 07: WITH-GAN real rows == fold_07_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: synthetic rows carry fold=-1 and data/gan/fold_07/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 07: registry count == synthetic rows",
+      "ok": true,
+      "detail": "507 vs 507"
+    },
+    {
+      "check": "fold 07: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 08: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: generator digest matches run record",
+      "ok": true,
+      "detail": "a8337b030933"
+    },
+    {
+      "check": "fold 08: training source is fold_08_train.csv and unchanged",
+      "ok": true,
+      "detail": "47cf088cf48d"
+    },
+    {
+      "check": "fold 08: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1060 vs 1060"
+    },
+    {
+      "check": "fold 08: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2745 vs 2745"
+    },
+    {
+      "check": "fold 08: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 503
+    },
+    {
+      "check": "fold 08: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: no PNG outside fold_08/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 08: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "503 on disk, 503 rows"
+    },
+    {
+      "check": "fold 08: PNGs open as RGB 64x64 (all, 503 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 08: WITH-GAN real rows == fold_08_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: synthetic rows carry fold=-1 and data/gan/fold_08/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 08: registry count == synthetic rows",
+      "ok": true,
+      "detail": "503 vs 503"
+    },
+    {
+      "check": "fold 08: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 09: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: generator digest matches run record",
+      "ok": true,
+      "detail": "2f99ac863bbe"
+    },
+    {
+      "check": "fold 09: training source is fold_09_train.csv and unchanged",
+      "ok": true,
+      "detail": "680d8c94e7e1"
+    },
+    {
+      "check": "fold 09: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1058 vs 1058"
+    },
+    {
+      "check": "fold 09: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2747 vs 2747"
+    },
+    {
+      "check": "fold 09: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 501
+    },
+    {
+      "check": "fold 09: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: no PNG outside fold_09/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 09: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "501 on disk, 501 rows"
+    },
+    {
+      "check": "fold 09: PNGs open as RGB 64x64 (all, 501 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 09: WITH-GAN real rows == fold_09_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: synthetic rows carry fold=-1 and data/gan/fold_09/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 09: registry count == synthetic rows",
+      "ok": true,
+      "detail": "501 vs 501"
+    },
+    {
+      "check": "fold 09: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "fold 10: run record is for this fold",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: generator digest matches run record",
+      "ok": true,
+      "detail": "13ed96fd6e32"
+    },
+    {
+      "check": "fold 10: training source is fold_10_train.csv and unchanged",
+      "ok": true,
+      "detail": "a1951723f446"
+    },
+    {
+      "check": "fold 10: forbidden ids checked == validation + final test",
+      "ok": true,
+      "detail": "1056 vs 1056"
+    },
+    {
+      "check": "fold 10: real images seen == training fold rows",
+      "ok": true,
+      "detail": "2749 vs 2749"
+    },
+    {
+      "check": "fold 10: synthetic rows valid (fold, class, label, train path, file)",
+      "ok": true,
+      "detail": 499
+    },
+    {
+      "check": "fold 10: every synthetic row names this fold's generator",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: synthetic ids unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: synthetic ids disjoint from every real id",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: class directory matches class",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: no PNG outside fold_10/train",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 10: PNGs on disk == synthetic manifest rows",
+      "ok": true,
+      "detail": "499 on disk, 499 rows"
+    },
+    {
+      "check": "fold 10: PNGs open as RGB 64x64 (all, 499 files)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "fold 10: WITH-GAN real rows == fold_10_train.csv ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: WITH-GAN synthetic rows == synthetic manifest ids",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: no validation id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: no final-test id in WITH-GAN manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: synthetic rows carry fold=-1 and data/gan/fold_10/train paths",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: registry line present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: registry digests match generator / manifests / source",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "fold 10: registry count == synthetic rows",
+      "ok": true,
+      "detail": "499 vs 499"
+    },
+    {
+      "check": "fold 10: registry device / seed / architecture == run record",
+      "ok": true,
+      "detail": "cuda"
+    },
+    {
+      "check": "no synthetic id shared between folds",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "no synthetic path shared between folds",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "check": "class mapping: every label index names its class",
+      "ok": true,
+      "detail": "8 classes"
+    },
+    {
+      "check": "GAN_MANIFEST.csv present",
+      "ok": true,
+      "detail": "/content/aquahealth/results/v2/gan/GAN_MANIFEST.csv"
+    },
+    {
+      "check": "GAN_MANIFEST.csv rows == union of per-fold synthetic manifests",
+      "ok": true,
+      "detail": "5004 listed, 5004 expected"
+    },
+    {
+      "check": "GAN_MANIFEST.csv classes / labels / sources / dimensions consistent",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "GAN_MANIFEST.csv image digests match files",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "errors": [],
+  "folds": [
+    {
+      "fold": 1,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 212.8,
+      "real_training_images": 2729,
+      "synthetic": 495,
+      "per_class": {
+        "Aeromoniasis": 55,
+        "Bacterial Gill Disease": 49,
+        "Bacterial Red Disease": 79,
+        "EUS Disease": 72,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 86,
+        "White Tail Disease": 81
+      },
+      "smoke": false
+    },
+    {
+      "fold": 2,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 222.5,
+      "real_training_images": 2733,
+      "synthetic": 491,
+      "per_class": {
+        "Aeromoniasis": 55,
+        "Bacterial Gill Disease": 48,
+        "Bacterial Red Disease": 78,
+        "EUS Disease": 72,
+        "Parasitic Disease": 71,
+        "Saprolegniasis": 86,
+        "White Tail Disease": 81
+      },
+      "smoke": false
+    },
+    {
+      "fold": 3,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 222.9,
+      "real_training_images": 2736,
+      "synthetic": 504,
+      "per_class": {
+        "Aeromoniasis": 56,
+        "Bacterial Gill Disease": 50,
+        "Bacterial Red Disease": 80,
+        "EUS Disease": 74,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 88,
+        "White Tail Disease": 83
+      },
+      "smoke": false
+    },
+    {
+      "fold": 4,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 222.9,
+      "real_training_images": 2736,
+      "synthetic": 504,
+      "per_class": {
+        "Aeromoniasis": 56,
+        "Bacterial Gill Disease": 50,
+        "Bacterial Red Disease": 80,
+        "EUS Disease": 74,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 88,
+        "White Tail Disease": 83
+      },
+      "smoke": false
+    },
+    {
+      "fold": 5,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 223.2,
+      "real_training_images": 2740,
+      "synthetic": 500,
+      "per_class": {
+        "Aeromoniasis": 56,
+        "Bacterial Gill Disease": 49,
+        "Bacterial Red Disease": 79,
+        "EUS Disease": 74,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 87,
+        "White Tail Disease": 82
+      },
+      "smoke": false
+    },
+    {
+      "fold": 6,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 223.4,
+      "real_training_images": 2740,
+      "synthetic": 500,
+      "per_class": {
+        "Aeromoniasis": 56,
+        "Bacterial Gill Disease": 49,
+        "Bacterial Red Disease": 79,
+        "EUS Disease": 74,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 87,
+        "White Tail Disease": 82
+      },
+      "smoke": false
+    },
+    {
+      "fold": 7,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 223.2,
+      "real_training_images": 2741,
+      "synthetic": 507,
+      "per_class": {
+        "Aeromoniasis": 57,
+        "Bacterial Gill Disease": 50,
+        "Bacterial Red Disease": 80,
+        "EUS Disease": 75,
+        "Parasitic Disease": 74,
+        "Saprolegniasis": 88,
+        "White Tail Disease": 83
+      },
+      "smoke": false
+    },
+    {
+      "fold": 8,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 223.5,
+      "real_training_images": 2745,
+      "synthetic": 503,
+      "per_class": {
+        "Aeromoniasis": 56,
+        "Bacterial Gill Disease": 50,
+        "Bacterial Red Disease": 79,
+        "EUS Disease": 75,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 88,
+        "White Tail Disease": 82
+      },
+      "smoke": false
+    },
+    {
+      "fold": 9,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 223.5,
+      "real_training_images": 2747,
+      "synthetic": 501,
+      "per_class": {
+        "Aeromoniasis": 56,
+        "Bacterial Gill Disease": 50,
+        "Bacterial Red Disease": 79,
+        "EUS Disease": 74,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 88,
+        "White Tail Disease": 81
+      },
+      "smoke": false
+    },
+    {
+      "fold": 10,
+      "device": "cuda",
+      "gpu_name": "Tesla T4",
+      "cuda_version": "13.0",
+      "epochs": 30,
+      "seconds": 224.1,
+      "real_training_images": 2749,
+      "synthetic": 499,
+      "per_class": {
+        "Aeromoniasis": 55,
+        "Bacterial Gill Disease": 50,
+        "Bacterial Red Disease": 79,
+        "EUS Disease": 74,
+        "Parasitic Disease": 73,
+        "Saprolegniasis": 87,
+        "White Tail Disease": 81
+      },
+      "smoke": false
+    }
+  ],
+  "counts": {
+    "folds": 10,
+    "synthetic_images": 5004,
+    "per_fold": {
+      "1": 495,
+      "2": 491,
+      "3": 504,
+      "4": 504,
+      "5": 500,
+      "6": 500,
+      "7": 507,
+      "8": 503,
+      "9": 501,
+      "10": 499
+    }
+  }
+}

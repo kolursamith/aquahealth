@@ -136,3 +136,4 @@ aquahealth_bundle*/
 
 # Quarantined unofficial GAN outputs (v2 data / local MPS): never committed, never used.
 data/gan_archive_unofficial/
+!results/v2/drive_delivery.json

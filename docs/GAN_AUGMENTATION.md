@@ -170,7 +170,29 @@ Before this layer's CUDA-only rule was enforced, fold 1 was trained locally on A
 "all real GAN training on Colab" rule, so its registry line was removed from `results/v2/gan/registry.csv`
 (kept only as an untracked backup) and its outputs are not used; the Colab run of fold 1 replaces it.
 
-## 8. Runs on the real data (Colab)
+## 8. Official run — dataset configuration v3, Google Colab CUDA (2026-09-20) — VERIFIED
 
-NOT VERIFIED until `results/v2/gan/registry.csv`, `GAN_MANIFEST.csv`, `verification.json` and
-`generation_summary.json` hold the Colab run; this section is filled from them afterwards.
+Source of every number: `results/v2/gan/registry.csv`, `GAN_MANIFEST.csv`, `verification.json`,
+`generation_summary.json`, `run_gan_all_folds.console.log` (records brought back from the Colab
+runtime; images, generators and per-fold manifests are in `MyDrive/AquaHealth/aquahealth_gan_layer3_a9bc3c8.tar.gz`, 689.6 MB).
+
+| item | value |
+|---|---|
+| repository on Colab | `a9bc3c8` (develop) — data configuration v3 (`6fa8e8e`) |
+| device / GPU / CUDA / torch | `cuda` · Tesla T4 (14.6 GiB) · CUDA 13.0 · torch 2.14.0+cu130 (`--require-cuda`) |
+| smoke test (fold 1, `smoke.json`) | PASS — 256 images, 1 epoch, 16 PNGs, `verify_gan_outputs.py --smoke --images all`: 31/31 checks, RESULT: VERIFIED |
+| configuration | `configs/gan_v2/default.json`: cDCGAN, 64×64, z=100, Adam 2e-4 (0.5, 0.999), batch 64, 30 epochs, seed 42, non-saturating BCE |
+| run window | 11:13:57 → 11:53:50 UTC; total training 2,222 s (212.8–224.1 s per fold; wall 229–240 s per fold incl. decode + generation) |
+| training source per fold | `data/audit/cv_v3/fold_XX_train.csv` (2,729–2,749 rows); registry digests == committed `cv_v3/folds.sha256` |
+| forbidden ids checked per fold | validation + final test = 1,076 / 1,072 / 1,069 / 1,069 / 1,065 / 1,065 / 1,064 / 1,060 / 1,058 / 1,056 (0 offered) |
+| generated per fold | 495 / 491 / 504 / 504 / 500 / 500 / 507 / 503 / 501 / 499 = **5,004** (planned 5,004; failed 0) |
+| generated per class | Saprolegniasis 873 · White Tail 819 · Bacterial Red 792 · EUS 738 · Parasitic 729 · Aeromoniasis 558 · Bacterial Gill 495 · Healthy Fish 0 (largest class in every fold) |
+| output | PNG RGB 64×64 under `data/gan/fold_XX/train/<class>/`; `generated_at` 11:17:45–11:53:35 |
+| verification (`verify_gan_outputs.py --images all`) | **229/229 checks ok, RESULT: VERIFIED**: per fold — generator digest == run record, training source unchanged, forbidden count == |val| + |test|, real images == fold rows, synthetic rows valid, ids unique and disjoint from every real id, class dir == class, no PNG outside `fold_XX/train`, PNGs on disk == rows, all PNGs open as RGB 64×64, WITH-GAN = real train ids + synthetic ids with no validation / final-test id, registry digests/counts/device agree; across folds — no shared id or path; label index == class; `GAN_MANIFEST.csv` 5,004 rows == union of per-fold manifests, image digests match |
+| raw data after generation | `colab_dataset.py verify --hash sample` RESULT: VERIFIED (seeded 200-image re-hash; no source image modified) |
+| persistence | `MyDrive/AquaHealth/results_v2_datasetv3/` (records, live) and `aquahealth_gan_layer3_a9bc3c8.tar.gz` (records + 5,004 PNGs + 10 generators + per-fold manifests) |
+
+Not an official result: the earlier local MPS fold-1 run (v2 data), quarantined under
+`data/gan_archive_unofficial/`.
+
+**LAYER 3 GAN COMPLETE — COLAB CUDA VERIFIED.**

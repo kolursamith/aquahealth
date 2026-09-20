@@ -1,0 +1,848 @@
+2026-09-20 11:13:57,444 [INFO] gan_all_folds: folds [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] on cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}; config configs/gan_v2/default.json
+2026-09-20 11:13:57,449 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:13:57,449 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:13:57,561 [INFO] gan_fold: fold 1: 2729 training rows; 1076 forbidden ids (validation 315 + final test 761)
+2026-09-20 11:14:11,124 [INFO] gan_fold: real per class {'Bacterial Red Disease': 324, 'Aeromoniasis': 348, 'Bacterial Gill Disease': 354, 'Parasitic Disease': 330, 'Saprolegniasis': 317, 'White Tail Disease': 322, 'EUS Disease': 331, 'Healthy Fish': 403} -> synthetic plan {'Bacterial Red Disease': 79, 'Aeromoniasis': 55, 'Bacterial Gill Disease': 49, 'Parasitic Disease': 73, 'Saprolegniasis': 86, 'White Tail Disease': 81, 'EUS Disease': 72, 'Healthy Fish': 0}
+2026-09-20 11:14:17,974 [INFO] src.gan_augmentation: fold 1 epoch 1/30  loss_G 3.750  loss_D 1.807
+2026-09-20 11:14:24,117 [INFO] src.gan_augmentation: fold 1 epoch 2/30  loss_G 3.840  loss_D 0.865
+2026-09-20 11:14:30,342 [INFO] src.gan_augmentation: fold 1 epoch 3/30  loss_G 4.055  loss_D 0.902
+2026-09-20 11:14:36,658 [INFO] src.gan_augmentation: fold 1 epoch 4/30  loss_G 3.533  loss_D 1.016
+2026-09-20 11:14:43,048 [INFO] src.gan_augmentation: fold 1 epoch 5/30  loss_G 3.045  loss_D 0.988
+2026-09-20 11:14:49,524 [INFO] src.gan_augmentation: fold 1 epoch 6/30  loss_G 2.911  loss_D 0.928
+2026-09-20 11:14:56,101 [INFO] src.gan_augmentation: fold 1 epoch 7/30  loss_G 2.842  loss_D 1.043
+2026-09-20 11:15:02,793 [INFO] src.gan_augmentation: fold 1 epoch 8/30  loss_G 3.042  loss_D 0.940
+2026-09-20 11:15:09,628 [INFO] src.gan_augmentation: fold 1 epoch 9/30  loss_G 2.927  loss_D 0.833
+2026-09-20 11:15:16,541 [INFO] src.gan_augmentation: fold 1 epoch 10/30  loss_G 3.405  loss_D 1.087
+2026-09-20 11:15:23,562 [INFO] src.gan_augmentation: fold 1 epoch 11/30  loss_G 2.841  loss_D 0.830
+2026-09-20 11:15:30,765 [INFO] src.gan_augmentation: fold 1 epoch 12/30  loss_G 3.585  loss_D 0.801
+2026-09-20 11:15:38,150 [INFO] src.gan_augmentation: fold 1 epoch 13/30  loss_G 3.444  loss_D 0.834
+2026-09-20 11:15:45,756 [INFO] src.gan_augmentation: fold 1 epoch 14/30  loss_G 3.516  loss_D 0.856
+2026-09-20 11:15:53,534 [INFO] src.gan_augmentation: fold 1 epoch 15/30  loss_G 3.053  loss_D 0.859
+2026-09-20 11:16:01,291 [INFO] src.gan_augmentation: fold 1 epoch 16/30  loss_G 3.654  loss_D 0.933
+2026-09-20 11:16:08,883 [INFO] src.gan_augmentation: fold 1 epoch 17/30  loss_G 3.305  loss_D 0.733
+2026-09-20 11:16:16,293 [INFO] src.gan_augmentation: fold 1 epoch 18/30  loss_G 3.719  loss_D 0.768
+2026-09-20 11:16:23,596 [INFO] src.gan_augmentation: fold 1 epoch 19/30  loss_G 3.665  loss_D 0.784
+2026-09-20 11:16:30,820 [INFO] src.gan_augmentation: fold 1 epoch 20/30  loss_G 3.286  loss_D 0.873
+2026-09-20 11:16:38,008 [INFO] src.gan_augmentation: fold 1 epoch 21/30  loss_G 3.598  loss_D 0.869
+2026-09-20 11:16:45,204 [INFO] src.gan_augmentation: fold 1 epoch 22/30  loss_G 3.712  loss_D 0.690
+2026-09-20 11:16:52,448 [INFO] src.gan_augmentation: fold 1 epoch 23/30  loss_G 3.982  loss_D 0.650
+2026-09-20 11:16:59,737 [INFO] src.gan_augmentation: fold 1 epoch 24/30  loss_G 3.316  loss_D 0.903
+2026-09-20 11:17:07,104 [INFO] src.gan_augmentation: fold 1 epoch 25/30  loss_G 3.435  loss_D 0.964
+2026-09-20 11:17:14,520 [INFO] src.gan_augmentation: fold 1 epoch 26/30  loss_G 3.346  loss_D 0.702
+2026-09-20 11:17:21,976 [INFO] src.gan_augmentation: fold 1 epoch 27/30  loss_G 3.845  loss_D 0.605
+2026-09-20 11:17:29,437 [INFO] src.gan_augmentation: fold 1 epoch 28/30  loss_G 3.835  loss_D 0.726
+2026-09-20 11:17:36,893 [INFO] src.gan_augmentation: fold 1 epoch 29/30  loss_G 3.853  loss_D 0.745
+2026-09-20 11:17:44,275 [INFO] src.gan_augmentation: fold 1 epoch 30/30  loss_G 3.741  loss_D 0.788
+2026-09-20 11:17:46,782 [INFO] gan_all_folds: fold 1 done: 495 synthetic in 229 s wall
+2026-09-20 11:17:46,784 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:17:46,786 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:17:46,966 [INFO] gan_fold: fold 2: 2733 training rows; 1072 forbidden ids (validation 311 + final test 761)
+2026-09-20 11:18:00,385 [INFO] gan_fold: real per class {'Bacterial Red Disease': 325, 'Aeromoniasis': 348, 'Bacterial Gill Disease': 355, 'Parasitic Disease': 332, 'Saprolegniasis': 317, 'White Tail Disease': 322, 'EUS Disease': 331, 'Healthy Fish': 403} -> synthetic plan {'Bacterial Red Disease': 78, 'Aeromoniasis': 55, 'Bacterial Gill Disease': 48, 'Parasitic Disease': 71, 'Saprolegniasis': 86, 'White Tail Disease': 81, 'EUS Disease': 72, 'Healthy Fish': 0}
+2026-09-20 11:18:07,804 [INFO] src.gan_augmentation: fold 2 epoch 1/30  loss_G 3.763  loss_D 2.030
+2026-09-20 11:18:15,196 [INFO] src.gan_augmentation: fold 2 epoch 2/30  loss_G 3.365  loss_D 0.999
+2026-09-20 11:18:22,869 [INFO] src.gan_augmentation: fold 2 epoch 3/30  loss_G 3.753  loss_D 1.027
+2026-09-20 11:18:30,866 [INFO] src.gan_augmentation: fold 2 epoch 4/30  loss_G 3.292  loss_D 0.860
+2026-09-20 11:18:38,947 [INFO] src.gan_augmentation: fold 2 epoch 5/30  loss_G 3.384  loss_D 0.988
+2026-09-20 11:18:46,664 [INFO] src.gan_augmentation: fold 2 epoch 6/30  loss_G 3.040  loss_D 0.906
+2026-09-20 11:18:54,081 [INFO] src.gan_augmentation: fold 2 epoch 7/30  loss_G 3.144  loss_D 0.754
+2026-09-20 11:19:01,321 [INFO] src.gan_augmentation: fold 2 epoch 8/30  loss_G 3.018  loss_D 0.963
+2026-09-20 11:19:08,486 [INFO] src.gan_augmentation: fold 2 epoch 9/30  loss_G 2.774  loss_D 1.088
+2026-09-20 11:19:15,615 [INFO] src.gan_augmentation: fold 2 epoch 10/30  loss_G 2.990  loss_D 0.906
+2026-09-20 11:19:22,757 [INFO] src.gan_augmentation: fold 2 epoch 11/30  loss_G 3.013  loss_D 0.861
+2026-09-20 11:19:29,932 [INFO] src.gan_augmentation: fold 2 epoch 12/30  loss_G 3.153  loss_D 0.969
+2026-09-20 11:19:37,221 [INFO] src.gan_augmentation: fold 2 epoch 13/30  loss_G 2.908  loss_D 1.068
+2026-09-20 11:19:44,591 [INFO] src.gan_augmentation: fold 2 epoch 14/30  loss_G 3.413  loss_D 0.823
+2026-09-20 11:19:52,068 [INFO] src.gan_augmentation: fold 2 epoch 15/30  loss_G 2.731  loss_D 0.982
+2026-09-20 11:19:59,595 [INFO] src.gan_augmentation: fold 2 epoch 16/30  loss_G 3.155  loss_D 0.906
+2026-09-20 11:20:07,120 [INFO] src.gan_augmentation: fold 2 epoch 17/30  loss_G 3.071  loss_D 0.643
+2026-09-20 11:20:14,626 [INFO] src.gan_augmentation: fold 2 epoch 18/30  loss_G 2.468  loss_D 1.211
+2026-09-20 11:20:22,088 [INFO] src.gan_augmentation: fold 2 epoch 19/30  loss_G 2.885  loss_D 1.010
+2026-09-20 11:20:29,495 [INFO] src.gan_augmentation: fold 2 epoch 20/30  loss_G 3.049  loss_D 0.797
+2026-09-20 11:20:36,853 [INFO] src.gan_augmentation: fold 2 epoch 21/30  loss_G 2.942  loss_D 0.863
+2026-09-20 11:20:44,173 [INFO] src.gan_augmentation: fold 2 epoch 22/30  loss_G 3.113  loss_D 0.747
+2026-09-20 11:20:51,486 [INFO] src.gan_augmentation: fold 2 epoch 23/30  loss_G 3.543  loss_D 0.874
+2026-09-20 11:20:58,800 [INFO] src.gan_augmentation: fold 2 epoch 24/30  loss_G 2.944  loss_D 0.898
+2026-09-20 11:21:06,146 [INFO] src.gan_augmentation: fold 2 epoch 25/30  loss_G 3.324  loss_D 0.725
+2026-09-20 11:21:13,510 [INFO] src.gan_augmentation: fold 2 epoch 26/30  loss_G 3.168  loss_D 0.873
+2026-09-20 11:21:20,874 [INFO] src.gan_augmentation: fold 2 epoch 27/30  loss_G 3.369  loss_D 0.862
+2026-09-20 11:21:28,284 [INFO] src.gan_augmentation: fold 2 epoch 28/30  loss_G 2.868  loss_D 0.859
+2026-09-20 11:21:35,694 [INFO] src.gan_augmentation: fold 2 epoch 29/30  loss_G 3.021  loss_D 0.862
+2026-09-20 11:21:43,119 [INFO] src.gan_augmentation: fold 2 epoch 30/30  loss_G 3.073  loss_D 0.606
+2026-09-20 11:21:44,800 [INFO] gan_all_folds: fold 2 done: 491 synthetic in 238 s wall
+2026-09-20 11:21:44,801 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:21:44,801 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:21:44,903 [INFO] gan_fold: fold 3: 2736 training rows; 1069 forbidden ids (validation 308 + final test 761)
+2026-09-20 11:21:58,342 [INFO] gan_fold: real per class {'Aeromoniasis': 349, 'Bacterial Red Disease': 325, 'Parasitic Disease': 332, 'Saprolegniasis': 317, 'White Tail Disease': 322, 'EUS Disease': 331, 'Healthy Fish': 405, 'Bacterial Gill Disease': 355} -> synthetic plan {'Aeromoniasis': 56, 'Bacterial Red Disease': 80, 'Parasitic Disease': 73, 'Saprolegniasis': 88, 'White Tail Disease': 83, 'EUS Disease': 74, 'Healthy Fish': 0, 'Bacterial Gill Disease': 50}
+2026-09-20 11:22:05,757 [INFO] src.gan_augmentation: fold 3 epoch 1/30  loss_G 3.812  loss_D 1.914
+2026-09-20 11:22:13,229 [INFO] src.gan_augmentation: fold 3 epoch 2/30  loss_G 3.722  loss_D 0.957
+2026-09-20 11:22:21,020 [INFO] src.gan_augmentation: fold 3 epoch 3/30  loss_G 3.957  loss_D 0.999
+2026-09-20 11:22:29,174 [INFO] src.gan_augmentation: fold 3 epoch 4/30  loss_G 3.332  loss_D 0.819
+2026-09-20 11:22:37,144 [INFO] src.gan_augmentation: fold 3 epoch 5/30  loss_G 2.859  loss_D 0.938
+2026-09-20 11:22:44,764 [INFO] src.gan_augmentation: fold 3 epoch 6/30  loss_G 3.422  loss_D 0.993
+2026-09-20 11:22:52,134 [INFO] src.gan_augmentation: fold 3 epoch 7/30  loss_G 3.325  loss_D 0.965
+2026-09-20 11:22:59,360 [INFO] src.gan_augmentation: fold 3 epoch 8/30  loss_G 3.036  loss_D 0.908
+2026-09-20 11:23:06,523 [INFO] src.gan_augmentation: fold 3 epoch 9/30  loss_G 2.576  loss_D 1.229
+2026-09-20 11:23:13,657 [INFO] src.gan_augmentation: fold 3 epoch 10/30  loss_G 3.199  loss_D 0.854
+2026-09-20 11:23:20,826 [INFO] src.gan_augmentation: fold 3 epoch 11/30  loss_G 2.534  loss_D 1.064
+2026-09-20 11:23:28,061 [INFO] src.gan_augmentation: fold 3 epoch 12/30  loss_G 2.339  loss_D 1.045
+2026-09-20 11:23:35,402 [INFO] src.gan_augmentation: fold 3 epoch 13/30  loss_G 3.108  loss_D 0.900
+2026-09-20 11:23:42,827 [INFO] src.gan_augmentation: fold 3 epoch 14/30  loss_G 3.557  loss_D 0.953
+2026-09-20 11:23:50,329 [INFO] src.gan_augmentation: fold 3 epoch 15/30  loss_G 2.966  loss_D 0.964
+2026-09-20 11:23:57,859 [INFO] src.gan_augmentation: fold 3 epoch 16/30  loss_G 3.353  loss_D 0.881
+2026-09-20 11:24:05,387 [INFO] src.gan_augmentation: fold 3 epoch 17/30  loss_G 3.260  loss_D 0.894
+2026-09-20 11:24:12,872 [INFO] src.gan_augmentation: fold 3 epoch 18/30  loss_G 2.991  loss_D 0.929
+2026-09-20 11:24:20,312 [INFO] src.gan_augmentation: fold 3 epoch 19/30  loss_G 3.332  loss_D 0.746
+2026-09-20 11:24:27,698 [INFO] src.gan_augmentation: fold 3 epoch 20/30  loss_G 2.959  loss_D 0.757
+2026-09-20 11:24:35,047 [INFO] src.gan_augmentation: fold 3 epoch 21/30  loss_G 3.875  loss_D 0.685
+2026-09-20 11:24:42,369 [INFO] src.gan_augmentation: fold 3 epoch 22/30  loss_G 3.586  loss_D 0.749
+2026-09-20 11:24:49,681 [INFO] src.gan_augmentation: fold 3 epoch 23/30  loss_G 3.743  loss_D 0.634
+2026-09-20 11:24:57,033 [INFO] src.gan_augmentation: fold 3 epoch 24/30  loss_G 4.115  loss_D 0.738
+2026-09-20 11:25:04,390 [INFO] src.gan_augmentation: fold 3 epoch 25/30  loss_G 3.558  loss_D 0.732
+2026-09-20 11:25:11,761 [INFO] src.gan_augmentation: fold 3 epoch 26/30  loss_G 3.515  loss_D 0.627
+2026-09-20 11:25:19,160 [INFO] src.gan_augmentation: fold 3 epoch 27/30  loss_G 3.738  loss_D 0.684
+2026-09-20 11:25:26,562 [INFO] src.gan_augmentation: fold 3 epoch 28/30  loss_G 3.740  loss_D 0.815
+2026-09-20 11:25:33,986 [INFO] src.gan_augmentation: fold 3 epoch 29/30  loss_G 3.580  loss_D 0.808
+2026-09-20 11:25:41,403 [INFO] src.gan_augmentation: fold 3 epoch 30/30  loss_G 3.712  loss_D 0.711
+2026-09-20 11:25:43,263 [INFO] gan_all_folds: fold 3 done: 504 synthetic in 238 s wall
+2026-09-20 11:25:43,266 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:25:43,267 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:25:43,468 [INFO] gan_fold: fold 4: 2736 training rows; 1069 forbidden ids (validation 308 + final test 761)
+2026-09-20 11:25:56,652 [INFO] gan_fold: real per class {'Bacterial Red Disease': 325, 'Aeromoniasis': 349, 'Bacterial Gill Disease': 355, 'Parasitic Disease': 332, 'Saprolegniasis': 317, 'White Tail Disease': 322, 'EUS Disease': 331, 'Healthy Fish': 405} -> synthetic plan {'Bacterial Red Disease': 80, 'Aeromoniasis': 56, 'Bacterial Gill Disease': 50, 'Parasitic Disease': 73, 'Saprolegniasis': 88, 'White Tail Disease': 83, 'EUS Disease': 74, 'Healthy Fish': 0}
+2026-09-20 11:26:04,142 [INFO] src.gan_augmentation: fold 4 epoch 1/30  loss_G 3.648  loss_D 1.990
+2026-09-20 11:26:11,589 [INFO] src.gan_augmentation: fold 4 epoch 2/30  loss_G 4.245  loss_D 0.886
+2026-09-20 11:26:19,355 [INFO] src.gan_augmentation: fold 4 epoch 3/30  loss_G 3.740  loss_D 1.033
+2026-09-20 11:26:27,427 [INFO] src.gan_augmentation: fold 4 epoch 4/30  loss_G 3.577  loss_D 0.730
+2026-09-20 11:26:35,386 [INFO] src.gan_augmentation: fold 4 epoch 5/30  loss_G 3.342  loss_D 0.928
+2026-09-20 11:26:43,026 [INFO] src.gan_augmentation: fold 4 epoch 6/30  loss_G 3.068  loss_D 0.817
+2026-09-20 11:26:50,398 [INFO] src.gan_augmentation: fold 4 epoch 7/30  loss_G 3.048  loss_D 1.049
+2026-09-20 11:26:57,625 [INFO] src.gan_augmentation: fold 4 epoch 8/30  loss_G 3.016  loss_D 1.049
+2026-09-20 11:27:04,789 [INFO] src.gan_augmentation: fold 4 epoch 9/30  loss_G 2.721  loss_D 0.941
+2026-09-20 11:27:11,946 [INFO] src.gan_augmentation: fold 4 epoch 10/30  loss_G 3.272  loss_D 1.006
+2026-09-20 11:27:19,131 [INFO] src.gan_augmentation: fold 4 epoch 11/30  loss_G 3.024  loss_D 0.927
+2026-09-20 11:27:26,359 [INFO] src.gan_augmentation: fold 4 epoch 12/30  loss_G 2.720  loss_D 0.953
+2026-09-20 11:27:33,685 [INFO] src.gan_augmentation: fold 4 epoch 13/30  loss_G 3.078  loss_D 0.734
+2026-09-20 11:27:41,088 [INFO] src.gan_augmentation: fold 4 epoch 14/30  loss_G 3.047  loss_D 1.087
+2026-09-20 11:27:48,570 [INFO] src.gan_augmentation: fold 4 epoch 15/30  loss_G 2.921  loss_D 0.816
+2026-09-20 11:27:56,087 [INFO] src.gan_augmentation: fold 4 epoch 16/30  loss_G 2.701  loss_D 0.989
+2026-09-20 11:28:03,610 [INFO] src.gan_augmentation: fold 4 epoch 17/30  loss_G 2.980  loss_D 1.000
+2026-09-20 11:28:11,112 [INFO] src.gan_augmentation: fold 4 epoch 18/30  loss_G 2.715  loss_D 0.996
+2026-09-20 11:28:18,580 [INFO] src.gan_augmentation: fold 4 epoch 19/30  loss_G 2.787  loss_D 0.801
+2026-09-20 11:28:25,976 [INFO] src.gan_augmentation: fold 4 epoch 20/30  loss_G 2.962  loss_D 0.835
+2026-09-20 11:28:33,341 [INFO] src.gan_augmentation: fold 4 epoch 21/30  loss_G 2.797  loss_D 1.175
+2026-09-20 11:28:40,685 [INFO] src.gan_augmentation: fold 4 epoch 22/30  loss_G 3.308  loss_D 0.730
+2026-09-20 11:28:48,012 [INFO] src.gan_augmentation: fold 4 epoch 23/30  loss_G 3.083  loss_D 0.686
+2026-09-20 11:28:55,352 [INFO] src.gan_augmentation: fold 4 epoch 24/30  loss_G 3.056  loss_D 0.950
+2026-09-20 11:29:02,698 [INFO] src.gan_augmentation: fold 4 epoch 25/30  loss_G 3.046  loss_D 0.878
+2026-09-20 11:29:10,074 [INFO] src.gan_augmentation: fold 4 epoch 26/30  loss_G 3.508  loss_D 0.851
+2026-09-20 11:29:17,457 [INFO] src.gan_augmentation: fold 4 epoch 27/30  loss_G 3.262  loss_D 0.769
+2026-09-20 11:29:24,867 [INFO] src.gan_augmentation: fold 4 epoch 28/30  loss_G 3.160  loss_D 0.781
+2026-09-20 11:29:32,294 [INFO] src.gan_augmentation: fold 4 epoch 29/30  loss_G 2.997  loss_D 0.861
+2026-09-20 11:29:39,733 [INFO] src.gan_augmentation: fold 4 epoch 30/30  loss_G 3.643  loss_D 0.655
+2026-09-20 11:29:41,392 [INFO] gan_all_folds: fold 4 done: 504 synthetic in 238 s wall
+2026-09-20 11:29:41,394 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:29:41,394 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:29:41,496 [INFO] gan_fold: fold 5: 2740 training rows; 1065 forbidden ids (validation 304 + final test 761)
+2026-09-20 11:29:55,154 [INFO] gan_fold: real per class {'Bacterial Red Disease': 326, 'Aeromoniasis': 349, 'Bacterial Gill Disease': 356, 'Parasitic Disease': 332, 'Saprolegniasis': 318, 'White Tail Disease': 323, 'EUS Disease': 331, 'Healthy Fish': 405} -> synthetic plan {'Bacterial Red Disease': 79, 'Aeromoniasis': 56, 'Bacterial Gill Disease': 49, 'Parasitic Disease': 73, 'Saprolegniasis': 87, 'White Tail Disease': 82, 'EUS Disease': 74, 'Healthy Fish': 0}
+2026-09-20 11:30:02,554 [INFO] src.gan_augmentation: fold 5 epoch 1/30  loss_G 3.541  loss_D 1.969
+2026-09-20 11:30:10,018 [INFO] src.gan_augmentation: fold 5 epoch 2/30  loss_G 3.271  loss_D 1.103
+2026-09-20 11:30:17,816 [INFO] src.gan_augmentation: fold 5 epoch 3/30  loss_G 3.541  loss_D 0.891
+2026-09-20 11:30:25,923 [INFO] src.gan_augmentation: fold 5 epoch 4/30  loss_G 3.267  loss_D 0.940
+2026-09-20 11:30:33,886 [INFO] src.gan_augmentation: fold 5 epoch 5/30  loss_G 2.416  loss_D 1.168
+2026-09-20 11:30:41,495 [INFO] src.gan_augmentation: fold 5 epoch 6/30  loss_G 3.031  loss_D 0.997
+2026-09-20 11:30:48,869 [INFO] src.gan_augmentation: fold 5 epoch 7/30  loss_G 2.753  loss_D 1.065
+2026-09-20 11:30:56,101 [INFO] src.gan_augmentation: fold 5 epoch 8/30  loss_G 2.982  loss_D 0.976
+2026-09-20 11:31:03,277 [INFO] src.gan_augmentation: fold 5 epoch 9/30  loss_G 2.814  loss_D 1.065
+2026-09-20 11:31:10,447 [INFO] src.gan_augmentation: fold 5 epoch 10/30  loss_G 2.349  loss_D 1.136
+2026-09-20 11:31:17,631 [INFO] src.gan_augmentation: fold 5 epoch 11/30  loss_G 2.608  loss_D 0.912
+2026-09-20 11:31:24,886 [INFO] src.gan_augmentation: fold 5 epoch 12/30  loss_G 2.744  loss_D 0.938
+2026-09-20 11:31:32,219 [INFO] src.gan_augmentation: fold 5 epoch 13/30  loss_G 2.835  loss_D 1.046
+2026-09-20 11:31:39,663 [INFO] src.gan_augmentation: fold 5 epoch 14/30  loss_G 2.535  loss_D 1.079
+2026-09-20 11:31:47,179 [INFO] src.gan_augmentation: fold 5 epoch 15/30  loss_G 2.844  loss_D 0.850
+2026-09-20 11:31:54,728 [INFO] src.gan_augmentation: fold 5 epoch 16/30  loss_G 2.661  loss_D 0.968
+2026-09-20 11:32:02,268 [INFO] src.gan_augmentation: fold 5 epoch 17/30  loss_G 3.058  loss_D 0.979
+2026-09-20 11:32:09,765 [INFO] src.gan_augmentation: fold 5 epoch 18/30  loss_G 2.575  loss_D 0.972
+2026-09-20 11:32:17,231 [INFO] src.gan_augmentation: fold 5 epoch 19/30  loss_G 2.792  loss_D 0.916
+2026-09-20 11:32:24,646 [INFO] src.gan_augmentation: fold 5 epoch 20/30  loss_G 2.905  loss_D 0.931
+2026-09-20 11:32:32,004 [INFO] src.gan_augmentation: fold 5 epoch 21/30  loss_G 3.018  loss_D 0.875
+2026-09-20 11:32:39,372 [INFO] src.gan_augmentation: fold 5 epoch 22/30  loss_G 2.950  loss_D 0.792
+2026-09-20 11:32:46,707 [INFO] src.gan_augmentation: fold 5 epoch 23/30  loss_G 3.495  loss_D 0.776
+2026-09-20 11:32:54,057 [INFO] src.gan_augmentation: fold 5 epoch 24/30  loss_G 3.285  loss_D 0.942
+2026-09-20 11:33:01,433 [INFO] src.gan_augmentation: fold 5 epoch 25/30  loss_G 2.903  loss_D 0.983
+2026-09-20 11:33:08,811 [INFO] src.gan_augmentation: fold 5 epoch 26/30  loss_G 2.943  loss_D 0.867
+2026-09-20 11:33:16,211 [INFO] src.gan_augmentation: fold 5 epoch 27/30  loss_G 2.754  loss_D 0.856
+2026-09-20 11:33:23,626 [INFO] src.gan_augmentation: fold 5 epoch 28/30  loss_G 3.104  loss_D 0.865
+2026-09-20 11:33:31,052 [INFO] src.gan_augmentation: fold 5 epoch 29/30  loss_G 3.044  loss_D 0.854
+2026-09-20 11:33:38,490 [INFO] src.gan_augmentation: fold 5 epoch 30/30  loss_G 3.394  loss_D 0.802
+2026-09-20 11:33:40,482 [INFO] gan_all_folds: fold 5 done: 500 synthetic in 239 s wall
+2026-09-20 11:33:40,484 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:33:40,485 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:33:40,657 [INFO] gan_fold: fold 6: 2740 training rows; 1065 forbidden ids (validation 304 + final test 761)
+2026-09-20 11:33:53,775 [INFO] gan_fold: real per class {'Bacterial Red Disease': 326, 'Aeromoniasis': 349, 'Bacterial Gill Disease': 356, 'Parasitic Disease': 332, 'White Tail Disease': 323, 'EUS Disease': 331, 'Healthy Fish': 405, 'Saprolegniasis': 318} -> synthetic plan {'Bacterial Red Disease': 79, 'Aeromoniasis': 56, 'Bacterial Gill Disease': 49, 'Parasitic Disease': 73, 'White Tail Disease': 82, 'EUS Disease': 74, 'Healthy Fish': 0, 'Saprolegniasis': 87}
+2026-09-20 11:34:01,286 [INFO] src.gan_augmentation: fold 6 epoch 1/30  loss_G 3.709  loss_D 1.877
+2026-09-20 11:34:08,767 [INFO] src.gan_augmentation: fold 6 epoch 2/30  loss_G 3.209  loss_D 1.043
+2026-09-20 11:34:16,590 [INFO] src.gan_augmentation: fold 6 epoch 3/30  loss_G 3.202  loss_D 1.082
+2026-09-20 11:34:24,708 [INFO] src.gan_augmentation: fold 6 epoch 4/30  loss_G 3.338  loss_D 0.858
+2026-09-20 11:34:32,648 [INFO] src.gan_augmentation: fold 6 epoch 5/30  loss_G 3.018  loss_D 1.016
+2026-09-20 11:34:40,297 [INFO] src.gan_augmentation: fold 6 epoch 6/30  loss_G 2.835  loss_D 0.986
+2026-09-20 11:34:47,682 [INFO] src.gan_augmentation: fold 6 epoch 7/30  loss_G 3.137  loss_D 0.888
+2026-09-20 11:34:54,937 [INFO] src.gan_augmentation: fold 6 epoch 8/30  loss_G 3.421  loss_D 0.940
+2026-09-20 11:35:02,120 [INFO] src.gan_augmentation: fold 6 epoch 9/30  loss_G 3.224  loss_D 0.980
+2026-09-20 11:35:09,278 [INFO] src.gan_augmentation: fold 6 epoch 10/30  loss_G 3.299  loss_D 0.962
+2026-09-20 11:35:16,465 [INFO] src.gan_augmentation: fold 6 epoch 11/30  loss_G 3.486  loss_D 0.843
+2026-09-20 11:35:23,722 [INFO] src.gan_augmentation: fold 6 epoch 12/30  loss_G 2.803  loss_D 0.977
+2026-09-20 11:35:31,064 [INFO] src.gan_augmentation: fold 6 epoch 13/30  loss_G 2.843  loss_D 1.039
+2026-09-20 11:35:38,486 [INFO] src.gan_augmentation: fold 6 epoch 14/30  loss_G 2.780  loss_D 0.835
+2026-09-20 11:35:45,980 [INFO] src.gan_augmentation: fold 6 epoch 15/30  loss_G 3.058  loss_D 0.851
+2026-09-20 11:35:53,510 [INFO] src.gan_augmentation: fold 6 epoch 16/30  loss_G 2.509  loss_D 1.054
+2026-09-20 11:36:01,056 [INFO] src.gan_augmentation: fold 6 epoch 17/30  loss_G 3.034  loss_D 0.875
+2026-09-20 11:36:08,568 [INFO] src.gan_augmentation: fold 6 epoch 18/30  loss_G 3.389  loss_D 0.891
+2026-09-20 11:36:16,043 [INFO] src.gan_augmentation: fold 6 epoch 19/30  loss_G 2.912  loss_D 0.895
+2026-09-20 11:36:23,454 [INFO] src.gan_augmentation: fold 6 epoch 20/30  loss_G 3.284  loss_D 0.891
+2026-09-20 11:36:30,818 [INFO] src.gan_augmentation: fold 6 epoch 21/30  loss_G 3.015  loss_D 0.825
+2026-09-20 11:36:38,155 [INFO] src.gan_augmentation: fold 6 epoch 22/30  loss_G 3.062  loss_D 0.777
+2026-09-20 11:36:45,476 [INFO] src.gan_augmentation: fold 6 epoch 23/30  loss_G 2.971  loss_D 1.070
+2026-09-20 11:36:52,815 [INFO] src.gan_augmentation: fold 6 epoch 24/30  loss_G 3.037  loss_D 0.776
+2026-09-20 11:37:00,176 [INFO] src.gan_augmentation: fold 6 epoch 25/30  loss_G 3.353  loss_D 0.729
+2026-09-20 11:37:07,564 [INFO] src.gan_augmentation: fold 6 epoch 26/30  loss_G 3.264  loss_D 0.860
+2026-09-20 11:37:14,984 [INFO] src.gan_augmentation: fold 6 epoch 27/30  loss_G 3.158  loss_D 0.796
+2026-09-20 11:37:22,423 [INFO] src.gan_augmentation: fold 6 epoch 28/30  loss_G 3.269  loss_D 0.808
+2026-09-20 11:37:29,870 [INFO] src.gan_augmentation: fold 6 epoch 29/30  loss_G 3.155  loss_D 1.027
+2026-09-20 11:37:37,339 [INFO] src.gan_augmentation: fold 6 epoch 30/30  loss_G 3.233  loss_D 0.753
+2026-09-20 11:37:39,044 [INFO] gan_all_folds: fold 6 done: 500 synthetic in 239 s wall
+2026-09-20 11:37:39,045 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:37:39,046 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:37:39,151 [INFO] gan_fold: fold 7: 2741 training rows; 1064 forbidden ids (validation 303 + final test 761)
+2026-09-20 11:37:53,053 [INFO] gan_fold: real per class {'Bacterial Red Disease': 326, 'Aeromoniasis': 349, 'Bacterial Gill Disease': 356, 'Parasitic Disease': 332, 'Saprolegniasis': 318, 'White Tail Disease': 323, 'EUS Disease': 331, 'Healthy Fish': 406} -> synthetic plan {'Bacterial Red Disease': 80, 'Aeromoniasis': 57, 'Bacterial Gill Disease': 50, 'Parasitic Disease': 74, 'Saprolegniasis': 88, 'White Tail Disease': 83, 'EUS Disease': 75, 'Healthy Fish': 0}
+2026-09-20 11:38:00,516 [INFO] src.gan_augmentation: fold 7 epoch 1/30  loss_G 3.615  loss_D 1.916
+2026-09-20 11:38:08,001 [INFO] src.gan_augmentation: fold 7 epoch 2/30  loss_G 3.733  loss_D 1.170
+2026-09-20 11:38:15,778 [INFO] src.gan_augmentation: fold 7 epoch 3/30  loss_G 4.035  loss_D 0.736
+2026-09-20 11:38:23,886 [INFO] src.gan_augmentation: fold 7 epoch 4/30  loss_G 3.457  loss_D 0.751
+2026-09-20 11:38:31,853 [INFO] src.gan_augmentation: fold 7 epoch 5/30  loss_G 3.209  loss_D 0.999
+2026-09-20 11:38:39,451 [INFO] src.gan_augmentation: fold 7 epoch 6/30  loss_G 3.038  loss_D 0.950
+2026-09-20 11:38:46,805 [INFO] src.gan_augmentation: fold 7 epoch 7/30  loss_G 3.323  loss_D 0.921
+2026-09-20 11:38:54,026 [INFO] src.gan_augmentation: fold 7 epoch 8/30  loss_G 3.056  loss_D 0.856
+2026-09-20 11:39:01,198 [INFO] src.gan_augmentation: fold 7 epoch 9/30  loss_G 3.465  loss_D 0.848
+2026-09-20 11:39:08,356 [INFO] src.gan_augmentation: fold 7 epoch 10/30  loss_G 2.683  loss_D 1.163
+2026-09-20 11:39:15,540 [INFO] src.gan_augmentation: fold 7 epoch 11/30  loss_G 3.032  loss_D 0.952
+2026-09-20 11:39:22,801 [INFO] src.gan_augmentation: fold 7 epoch 12/30  loss_G 3.475  loss_D 0.777
+2026-09-20 11:39:30,154 [INFO] src.gan_augmentation: fold 7 epoch 13/30  loss_G 3.089  loss_D 0.920
+2026-09-20 11:39:37,599 [INFO] src.gan_augmentation: fold 7 epoch 14/30  loss_G 3.234  loss_D 0.993
+2026-09-20 11:39:45,106 [INFO] src.gan_augmentation: fold 7 epoch 15/30  loss_G 3.384  loss_D 0.852
+2026-09-20 11:39:52,643 [INFO] src.gan_augmentation: fold 7 epoch 16/30  loss_G 3.346  loss_D 0.809
+2026-09-20 11:40:00,161 [INFO] src.gan_augmentation: fold 7 epoch 17/30  loss_G 3.456  loss_D 0.767
+2026-09-20 11:40:07,663 [INFO] src.gan_augmentation: fold 7 epoch 18/30  loss_G 3.412  loss_D 0.849
+2026-09-20 11:40:15,120 [INFO] src.gan_augmentation: fold 7 epoch 19/30  loss_G 3.653  loss_D 0.782
+2026-09-20 11:40:22,514 [INFO] src.gan_augmentation: fold 7 epoch 20/30  loss_G 3.680  loss_D 0.624
+2026-09-20 11:40:29,878 [INFO] src.gan_augmentation: fold 7 epoch 21/30  loss_G 3.908  loss_D 0.870
+2026-09-20 11:40:37,209 [INFO] src.gan_augmentation: fold 7 epoch 22/30  loss_G 3.407  loss_D 0.792
+2026-09-20 11:40:44,558 [INFO] src.gan_augmentation: fold 7 epoch 23/30  loss_G 3.060  loss_D 0.881
+2026-09-20 11:40:51,904 [INFO] src.gan_augmentation: fold 7 epoch 24/30  loss_G 2.983  loss_D 0.719
+2026-09-20 11:40:59,276 [INFO] src.gan_augmentation: fold 7 epoch 25/30  loss_G 3.366  loss_D 0.965
+2026-09-20 11:41:06,666 [INFO] src.gan_augmentation: fold 7 epoch 26/30  loss_G 3.138  loss_D 0.998
+2026-09-20 11:41:14,075 [INFO] src.gan_augmentation: fold 7 epoch 27/30  loss_G 3.406  loss_D 0.963
+2026-09-20 11:41:21,513 [INFO] src.gan_augmentation: fold 7 epoch 28/30  loss_G 3.266  loss_D 0.719
+2026-09-20 11:41:28,974 [INFO] src.gan_augmentation: fold 7 epoch 29/30  loss_G 3.065  loss_D 0.890
+2026-09-20 11:41:36,437 [INFO] src.gan_augmentation: fold 7 epoch 30/30  loss_G 3.140  loss_D 0.764
+2026-09-20 11:41:38,553 [INFO] gan_all_folds: fold 7 done: 507 synthetic in 240 s wall
+2026-09-20 11:41:38,555 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:41:38,557 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:41:38,730 [INFO] gan_fold: fold 8: 2745 training rows; 1060 forbidden ids (validation 299 + final test 761)
+2026-09-20 11:41:51,786 [INFO] gan_fold: real per class {'Bacterial Red Disease': 327, 'Aeromoniasis': 350, 'Bacterial Gill Disease': 356, 'Parasitic Disease': 333, 'Saprolegniasis': 318, 'White Tail Disease': 324, 'Healthy Fish': 406, 'EUS Disease': 331} -> synthetic plan {'Bacterial Red Disease': 79, 'Aeromoniasis': 56, 'Bacterial Gill Disease': 50, 'Parasitic Disease': 73, 'Saprolegniasis': 88, 'White Tail Disease': 82, 'Healthy Fish': 0, 'EUS Disease': 75}
+2026-09-20 11:41:59,266 [INFO] src.gan_augmentation: fold 8 epoch 1/30  loss_G 3.718  loss_D 1.833
+2026-09-20 11:42:06,731 [INFO] src.gan_augmentation: fold 8 epoch 2/30  loss_G 4.035  loss_D 0.927
+2026-09-20 11:42:14,506 [INFO] src.gan_augmentation: fold 8 epoch 3/30  loss_G 4.373  loss_D 0.776
+2026-09-20 11:42:22,630 [INFO] src.gan_augmentation: fold 8 epoch 4/30  loss_G 3.479  loss_D 0.968
+2026-09-20 11:42:30,652 [INFO] src.gan_augmentation: fold 8 epoch 5/30  loss_G 2.998  loss_D 0.987
+2026-09-20 11:42:38,319 [INFO] src.gan_augmentation: fold 8 epoch 6/30  loss_G 2.856  loss_D 1.084
+2026-09-20 11:42:45,711 [INFO] src.gan_augmentation: fold 8 epoch 7/30  loss_G 2.904  loss_D 1.102
+2026-09-20 11:42:52,967 [INFO] src.gan_augmentation: fold 8 epoch 8/30  loss_G 2.762  loss_D 0.887
+2026-09-20 11:43:00,168 [INFO] src.gan_augmentation: fold 8 epoch 9/30  loss_G 2.998  loss_D 1.077
+2026-09-20 11:43:07,350 [INFO] src.gan_augmentation: fold 8 epoch 10/30  loss_G 2.554  loss_D 1.080
+2026-09-20 11:43:14,557 [INFO] src.gan_augmentation: fold 8 epoch 11/30  loss_G 3.062  loss_D 0.935
+2026-09-20 11:43:21,819 [INFO] src.gan_augmentation: fold 8 epoch 12/30  loss_G 3.269  loss_D 0.978
+2026-09-20 11:43:29,179 [INFO] src.gan_augmentation: fold 8 epoch 13/30  loss_G 2.512  loss_D 0.865
+2026-09-20 11:43:36,613 [INFO] src.gan_augmentation: fold 8 epoch 14/30  loss_G 3.101  loss_D 1.056
+2026-09-20 11:43:44,119 [INFO] src.gan_augmentation: fold 8 epoch 15/30  loss_G 2.810  loss_D 0.902
+2026-09-20 11:43:51,641 [INFO] src.gan_augmentation: fold 8 epoch 16/30  loss_G 3.111  loss_D 0.882
+2026-09-20 11:43:59,169 [INFO] src.gan_augmentation: fold 8 epoch 17/30  loss_G 2.873  loss_D 0.927
+2026-09-20 11:44:06,661 [INFO] src.gan_augmentation: fold 8 epoch 18/30  loss_G 2.837  loss_D 0.998
+2026-09-20 11:44:14,097 [INFO] src.gan_augmentation: fold 8 epoch 19/30  loss_G 3.180  loss_D 0.701
+2026-09-20 11:44:21,483 [INFO] src.gan_augmentation: fold 8 epoch 20/30  loss_G 3.167  loss_D 1.093
+2026-09-20 11:44:28,842 [INFO] src.gan_augmentation: fold 8 epoch 21/30  loss_G 2.707  loss_D 0.957
+2026-09-20 11:44:36,192 [INFO] src.gan_augmentation: fold 8 epoch 22/30  loss_G 3.085  loss_D 0.827
+2026-09-20 11:44:43,553 [INFO] src.gan_augmentation: fold 8 epoch 23/30  loss_G 3.164  loss_D 0.921
+2026-09-20 11:44:50,923 [INFO] src.gan_augmentation: fold 8 epoch 24/30  loss_G 3.161  loss_D 0.683
+2026-09-20 11:44:58,299 [INFO] src.gan_augmentation: fold 8 epoch 25/30  loss_G 3.191  loss_D 0.988
+2026-09-20 11:45:05,698 [INFO] src.gan_augmentation: fold 8 epoch 26/30  loss_G 2.918  loss_D 0.962
+2026-09-20 11:45:13,106 [INFO] src.gan_augmentation: fold 8 epoch 27/30  loss_G 3.320  loss_D 0.826
+2026-09-20 11:45:20,543 [INFO] src.gan_augmentation: fold 8 epoch 28/30  loss_G 3.708  loss_D 0.672
+2026-09-20 11:45:27,995 [INFO] src.gan_augmentation: fold 8 epoch 29/30  loss_G 3.154  loss_D 0.835
+2026-09-20 11:45:35,456 [INFO] src.gan_augmentation: fold 8 epoch 30/30  loss_G 3.601  loss_D 0.717
+2026-09-20 11:45:37,156 [INFO] gan_all_folds: fold 8 done: 503 synthetic in 239 s wall
+2026-09-20 11:45:37,158 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:45:37,158 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:45:37,260 [INFO] gan_fold: fold 9: 2747 training rows; 1058 forbidden ids (validation 297 + final test 761)
+2026-09-20 11:45:50,809 [INFO] gan_fold: real per class {'Bacterial Red Disease': 327, 'Aeromoniasis': 350, 'Bacterial Gill Disease': 356, 'Parasitic Disease': 333, 'Saprolegniasis': 318, 'White Tail Disease': 325, 'EUS Disease': 332, 'Healthy Fish': 406} -> synthetic plan {'Bacterial Red Disease': 79, 'Aeromoniasis': 56, 'Bacterial Gill Disease': 50, 'Parasitic Disease': 73, 'Saprolegniasis': 88, 'White Tail Disease': 81, 'EUS Disease': 74, 'Healthy Fish': 0}
+2026-09-20 11:45:58,231 [INFO] src.gan_augmentation: fold 9 epoch 1/30  loss_G 3.622  loss_D 1.903
+2026-09-20 11:46:05,682 [INFO] src.gan_augmentation: fold 9 epoch 2/30  loss_G 4.102  loss_D 1.100
+2026-09-20 11:46:13,452 [INFO] src.gan_augmentation: fold 9 epoch 3/30  loss_G 3.733  loss_D 1.014
+2026-09-20 11:46:21,580 [INFO] src.gan_augmentation: fold 9 epoch 4/30  loss_G 3.488  loss_D 0.737
+2026-09-20 11:46:29,544 [INFO] src.gan_augmentation: fold 9 epoch 5/30  loss_G 2.952  loss_D 0.962
+2026-09-20 11:46:37,180 [INFO] src.gan_augmentation: fold 9 epoch 6/30  loss_G 2.943  loss_D 1.070
+2026-09-20 11:46:44,558 [INFO] src.gan_augmentation: fold 9 epoch 7/30  loss_G 2.902  loss_D 1.074
+2026-09-20 11:46:51,811 [INFO] src.gan_augmentation: fold 9 epoch 8/30  loss_G 2.997  loss_D 0.930
+2026-09-20 11:46:58,992 [INFO] src.gan_augmentation: fold 9 epoch 9/30  loss_G 3.284  loss_D 0.847
+2026-09-20 11:47:06,158 [INFO] src.gan_augmentation: fold 9 epoch 10/30  loss_G 3.053  loss_D 0.888
+2026-09-20 11:47:13,343 [INFO] src.gan_augmentation: fold 9 epoch 11/30  loss_G 3.025  loss_D 0.971
+2026-09-20 11:47:20,597 [INFO] src.gan_augmentation: fold 9 epoch 12/30  loss_G 3.243  loss_D 0.919
+2026-09-20 11:47:27,947 [INFO] src.gan_augmentation: fold 9 epoch 13/30  loss_G 2.936  loss_D 0.870
+2026-09-20 11:47:35,385 [INFO] src.gan_augmentation: fold 9 epoch 14/30  loss_G 3.254  loss_D 1.046
+2026-09-20 11:47:42,885 [INFO] src.gan_augmentation: fold 9 epoch 15/30  loss_G 2.995  loss_D 0.896
+2026-09-20 11:47:50,406 [INFO] src.gan_augmentation: fold 9 epoch 16/30  loss_G 3.110  loss_D 0.966
+2026-09-20 11:47:57,927 [INFO] src.gan_augmentation: fold 9 epoch 17/30  loss_G 3.346  loss_D 0.767
+2026-09-20 11:48:05,429 [INFO] src.gan_augmentation: fold 9 epoch 18/30  loss_G 3.086  loss_D 0.858
+2026-09-20 11:48:12,883 [INFO] src.gan_augmentation: fold 9 epoch 19/30  loss_G 3.087  loss_D 0.865
+2026-09-20 11:48:20,285 [INFO] src.gan_augmentation: fold 9 epoch 20/30  loss_G 3.510  loss_D 0.894
+2026-09-20 11:48:27,663 [INFO] src.gan_augmentation: fold 9 epoch 21/30  loss_G 3.054  loss_D 0.960
+2026-09-20 11:48:35,012 [INFO] src.gan_augmentation: fold 9 epoch 22/30  loss_G 3.277  loss_D 0.804
+2026-09-20 11:48:42,379 [INFO] src.gan_augmentation: fold 9 epoch 23/30  loss_G 3.339  loss_D 0.832
+2026-09-20 11:48:49,741 [INFO] src.gan_augmentation: fold 9 epoch 24/30  loss_G 3.211  loss_D 0.728
+2026-09-20 11:48:57,142 [INFO] src.gan_augmentation: fold 9 epoch 25/30  loss_G 2.944  loss_D 0.893
+2026-09-20 11:49:04,560 [INFO] src.gan_augmentation: fold 9 epoch 26/30  loss_G 2.862  loss_D 0.775
+2026-09-20 11:49:12,018 [INFO] src.gan_augmentation: fold 9 epoch 27/30  loss_G 3.518  loss_D 0.793
+2026-09-20 11:49:19,490 [INFO] src.gan_augmentation: fold 9 epoch 28/30  loss_G 3.143  loss_D 0.673
+2026-09-20 11:49:26,951 [INFO] src.gan_augmentation: fold 9 epoch 29/30  loss_G 3.524  loss_D 0.660
+2026-09-20 11:49:34,404 [INFO] src.gan_augmentation: fold 9 epoch 30/30  loss_G 3.461  loss_D 0.847
+2026-09-20 11:49:36,787 [INFO] gan_all_folds: fold 9 done: 501 synthetic in 240 s wall
+2026-09-20 11:49:36,788 [INFO] gan_fold: config configs/gan_v2/default.json: GANConfig(image_size=64, latent_dim=100, base_channels=64, epochs=30, batch_size=64, learning_rate=0.0002, beta1=0.5, beta2=0.999, label_smoothing=0.0, seed=42, target_per_class=None, synthetic_per_class={}, max_synthetic_ratio=1.0, max_train_images=None)
+2026-09-20 11:49:36,788 [INFO] gan_fold: device cuda {'gpu_name': 'Tesla T4', 'cuda_version': '13.0'}
+2026-09-20 11:49:36,890 [INFO] gan_fold: fold 10: 2749 training rows; 1056 forbidden ids (validation 295 + final test 761)
+2026-09-20 11:49:50,494 [INFO] gan_fold: real per class {'Bacterial Red Disease': 327, 'Aeromoniasis': 351, 'Bacterial Gill Disease': 356, 'Saprolegniasis': 319, 'White Tail Disease': 325, 'EUS Disease': 332, 'Parasitic Disease': 333, 'Healthy Fish': 406} -> synthetic plan {'Bacterial Red Disease': 79, 'Aeromoniasis': 55, 'Bacterial Gill Disease': 50, 'Saprolegniasis': 87, 'White Tail Disease': 81, 'EUS Disease': 74, 'Parasitic Disease': 73, 'Healthy Fish': 0}
+2026-09-20 11:49:57,947 [INFO] src.gan_augmentation: fold 10 epoch 1/30  loss_G 3.978  loss_D 1.687
+2026-09-20 11:50:05,459 [INFO] src.gan_augmentation: fold 10 epoch 2/30  loss_G 5.197  loss_D 1.243
+2026-09-20 11:50:13,289 [INFO] src.gan_augmentation: fold 10 epoch 3/30  loss_G 3.755  loss_D 0.781
+2026-09-20 11:50:21,457 [INFO] src.gan_augmentation: fold 10 epoch 4/30  loss_G 3.593  loss_D 0.878
+2026-09-20 11:50:29,416 [INFO] src.gan_augmentation: fold 10 epoch 5/30  loss_G 3.664  loss_D 0.797
+2026-09-20 11:50:37,074 [INFO] src.gan_augmentation: fold 10 epoch 6/30  loss_G 3.266  loss_D 1.041
+2026-09-20 11:50:44,501 [INFO] src.gan_augmentation: fold 10 epoch 7/30  loss_G 2.796  loss_D 0.975
+2026-09-20 11:50:51,777 [INFO] src.gan_augmentation: fold 10 epoch 8/30  loss_G 3.324  loss_D 0.835
+2026-09-20 11:50:58,998 [INFO] src.gan_augmentation: fold 10 epoch 9/30  loss_G 2.855  loss_D 0.964
+2026-09-20 11:51:06,194 [INFO] src.gan_augmentation: fold 10 epoch 10/30  loss_G 3.137  loss_D 0.883
+2026-09-20 11:51:13,423 [INFO] src.gan_augmentation: fold 10 epoch 11/30  loss_G 2.976  loss_D 0.931
+2026-09-20 11:51:20,707 [INFO] src.gan_augmentation: fold 10 epoch 12/30  loss_G 3.089  loss_D 0.964
+2026-09-20 11:51:28,083 [INFO] src.gan_augmentation: fold 10 epoch 13/30  loss_G 2.681  loss_D 0.980
+2026-09-20 11:51:35,516 [INFO] src.gan_augmentation: fold 10 epoch 14/30  loss_G 2.632  loss_D 1.019
+2026-09-20 11:51:43,055 [INFO] src.gan_augmentation: fold 10 epoch 15/30  loss_G 2.559  loss_D 0.894
+2026-09-20 11:51:50,600 [INFO] src.gan_augmentation: fold 10 epoch 16/30  loss_G 2.893  loss_D 1.006
+2026-09-20 11:51:58,143 [INFO] src.gan_augmentation: fold 10 epoch 17/30  loss_G 3.370  loss_D 0.779
+2026-09-20 11:52:05,663 [INFO] src.gan_augmentation: fold 10 epoch 18/30  loss_G 3.648  loss_D 0.650
+2026-09-20 11:52:13,127 [INFO] src.gan_augmentation: fold 10 epoch 19/30  loss_G 3.518  loss_D 0.779
+2026-09-20 11:52:20,523 [INFO] src.gan_augmentation: fold 10 epoch 20/30  loss_G 3.326  loss_D 0.698
+2026-09-20 11:52:27,911 [INFO] src.gan_augmentation: fold 10 epoch 21/30  loss_G 3.219  loss_D 0.824
+2026-09-20 11:52:35,293 [INFO] src.gan_augmentation: fold 10 epoch 22/30  loss_G 3.620  loss_D 0.733
+2026-09-20 11:52:42,660 [INFO] src.gan_augmentation: fold 10 epoch 23/30  loss_G 3.370  loss_D 0.706
+2026-09-20 11:52:50,055 [INFO] src.gan_augmentation: fold 10 epoch 24/30  loss_G 3.233  loss_D 0.962
+2026-09-20 11:52:57,462 [INFO] src.gan_augmentation: fold 10 epoch 25/30  loss_G 3.121  loss_D 0.772
+2026-09-20 11:53:04,897 [INFO] src.gan_augmentation: fold 10 epoch 26/30  loss_G 3.258  loss_D 0.768
+2026-09-20 11:53:12,348 [INFO] src.gan_augmentation: fold 10 epoch 27/30  loss_G 3.707  loss_D 0.763
+2026-09-20 11:53:19,815 [INFO] src.gan_augmentation: fold 10 epoch 28/30  loss_G 3.604  loss_D 0.595
+2026-09-20 11:53:27,296 [INFO] src.gan_augmentation: fold 10 epoch 29/30  loss_G 3.746  loss_D 0.866
+2026-09-20 11:53:34,763 [INFO] src.gan_augmentation: fold 10 epoch 30/30  loss_G 3.521  loss_D 0.765
+2026-09-20 11:53:36,462 [INFO] gan_all_folds: fold 10 done: 499 synthetic in 240 s wall
+{
+  "fold": 1,
+  "real_training_images_in_fold": 2729,
+  "real_images_seen_by_gan": 2729,
+  "synthetic_images": 495,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 79,
+    "Aeromoniasis": 55,
+    "Bacterial Gill Disease": 49,
+    "Parasitic Disease": 73,
+    "Saprolegniasis": 86,
+    "White Tail Disease": 81,
+    "EUS Disease": 72,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3224,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_01_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_01/fold_01_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_01/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 2,
+  "real_training_images_in_fold": 2733,
+  "real_images_seen_by_gan": 2733,
+  "synthetic_images": 491,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 78,
+    "Aeromoniasis": 55,
+    "Bacterial Gill Disease": 48,
+    "Parasitic Disease": 71,
+    "Saprolegniasis": 86,
+    "White Tail Disease": 81,
+    "EUS Disease": 72,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3224,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_02_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_02/fold_02_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_02/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 3,
+  "real_training_images_in_fold": 2736,
+  "real_images_seen_by_gan": 2736,
+  "synthetic_images": 504,
+  "synthetic_per_class": {
+    "Aeromoniasis": 56,
+    "Bacterial Red Disease": 80,
+    "Parasitic Disease": 73,
+    "Saprolegniasis": 88,
+    "White Tail Disease": 83,
+    "EUS Disease": 74,
+    "Healthy Fish": 0,
+    "Bacterial Gill Disease": 50
+  },
+  "with_gan_manifest_rows": 3240,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_03_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_03/fold_03_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_03/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 4,
+  "real_training_images_in_fold": 2736,
+  "real_images_seen_by_gan": 2736,
+  "synthetic_images": 504,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 80,
+    "Aeromoniasis": 56,
+    "Bacterial Gill Disease": 50,
+    "Parasitic Disease": 73,
+    "Saprolegniasis": 88,
+    "White Tail Disease": 83,
+    "EUS Disease": 74,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3240,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_04_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_04/fold_04_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_04/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 5,
+  "real_training_images_in_fold": 2740,
+  "real_images_seen_by_gan": 2740,
+  "synthetic_images": 500,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 79,
+    "Aeromoniasis": 56,
+    "Bacterial Gill Disease": 49,
+    "Parasitic Disease": 73,
+    "Saprolegniasis": 87,
+    "White Tail Disease": 82,
+    "EUS Disease": 74,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3240,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_05_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_05/fold_05_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_05/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 6,
+  "real_training_images_in_fold": 2740,
+  "real_images_seen_by_gan": 2740,
+  "synthetic_images": 500,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 79,
+    "Aeromoniasis": 56,
+    "Bacterial Gill Disease": 49,
+    "Parasitic Disease": 73,
+    "White Tail Disease": 82,
+    "EUS Disease": 74,
+    "Healthy Fish": 0,
+    "Saprolegniasis": 87
+  },
+  "with_gan_manifest_rows": 3240,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_06_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_06/fold_06_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_06/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 7,
+  "real_training_images_in_fold": 2741,
+  "real_images_seen_by_gan": 2741,
+  "synthetic_images": 507,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 80,
+    "Aeromoniasis": 57,
+    "Bacterial Gill Disease": 50,
+    "Parasitic Disease": 74,
+    "Saprolegniasis": 88,
+    "White Tail Disease": 83,
+    "EUS Disease": 75,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3248,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_07_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_07/fold_07_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_07/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 8,
+  "real_training_images_in_fold": 2745,
+  "real_images_seen_by_gan": 2745,
+  "synthetic_images": 503,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 79,
+    "Aeromoniasis": 56,
+    "Bacterial Gill Disease": 50,
+    "Parasitic Disease": 73,
+    "Saprolegniasis": 88,
+    "White Tail Disease": 82,
+    "Healthy Fish": 0,
+    "EUS Disease": 75
+  },
+  "with_gan_manifest_rows": 3248,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_08_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_08/fold_08_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_08/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 9,
+  "real_training_images_in_fold": 2747,
+  "real_images_seen_by_gan": 2747,
+  "synthetic_images": 501,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 79,
+    "Aeromoniasis": 56,
+    "Bacterial Gill Disease": 50,
+    "Parasitic Disease": 73,
+    "Saprolegniasis": 88,
+    "White Tail Disease": 81,
+    "EUS Disease": 74,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3248,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_09_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_09/fold_09_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_09/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+{
+  "fold": 10,
+  "real_training_images_in_fold": 2749,
+  "real_images_seen_by_gan": 2749,
+  "synthetic_images": 499,
+  "synthetic_per_class": {
+    "Bacterial Red Disease": 79,
+    "Aeromoniasis": 55,
+    "Bacterial Gill Disease": 50,
+    "Saprolegniasis": 87,
+    "White Tail Disease": 81,
+    "EUS Disease": 74,
+    "Parasitic Disease": 73,
+    "Healthy Fish": 0
+  },
+  "with_gan_manifest_rows": 3248,
+  "without_gan_manifest": "/content/aquahealth/data/audit/cv_v3/fold_10_train.csv",
+  "with_gan_manifest": "/content/aquahealth/data/gan/fold_10/fold_10_train_gan.csv",
+  "run_record": "/content/aquahealth/data/gan/fold_10/gan_run.json",
+  "registry": "/content/aquahealth/results/v2/gan/registry.csv",
+  "config_file": "configs/gan_v2/default.json",
+  "smoke_run": false
+}
+[ok] split and fold manifests verify — 3044 dev rows
+[ok] completed folds — [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+[ok] fold 01: run record is for this fold — 
+[ok] fold 01: generator digest matches run record — 2023a19c8dd4
+[ok] fold 01: training source is fold_01_train.csv and unchanged — f448186b3964
+[ok] fold 01: forbidden ids checked == validation + final test — 1076 vs 1076
+[ok] fold 01: real images seen == training fold rows — 2729 vs 2729
+[ok] fold 01: synthetic rows valid (fold, class, label, train path, file) — 495
+[ok] fold 01: every synthetic row names this fold's generator — 
+[ok] fold 01: synthetic ids unique — 
+[ok] fold 01: synthetic ids disjoint from every real id — 
+[ok] fold 01: class directory matches class — 
+[ok] fold 01: no PNG outside fold_01/train — []
+[ok] fold 01: PNGs on disk == synthetic manifest rows — 495 on disk, 495 rows
+[ok] fold 01: PNGs open as RGB 64x64 (all, 495 files) — []
+[ok] fold 01: WITH-GAN real rows == fold_01_train.csv ids — 
+[ok] fold 01: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 01: no validation id in WITH-GAN manifest — 
+[ok] fold 01: no final-test id in WITH-GAN manifest — 
+[ok] fold 01: synthetic rows carry fold=-1 and data/gan/fold_01/train paths — 
+[ok] fold 01: registry line present — 
+[ok] fold 01: registry digests match generator / manifests / source — 
+[ok] fold 01: registry count == synthetic rows — 495 vs 495
+[ok] fold 01: registry device / seed / architecture == run record — cuda
+[ok] fold 02: run record is for this fold — 
+[ok] fold 02: generator digest matches run record — a3eb27dc7f2d
+[ok] fold 02: training source is fold_02_train.csv and unchanged — f5ee082c3215
+[ok] fold 02: forbidden ids checked == validation + final test — 1072 vs 1072
+[ok] fold 02: real images seen == training fold rows — 2733 vs 2733
+[ok] fold 02: synthetic rows valid (fold, class, label, train path, file) — 491
+[ok] fold 02: every synthetic row names this fold's generator — 
+[ok] fold 02: synthetic ids unique — 
+[ok] fold 02: synthetic ids disjoint from every real id — 
+[ok] fold 02: class directory matches class — 
+[ok] fold 02: no PNG outside fold_02/train — []
+[ok] fold 02: PNGs on disk == synthetic manifest rows — 491 on disk, 491 rows
+[ok] fold 02: PNGs open as RGB 64x64 (all, 491 files) — []
+[ok] fold 02: WITH-GAN real rows == fold_02_train.csv ids — 
+[ok] fold 02: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 02: no validation id in WITH-GAN manifest — 
+[ok] fold 02: no final-test id in WITH-GAN manifest — 
+[ok] fold 02: synthetic rows carry fold=-1 and data/gan/fold_02/train paths — 
+[ok] fold 02: registry line present — 
+[ok] fold 02: registry digests match generator / manifests / source — 
+[ok] fold 02: registry count == synthetic rows — 491 vs 491
+[ok] fold 02: registry device / seed / architecture == run record — cuda
+[ok] fold 03: run record is for this fold — 
+[ok] fold 03: generator digest matches run record — 3d6efc524b9b
+[ok] fold 03: training source is fold_03_train.csv and unchanged — b3f5d62497e4
+[ok] fold 03: forbidden ids checked == validation + final test — 1069 vs 1069
+[ok] fold 03: real images seen == training fold rows — 2736 vs 2736
+[ok] fold 03: synthetic rows valid (fold, class, label, train path, file) — 504
+[ok] fold 03: every synthetic row names this fold's generator — 
+[ok] fold 03: synthetic ids unique — 
+[ok] fold 03: synthetic ids disjoint from every real id — 
+[ok] fold 03: class directory matches class — 
+[ok] fold 03: no PNG outside fold_03/train — []
+[ok] fold 03: PNGs on disk == synthetic manifest rows — 504 on disk, 504 rows
+[ok] fold 03: PNGs open as RGB 64x64 (all, 504 files) — []
+[ok] fold 03: WITH-GAN real rows == fold_03_train.csv ids — 
+[ok] fold 03: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 03: no validation id in WITH-GAN manifest — 
+[ok] fold 03: no final-test id in WITH-GAN manifest — 
+[ok] fold 03: synthetic rows carry fold=-1 and data/gan/fold_03/train paths — 
+[ok] fold 03: registry line present — 
+[ok] fold 03: registry digests match generator / manifests / source — 
+[ok] fold 03: registry count == synthetic rows — 504 vs 504
+[ok] fold 03: registry device / seed / architecture == run record — cuda
+[ok] fold 04: run record is for this fold — 
+[ok] fold 04: generator digest matches run record — cd1640684e70
+[ok] fold 04: training source is fold_04_train.csv and unchanged — f6a0ddd0d98d
+[ok] fold 04: forbidden ids checked == validation + final test — 1069 vs 1069
+[ok] fold 04: real images seen == training fold rows — 2736 vs 2736
+[ok] fold 04: synthetic rows valid (fold, class, label, train path, file) — 504
+[ok] fold 04: every synthetic row names this fold's generator — 
+[ok] fold 04: synthetic ids unique — 
+[ok] fold 04: synthetic ids disjoint from every real id — 
+[ok] fold 04: class directory matches class — 
+[ok] fold 04: no PNG outside fold_04/train — []
+[ok] fold 04: PNGs on disk == synthetic manifest rows — 504 on disk, 504 rows
+[ok] fold 04: PNGs open as RGB 64x64 (all, 504 files) — []
+[ok] fold 04: WITH-GAN real rows == fold_04_train.csv ids — 
+[ok] fold 04: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 04: no validation id in WITH-GAN manifest — 
+[ok] fold 04: no final-test id in WITH-GAN manifest — 
+[ok] fold 04: synthetic rows carry fold=-1 and data/gan/fold_04/train paths — 
+[ok] fold 04: registry line present — 
+[ok] fold 04: registry digests match generator / manifests / source — 
+[ok] fold 04: registry count == synthetic rows — 504 vs 504
+[ok] fold 04: registry device / seed / architecture == run record — cuda
+[ok] fold 05: run record is for this fold — 
+[ok] fold 05: generator digest matches run record — 0ac349c18b68
+[ok] fold 05: training source is fold_05_train.csv and unchanged — 21f854701616
+[ok] fold 05: forbidden ids checked == validation + final test — 1065 vs 1065
+[ok] fold 05: real images seen == training fold rows — 2740 vs 2740
+[ok] fold 05: synthetic rows valid (fold, class, label, train path, file) — 500
+[ok] fold 05: every synthetic row names this fold's generator — 
+[ok] fold 05: synthetic ids unique — 
+[ok] fold 05: synthetic ids disjoint from every real id — 
+[ok] fold 05: class directory matches class — 
+[ok] fold 05: no PNG outside fold_05/train — []
+[ok] fold 05: PNGs on disk == synthetic manifest rows — 500 on disk, 500 rows
+[ok] fold 05: PNGs open as RGB 64x64 (all, 500 files) — []
+[ok] fold 05: WITH-GAN real rows == fold_05_train.csv ids — 
+[ok] fold 05: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 05: no validation id in WITH-GAN manifest — 
+[ok] fold 05: no final-test id in WITH-GAN manifest — 
+[ok] fold 05: synthetic rows carry fold=-1 and data/gan/fold_05/train paths — 
+[ok] fold 05: registry line present — 
+[ok] fold 05: registry digests match generator / manifests / source — 
+[ok] fold 05: registry count == synthetic rows — 500 vs 500
+[ok] fold 05: registry device / seed / architecture == run record — cuda
+[ok] fold 06: run record is for this fold — 
+[ok] fold 06: generator digest matches run record — cbf0b417e7eb
+[ok] fold 06: training source is fold_06_train.csv and unchanged — b0b92ea1e5af
+[ok] fold 06: forbidden ids checked == validation + final test — 1065 vs 1065
+[ok] fold 06: real images seen == training fold rows — 2740 vs 2740
+[ok] fold 06: synthetic rows valid (fold, class, label, train path, file) — 500
+[ok] fold 06: every synthetic row names this fold's generator — 
+[ok] fold 06: synthetic ids unique — 
+[ok] fold 06: synthetic ids disjoint from every real id — 
+[ok] fold 06: class directory matches class — 
+[ok] fold 06: no PNG outside fold_06/train — []
+[ok] fold 06: PNGs on disk == synthetic manifest rows — 500 on disk, 500 rows
+[ok] fold 06: PNGs open as RGB 64x64 (all, 500 files) — []
+[ok] fold 06: WITH-GAN real rows == fold_06_train.csv ids — 
+[ok] fold 06: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 06: no validation id in WITH-GAN manifest — 
+[ok] fold 06: no final-test id in WITH-GAN manifest — 
+[ok] fold 06: synthetic rows carry fold=-1 and data/gan/fold_06/train paths — 
+[ok] fold 06: registry line present — 
+[ok] fold 06: registry digests match generator / manifests / source — 
+[ok] fold 06: registry count == synthetic rows — 500 vs 500
+[ok] fold 06: registry device / seed / architecture == run record — cuda
+[ok] fold 07: run record is for this fold — 
+[ok] fold 07: generator digest matches run record — ade723fbe5cc
+[ok] fold 07: training source is fold_07_train.csv and unchanged — c3a1bf8dbb66
+[ok] fold 07: forbidden ids checked == validation + final test — 1064 vs 1064
+[ok] fold 07: real images seen == training fold rows — 2741 vs 2741
+[ok] fold 07: synthetic rows valid (fold, class, label, train path, file) — 507
+[ok] fold 07: every synthetic row names this fold's generator — 
+[ok] fold 07: synthetic ids unique — 
+[ok] fold 07: synthetic ids disjoint from every real id — 
+[ok] fold 07: class directory matches class — 
+[ok] fold 07: no PNG outside fold_07/train — []
+[ok] fold 07: PNGs on disk == synthetic manifest rows — 507 on disk, 507 rows
+[ok] fold 07: PNGs open as RGB 64x64 (all, 507 files) — []
+[ok] fold 07: WITH-GAN real rows == fold_07_train.csv ids — 
+[ok] fold 07: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 07: no validation id in WITH-GAN manifest — 
+[ok] fold 07: no final-test id in WITH-GAN manifest — 
+[ok] fold 07: synthetic rows carry fold=-1 and data/gan/fold_07/train paths — 
+[ok] fold 07: registry line present — 
+[ok] fold 07: registry digests match generator / manifests / source — 
+[ok] fold 07: registry count == synthetic rows — 507 vs 507
+[ok] fold 07: registry device / seed / architecture == run record — cuda
+[ok] fold 08: run record is for this fold — 
+[ok] fold 08: generator digest matches run record — a8337b030933
+[ok] fold 08: training source is fold_08_train.csv and unchanged — 47cf088cf48d
+[ok] fold 08: forbidden ids checked == validation + final test — 1060 vs 1060
+[ok] fold 08: real images seen == training fold rows — 2745 vs 2745
+[ok] fold 08: synthetic rows valid (fold, class, label, train path, file) — 503
+[ok] fold 08: every synthetic row names this fold's generator — 
+[ok] fold 08: synthetic ids unique — 
+[ok] fold 08: synthetic ids disjoint from every real id — 
+[ok] fold 08: class directory matches class — 
+[ok] fold 08: no PNG outside fold_08/train — []
+[ok] fold 08: PNGs on disk == synthetic manifest rows — 503 on disk, 503 rows
+[ok] fold 08: PNGs open as RGB 64x64 (all, 503 files) — []
+[ok] fold 08: WITH-GAN real rows == fold_08_train.csv ids — 
+[ok] fold 08: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 08: no validation id in WITH-GAN manifest — 
+[ok] fold 08: no final-test id in WITH-GAN manifest — 
+[ok] fold 08: synthetic rows carry fold=-1 and data/gan/fold_08/train paths — 
+[ok] fold 08: registry line present — 
+[ok] fold 08: registry digests match generator / manifests / source — 
+[ok] fold 08: registry count == synthetic rows — 503 vs 503
+[ok] fold 08: registry device / seed / architecture == run record — cuda
+[ok] fold 09: run record is for this fold — 
+[ok] fold 09: generator digest matches run record — 2f99ac863bbe
+[ok] fold 09: training source is fold_09_train.csv and unchanged — 680d8c94e7e1
+[ok] fold 09: forbidden ids checked == validation + final test — 1058 vs 1058
+[ok] fold 09: real images seen == training fold rows — 2747 vs 2747
+[ok] fold 09: synthetic rows valid (fold, class, label, train path, file) — 501
+[ok] fold 09: every synthetic row names this fold's generator — 
+[ok] fold 09: synthetic ids unique — 
+[ok] fold 09: synthetic ids disjoint from every real id — 
+[ok] fold 09: class directory matches class — 
+[ok] fold 09: no PNG outside fold_09/train — []
+[ok] fold 09: PNGs on disk == synthetic manifest rows — 501 on disk, 501 rows
+[ok] fold 09: PNGs open as RGB 64x64 (all, 501 files) — []
+[ok] fold 09: WITH-GAN real rows == fold_09_train.csv ids — 
+[ok] fold 09: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 09: no validation id in WITH-GAN manifest — 
+[ok] fold 09: no final-test id in WITH-GAN manifest — 
+[ok] fold 09: synthetic rows carry fold=-1 and data/gan/fold_09/train paths — 
+[ok] fold 09: registry line present — 
+[ok] fold 09: registry digests match generator / manifests / source — 
+[ok] fold 09: registry count == synthetic rows — 501 vs 501
+[ok] fold 09: registry device / seed / architecture == run record — cuda
+[ok] fold 10: run record is for this fold — 
+[ok] fold 10: generator digest matches run record — 13ed96fd6e32
+[ok] fold 10: training source is fold_10_train.csv and unchanged — a1951723f446
+[ok] fold 10: forbidden ids checked == validation + final test — 1056 vs 1056
+[ok] fold 10: real images seen == training fold rows — 2749 vs 2749
+[ok] fold 10: synthetic rows valid (fold, class, label, train path, file) — 499
+[ok] fold 10: every synthetic row names this fold's generator — 
+[ok] fold 10: synthetic ids unique — 
+[ok] fold 10: synthetic ids disjoint from every real id — 
+[ok] fold 10: class directory matches class — 
+[ok] fold 10: no PNG outside fold_10/train — []
+[ok] fold 10: PNGs on disk == synthetic manifest rows — 499 on disk, 499 rows
+[ok] fold 10: PNGs open as RGB 64x64 (all, 499 files) — []
+[ok] fold 10: WITH-GAN real rows == fold_10_train.csv ids — 
+[ok] fold 10: WITH-GAN synthetic rows == synthetic manifest ids — 
+[ok] fold 10: no validation id in WITH-GAN manifest — 
+[ok] fold 10: no final-test id in WITH-GAN manifest — 
+[ok] fold 10: synthetic rows carry fold=-1 and data/gan/fold_10/train paths — 
+[ok] fold 10: registry line present — 
+[ok] fold 10: registry digests match generator / manifests / source — 
+[ok] fold 10: registry count == synthetic rows — 499 vs 499
+[ok] fold 10: registry device / seed / architecture == run record — cuda
+[ok] no synthetic id shared between folds — []
+[ok] no synthetic path shared between folds — []
+[ok] class mapping: every label index names its class — 8 classes
+[ok] GAN_MANIFEST.csv present — /content/aquahealth/results/v2/gan/GAN_MANIFEST.csv
+[ok] GAN_MANIFEST.csv rows == union of per-fold synthetic manifests — 5004 listed, 5004 expected
+[ok] GAN_MANIFEST.csv classes / labels / sources / dimensions consistent — 
+[ok] GAN_MANIFEST.csv image digests match files — []
+RESULT: VERIFIED
+{
+  "started": "2026-09-20T11:13:57",
+  "finished": "2026-09-20T11:53:50",
+  "device": "cuda",
+  "gpu_name": "Tesla T4",
+  "cuda_version": "13.0",
+  "torch_version": "2.14.0+cu130",
+  "config_file": "configs/gan_v2/default.json",
+  "folds_requested": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "folds_completed": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "synthetic_images_total": 5004,
+  "gan_manifest": "/content/aquahealth/results/v2/gan/GAN_MANIFEST.csv",
+  "gan_manifest_rows": 5004,
+  "verification_ok": true
+}

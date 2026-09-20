@@ -1,0 +1,72 @@
+{
+  "drop": "/content/drive/MyDrive/AquaHealth",
+  "keys": {
+    "current_freshwater": {
+      "name": "Current AquaHealth dataset (train_split / test_split / test.csv)",
+      "delivered_subdir": "",
+      "resolved": {
+        "train_split": "/content/drive/MyDrive/AquaHealth/Fresh_water_disease/train_split",
+        "test_split": "/content/drive/MyDrive/AquaHealth/Fresh_water_disease/test_split",
+        "test.csv": "/content/drive/MyDrive/AquaHealth/Fresh_water_disease/test.csv"
+      },
+      "images_found": 3503,
+      "inventory_all": 3503,
+      "inventory_included": 3401,
+      "manifest_rows_resolved": "3503/3503",
+      "included_rows_resolved": "3401/3401",
+      "missing_included_examples": [],
+      "surplus_vs_inventory": 0
+    },
+    "kaptai": {
+      "name": "Fresh Water Fish Dataset",
+      "delivered_subdir": "Fresh Water Fish Dataset",
+      "resolved": {
+        ".": "/content/drive/MyDrive/AquaHealth/Fresh Water Fish Dataset"
+      },
+      "images_found": 133,
+      "inventory_all": 133,
+      "inventory_included": 53,
+      "manifest_rows_resolved": "133/133",
+      "included_rows_resolved": "53/53",
+      "missing_included_examples": [],
+      "surplus_vs_inventory": 0
+    },
+    "roboflow": {
+      "name": "Fish Disease - v1 2023-10-04 (Roboflow export)",
+      "delivered_subdir": "Fish Disease.v1i.folder",
+      "resolved": {
+        ".": "/content/drive/MyDrive/AquaHealth/Fish Disease.v1i.folder"
+      },
+      "images_found": 454,
+      "inventory_all": 454,
+      "inventory_included": 351,
+      "manifest_rows_resolved": "454/454",
+      "included_rows_resolved": "351/351",
+      "missing_included_examples": [],
+      "surplus_vs_inventory": 0
+    },
+    "paper_dataset": {
+      "name": "SalmonScan",
+      "delivered_subdir": "SalmonScan A Novel Image Dataset for Fish Disease Detection in Salmon Aquaculture System/SalmonScan",
+      "resolved": {
+        ".": "/content/drive/MyDrive/AquaHealth/SalmonScan A Novel Image Dataset for Fish Disease Detection in Salmon Aquaculture System/SalmonScan"
+      },
+      "images_found": 1223,
+      "inventory_all": 1208,
+      "inventory_included": 0,
+      "manifest_rows_resolved": "1208/1208",
+      "included_rows_resolved": "0/0",
+      "missing_included_examples": [],
+      "surplus_vs_inventory": 15
+    }
+  },
+  "errors": [],
+  "ok": true,
+  "top_level_entries": [
+    "Fish Disease.v1i.folder",
+    "Fresh Water Fish Dataset",
+    "Fresh_water_disease",
+    "SalmonScan A Novel Image Dataset for Fish Disease Detection in Salmon Aquaculture System"
+  ],
+  "excluded_present": {}
+}
