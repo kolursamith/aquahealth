@@ -47,6 +47,7 @@ from src.experiment_matrix import (
 from src.gan_augmentation import (
     augmented_training_manifest,
     write_augmented_manifest,
+    write_synthetic_manifest,
 )
 from src.manifest import CANONICAL_CLASSES
 from src.model_factory import (
@@ -110,6 +111,38 @@ def repo(tmp_path):
     write_augmented_manifest(
         augmented_training_manifest(train, synthetic, 1),
         tmp_path / "data" / "gan" / "fold_01" / "fold_01_train_gan.csv",
+    )
+    # the provenance the real GAN pipeline leaves next to the images: a run record for THIS
+    # fold and a synthetic manifest whose rows name that run's generator digest
+    gan_dir = tmp_path / "data" / "gan" / "fold_01"
+    generator_sha = "ab" * 32
+    (gan_dir / "gan_run.json").write_text(
+        json.dumps(
+            {
+                "fold": 1,
+                "checkpoint_sha256": generator_sha,
+                "train_manifest_sha256": "cd" * 32,
+                "device": "cuda",
+                "gpu_name": "Tesla T4",
+            }
+        )
+    )
+    write_synthetic_manifest(
+        [
+            {
+                **s,
+                "index": k,
+                "seed": 42,
+                "generator_checkpoint": str(gan_dir / "generator.pt"),
+                "generator_sha256": generator_sha,
+                "architecture": "cDCGAN (class-conditional DCGAN)",
+                "image_size": 16,
+                "generated_at": "2026-09-20T00:00:00",
+                "synthetic": True,
+            }
+            for k, s in enumerate(synthetic)
+        ],
+        gan_dir / "synthetic_manifest.csv",
     )
     (tmp_path / "configs").mkdir()
     shutil.copy(ROOT / "configs" / "preprocess_v2_clahe.json", tmp_path / "configs")
@@ -445,6 +478,21 @@ def test_with_gan_arm_trains_on_real_plus_synthetic_and_validates_on_fold(repo):
     assert ckpt["manifest_sha256"]["train"] == record["manifests"]["train_sha256"]
     assert ckpt["preprocessing_sha256"] == record["preprocessing"]["config_sha256"]
     assert ckpt["environment"]["torch"] == torch.__version__ and "python" in ckpt["environment"]
+    # WITH-GAN provenance travels with the record and the checkpoint
+    assert record["gan"]["synthetic_rows"] == 2 and record["gan"]["generator_sha256"] == "ab" * 32
+    assert ckpt["manifest_sha256"]["gan_synthetic"] == record["gan"]["synthetic_manifest_sha256"]
+    assert (
+        ckpt["gan_generator_sha256"] == "ab" * 32 and ckpt["config_hash"] == record["config_hash"]
+    )
+
+
+def test_with_gan_arm_refuses_a_generator_of_another_fold(repo):
+    run_record = repo / "data" / "gan" / "fold_01" / "gan_run.json"
+    payload = json.loads(run_record.read_text())
+    payload["fold"] = 2
+    run_record.write_text(json.dumps(payload))
+    with pytest.raises(LeakageError, match="belongs to fold 2"):
+        run_experiment(_args(repo, data_arm="with_gan", max_train_samples=None))
 
 
 def test_efficientnet_baseline_runs_through_the_same_runner(repo):

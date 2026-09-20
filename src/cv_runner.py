@@ -402,6 +402,57 @@ def environment_record(device: torch.device) -> dict[str, Any]:
     }
 
 
+def gan_provenance(data_dir: Path, repo_root: Path, fold: int) -> dict[str, Any]:
+    """WITH-GAN arm: the synthetic images' provenance, and the hard gate that the fold's
+    generator is the one recorded for THIS fold (run record fold == fold, generator digest
+    == run record digest, every synthetic row names that digest)."""
+    fold_dir = Path(data_dir) / GAN_DIR_NAME / f"fold_{fold:02d}"
+    run_record_path = fold_dir / "gan_run.json"
+    synthetic_manifest = fold_dir / "synthetic_manifest.csv"
+    generator = fold_dir / "generator.pt"
+    for path in (run_record_path, synthetic_manifest):
+        if not path.is_file():
+            raise FileNotFoundError(f"WITH-GAN provenance missing: {path}")
+    run_record = json.loads(run_record_path.read_text())
+    if int(run_record["fold"]) != fold:
+        raise LeakageError(
+            f"{run_record_path} belongs to fold {run_record['fold']}, not fold {fold}"
+        )
+    generator_sha = file_sha256(generator) if generator.is_file() else None
+    if generator_sha is not None and generator_sha != run_record["checkpoint_sha256"]:
+        raise LeakageError(f"{generator} digest differs from its run record")
+    with synthetic_manifest.open(newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    foreign = [
+        r["image_id"] for r in rows if r["generator_sha256"] != run_record["checkpoint_sha256"]
+    ]
+    if foreign or any(int(r["fold"]) != fold for r in rows):
+        raise LeakageError(
+            f"synthetic manifest of fold {fold} holds rows of another generator/fold"
+        )
+    gan_results = Path(repo_root) / RESULTS_V2 / "gan"
+    digests = {
+        name: file_sha256(gan_results / name)
+        for name in ("GAN_MANIFEST.csv", "registry.csv")
+        if (gan_results / name).is_file()
+    }
+    return {
+        "fold_dir": str(fold_dir),
+        "run_record": str(run_record_path),
+        "generator_checkpoint": str(generator),
+        "generator_sha256": run_record["checkpoint_sha256"],
+        "generator_present": generator.is_file(),
+        "gan_device": run_record.get("device"),
+        "gan_gpu_name": run_record.get("gpu_name"),
+        "synthetic_manifest": str(synthetic_manifest),
+        "synthetic_manifest_sha256": file_sha256(synthetic_manifest),
+        "synthetic_rows": len(rows),
+        "gan_manifest_sha256": digests.get("GAN_MANIFEST.csv"),
+        "gan_registry_sha256": digests.get("registry.csv"),
+        "training_source_sha256": run_record["train_manifest_sha256"],
+    }
+
+
 def config_hash(record: dict[str, Any]) -> str:
     keys = (
         "model_key",
@@ -528,7 +579,11 @@ def save_checkpoint(
             "manifest_sha256": {
                 "train": record["manifests"]["train_sha256"],
                 "validation": record["manifests"]["validation_sha256"],
+                "gan_synthetic": (record["gan"] or {}).get("synthetic_manifest_sha256"),
+                "gan_manifest": (record["gan"] or {}).get("gan_manifest_sha256"),
             },
+            "gan_generator_sha256": (record["gan"] or {}).get("generator_sha256"),
+            "config_hash": record["config_hash"],
             "preprocessing_sha256": record["preprocessing"]["config_sha256"],
             "git_commit": record["git_commit"],
             "environment": record["environment"],
@@ -762,6 +817,11 @@ def run_experiment(args: RunArgs) -> dict[str, Any]:
             "final_test_path": str(split_dir / "final_test.csv"),
             "final_test_sha256": file_sha256(split_dir / "final_test.csv"),
         },
+        "gan": (
+            gan_provenance(args.data_dir, args.repo_root, args.fold)
+            if args.data_arm == "with_gan"
+            else None
+        ),
         "isolation": isolation,
         "smoke": args.smoke
         or args.max_train_samples is not None
