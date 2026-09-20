@@ -57,6 +57,7 @@ logger = get_logger(__name__)
 
 GAN_DIR_NAME = "gan"
 ARCHITECTURE = "cDCGAN (class-conditional DCGAN)"
+OPTIMIZER = "Adam(lr={lr}, betas=({beta1}, {beta2})) for generator and discriminator"
 FORBIDDEN_PATH_PARTS = ("validation", "test", "final_test", "val")
 
 
@@ -179,6 +180,7 @@ class FoldTrainingImages(Dataset[tuple[torch.Tensor, int]]):
         image_size: int,
         max_images: int | None = None,
         seed: int = SEED,
+        cache_in_memory: bool = False,
     ) -> None:
         leaked = sorted({r.image_id for r in rows} & forbidden_ids)
         if leaked:
@@ -192,16 +194,27 @@ class FoldTrainingImages(Dataset[tuple[torch.Tensor, int]]):
         self.rows = rows
         self.repo_root = Path(repo_root)
         self.image_size = image_size
+        # The GAN only ever sees the fixed image_size x image_size resize, so the
+        # decode+resize (the dominant cost on 4000x3000 JPEGs) can be done once per
+        # fold instead of once per epoch. Same files, same tensors; recorded in the run.
+        self.cache_in_memory = cache_in_memory
+        self._cache: torch.Tensor | None = None
+        if cache_in_memory:
+            self._cache = torch.stack([self._decode(r) for r in rows])
 
     def __len__(self) -> int:
         return len(self.rows)
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
-        row = self.rows[index]
+    def _decode(self, row: FoldRow) -> torch.Tensor:
         image = load_image(self.repo_root / row.filepath)  # raises on corrupt files
         image = image.resize((self.image_size, self.image_size), Image.Resampling.BICUBIC)
         array = np.asarray(image, dtype=np.float32) / 127.5 - 1.0
-        return torch.from_numpy(array).permute(2, 0, 1).contiguous(), row.label
+        return torch.from_numpy(array).permute(2, 0, 1).contiguous()
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, int]:
+        row = self.rows[index]
+        tensor = self._cache[index] if self._cache is not None else self._decode(row)
+        return tensor, row.label
 
     def class_counts(self) -> dict[str, int]:
         return dict(Counter(CANONICAL_CLASSES[r.label] for r in self.rows))
@@ -238,6 +251,16 @@ def plan_synthetic_counts(real_counts: dict[str, int], config: GANConfig) -> dic
 # --- training ----------------------------------------------------------------------------------
 
 
+def device_facts(device: torch.device) -> dict[str, str]:
+    """GPU name and CUDA version for the run record ("" when not CUDA)."""
+    if device.type == "cuda":
+        return {
+            "gpu_name": torch.cuda.get_device_name(device),
+            "cuda_version": str(torch.version.cuda or ""),
+        }
+    return {"gpu_name": "", "cuda_version": ""}
+
+
 @dataclass
 class GANRunRecord:
     architecture: str
@@ -245,6 +268,10 @@ class GANRunRecord:
     config: dict[str, Any]
     seed: int
     device: str
+    gpu_name: str  # torch.cuda.get_device_name, "" off CUDA
+    cuda_version: str  # torch.version.cuda, "" off CUDA
+    optimizer: str  # "Adam(lr, betas)" for both networks
+    images_cached_in_memory: bool  # decode+resize once per fold instead of once per epoch
     real_training_images: int
     real_per_class: dict[str, int]
     forbidden_ids_checked: int
@@ -353,6 +380,9 @@ def train_gan(
         config=asdict(config),
         seed=config.seed,
         device=str(device),
+        **device_facts(device),
+        optimizer=OPTIMIZER.format(lr=config.learning_rate, beta1=config.beta1, beta2=config.beta2),
+        images_cached_in_memory=dataset.cache_in_memory,
         real_training_images=len(dataset),
         real_per_class=dataset.class_counts(),
         forbidden_ids_checked=forbidden_count,
@@ -396,6 +426,8 @@ SYNTHETIC_COLUMNS = (
     "generator_checkpoint",
     "generator_sha256",
     "architecture",
+    "image_size",
+    "generated_at",
     "synthetic",
 )
 
@@ -430,6 +462,8 @@ def generate(
     root = synthetic_root(gan_dir, fold)
     assert_train_only_path(root)
     checkpoint_sha = file_sha256(checkpoint)
+    generated_at = time.strftime("%Y-%m-%dT%H:%M:%S")
+    image_size = int(payload["config"]["image_size"])
     rows: list[dict[str, Any]] = []
     rng = torch.Generator(device="cpu").manual_seed(seed)
     for name, n in sorted(counts.items()):
@@ -467,6 +501,8 @@ def generate(
                         "generator_checkpoint": str(checkpoint),
                         "generator_sha256": checkpoint_sha,
                         "architecture": ARCHITECTURE,
+                        "image_size": image_size,
+                        "generated_at": generated_at,
                         "synthetic": True,
                     }
                 )
@@ -542,3 +578,616 @@ def write_augmented_manifest(rows: list[dict[str, Any]], path: Path) -> None:
         writer = csv.DictWriter(handle, fieldnames=list(AUGMENTED_COLUMNS))
         writer.writeheader()
         writer.writerows(rows)
+
+
+# --- configuration file --------------------------------------------------------------------------
+
+
+def load_gan_config(path: Path, **overrides: Any) -> GANConfig:
+    """configs/gan_v2/<name>.json -> GANConfig. The file's `gan` block holds GANConfig
+    fields only; `architecture` and `description` are informational and must match
+    this module. CLI overrides win over the file."""
+    spec = json.loads(Path(path).read_text())
+    if spec.get("architecture", ARCHITECTURE) != ARCHITECTURE:
+        raise ValueError(f"{path}: architecture {spec.get('architecture')!r} != {ARCHITECTURE!r}")
+    block = dict(spec.get("gan", {}))
+    unknown = set(block) - {f.name for f in fields(GANConfig)}
+    if unknown:
+        raise ValueError(f"{path}: unknown GANConfig fields {sorted(unknown)}")
+    block.update({k: v for k, v in overrides.items() if v is not None})
+    return GANConfig(**block)
+
+
+# --- cross-fold registry of generated data ------------------------------------------------------
+
+REGISTRY_COLUMNS = (
+    "fold",
+    "architecture",
+    "latent_dim",
+    "resolution",
+    "epochs",
+    "batch_size",
+    "optimizer",
+    "learning_rate",
+    "beta1",
+    "beta2",
+    "seed",
+    "device",
+    "gpu_name",
+    "cuda_version",
+    "real_training_images",
+    "real_per_class",
+    "generated_count",
+    "generated_per_class",
+    "source_training_fold",
+    "source_training_fold_sha256",
+    "forbidden_ids_checked",
+    "generator_checkpoint",
+    "generator_sha256",
+    "synthetic_manifest",
+    "synthetic_manifest_sha256",
+    "with_gan_manifest",
+    "with_gan_manifest_sha256",
+    "torch_version",
+    "started",
+    "seconds",
+    "smoke_run",
+)
+
+
+def registry_row(
+    record: GANRunRecord,
+    *,
+    plan: dict[str, int],
+    synthetic_manifest: Path,
+    with_gan_manifest: Path,
+    smoke_run: bool,
+) -> dict[str, Any]:
+    """One registry line per (fold, run): everything needed to trace every synthetic
+    image back to the training fold it was generated from."""
+    config = record.config
+    return {
+        "fold": record.fold,
+        "architecture": record.architecture,
+        "latent_dim": config["latent_dim"],
+        "resolution": f"{config['image_size']}x{config['image_size']}",
+        "epochs": record.epochs_run,
+        "batch_size": config["batch_size"],
+        "optimizer": record.optimizer,
+        "learning_rate": config["learning_rate"],
+        "beta1": config["beta1"],
+        "beta2": config["beta2"],
+        "seed": record.seed,
+        "device": record.device,
+        "gpu_name": record.gpu_name,
+        "cuda_version": record.cuda_version,
+        "real_training_images": record.real_training_images,
+        "real_per_class": json.dumps(record.real_per_class, sort_keys=True),
+        "generated_count": sum(plan.values()),
+        "generated_per_class": json.dumps(plan, sort_keys=True),
+        "source_training_fold": record.train_manifest,
+        "source_training_fold_sha256": record.train_manifest_sha256,
+        "forbidden_ids_checked": record.forbidden_ids_checked,
+        "generator_checkpoint": record.checkpoint,
+        "generator_sha256": record.checkpoint_sha256,
+        "synthetic_manifest": str(synthetic_manifest),
+        "synthetic_manifest_sha256": file_sha256(synthetic_manifest),
+        "with_gan_manifest": str(with_gan_manifest),
+        "with_gan_manifest_sha256": file_sha256(with_gan_manifest),
+        "torch_version": record.torch_version,
+        "started": record.started,
+        "seconds": record.seconds,
+        "smoke_run": smoke_run,
+    }
+
+
+def update_registry(path: Path, row: dict[str, Any]) -> list[dict[str, Any]]:
+    """Append-or-replace the line for `row['fold']`; the file stays sorted by fold."""
+    path = Path(path)
+    rows: list[dict[str, Any]] = []
+    if path.is_file():
+        with path.open(newline="") as handle:
+            reader = csv.DictReader(handle)
+            if tuple(reader.fieldnames or ()) != REGISTRY_COLUMNS:
+                raise ValueError(f"{path}: unexpected registry columns {reader.fieldnames}")
+            rows = [r for r in reader if int(r["fold"]) != int(row["fold"])]
+    rows.append({k: row[k] for k in REGISTRY_COLUMNS})
+    rows.sort(key=lambda r: int(r["fold"]))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(REGISTRY_COLUMNS))
+        writer.writeheader()
+        writer.writerows(rows)
+    return rows
+
+
+def read_registry(path: Path) -> list[dict[str, Any]]:
+    with Path(path).open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        if tuple(reader.fieldnames or ()) != REGISTRY_COLUMNS:
+            raise ValueError(f"{path}: unexpected registry columns {reader.fieldnames}")
+        return list(reader)
+
+
+# --- consolidated GAN_MANIFEST.csv (every synthetic image of every fold) ------------------------
+
+GAN_MANIFEST_NAME = "GAN_MANIFEST.csv"
+GAN_MANIFEST_COLUMNS = (
+    "synthetic_id",
+    "fold",
+    "class",
+    "label",
+    "generation_seed",
+    "generation_config",  # JSON of the GANConfig the generator was trained with
+    "config_file",  # configs/gan_v2/<name>.json named on the command line, or "(defaults)"
+    "training_source",  # the fold's training manifest the GAN was trained on
+    "training_source_sha256",
+    "path",  # repository-relative path of the PNG
+    "sha256",  # of the PNG
+    "width",
+    "height",
+    "format",
+    "source_dataset",  # "gan": the image is synthetic; it descends from training_source only
+    "generator_checkpoint",
+    "generator_sha256",
+    "architecture",
+    "device",
+    "gpu_name",
+    "generated_at",
+    "index",
+)
+
+
+N_FOLDS = 10
+
+
+def parse_folds(spec: str) -> list[int]:
+    """'1-10', '1,2,5' or '3' -> sorted fold numbers within 1..N_FOLDS."""
+    out: set[int] = set()
+    for part in spec.split(","):
+        part = part.strip()
+        if "-" in part:
+            lo, hi = part.split("-", 1)
+            out.update(range(int(lo), int(hi) + 1))
+        elif part:
+            out.add(int(part))
+    folds = sorted(out)
+    if not folds or folds[0] < 1 or folds[-1] > N_FOLDS:
+        raise ValueError(f"folds must be within 1..{N_FOLDS}: {spec!r}")
+    return folds
+
+
+def completed_folds(gan_dir: Path) -> list[int]:
+    """Folds under `gan_dir` whose run finished (generator, run record, synthetic manifest)."""
+    out = []
+    for path in sorted(Path(gan_dir).glob("fold_*")):
+        if not path.is_dir() or not path.name[5:].isdigit():
+            continue
+        if all(
+            (path / name).is_file()
+            for name in ("generator.pt", "gan_run.json", "synthetic_manifest.csv")
+        ):
+            out.append(int(path.name[5:]))
+    return out
+
+
+def read_synthetic_manifest(path: Path) -> list[dict[str, Any]]:
+    with Path(path).open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        if tuple(reader.fieldnames or ()) != SYNTHETIC_COLUMNS:
+            raise ValueError(f"{path}: unexpected synthetic manifest columns {reader.fieldnames}")
+        return list(reader)
+
+
+def _relative(path: str | Path, repo_root: Path) -> str:
+    path = Path(path)
+    return path.relative_to(repo_root).as_posix() if path.is_relative_to(repo_root) else str(path)
+
+
+def build_gan_manifest(
+    gan_dir: Path, repo_root: Path, *, folds: Iterable[int] | None = None, hash_images: bool = True
+) -> list[dict[str, Any]]:
+    """One row per synthetic image across the completed folds, joined from each fold's
+    synthetic_manifest.csv + gan_run.json (+ summary.json for the config file name).
+    Every row names the fold, class, seed, config, training source and generator digest
+    the image came from."""
+    gan_dir, repo_root = Path(gan_dir), Path(repo_root)
+    wanted = sorted(folds) if folds is not None else completed_folds(gan_dir)
+    rows: list[dict[str, Any]] = []
+    for fold in wanted:
+        out = gan_dir / f"fold_{fold:02d}"
+        record = json.loads((out / "gan_run.json").read_text())
+        if int(record["fold"]) != fold:
+            raise ValueError(f"{out}: run record is for fold {record['fold']}")
+        config_file = "(defaults)"
+        if (out / "summary.json").is_file():
+            config_file = json.loads((out / "summary.json").read_text()).get("config_file") or (
+                "(defaults)"
+            )
+        config_json = json.dumps(record["config"], sort_keys=True)
+        source = _relative(record["train_manifest"], repo_root)
+        for s in read_synthetic_manifest(out / "synthetic_manifest.csv"):
+            if int(s["fold"]) != fold:
+                raise ValueError(f"{out}: synthetic row {s['image_id']} is for fold {s['fold']}")
+            if s["generator_sha256"] != record["checkpoint_sha256"]:
+                raise ValueError(f"{s['image_id']}: generator digest differs from the run record")
+            png = repo_root / s["filepath"]
+            rows.append(
+                {
+                    "synthetic_id": s["image_id"],
+                    "fold": fold,
+                    "class": s["unified_class"],
+                    "label": int(s["label"]),
+                    "generation_seed": int(s["seed"]),
+                    "generation_config": config_json,
+                    "config_file": config_file,
+                    "training_source": source,
+                    "training_source_sha256": record["train_manifest_sha256"],
+                    "path": s["filepath"],
+                    "sha256": file_sha256(png) if hash_images else "",
+                    "width": int(s.get("image_size") or record["config"]["image_size"]),
+                    "height": int(s.get("image_size") or record["config"]["image_size"]),
+                    "format": "PNG",
+                    "source_dataset": "gan",
+                    "generator_checkpoint": _relative(s["generator_checkpoint"], repo_root),
+                    "generator_sha256": s["generator_sha256"],
+                    "architecture": s["architecture"],
+                    "device": record["device"],
+                    "gpu_name": record.get("gpu_name", ""),
+                    "generated_at": s.get("generated_at") or record["started"],
+                    "index": int(s["index"]),
+                }
+            )
+    return rows
+
+
+def write_gan_manifest(rows: list[dict[str, Any]], path: Path) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(GAN_MANIFEST_COLUMNS))
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def read_gan_manifest(path: Path) -> list[dict[str, Any]]:
+    with Path(path).open(newline="") as handle:
+        reader = csv.DictReader(handle)
+        if tuple(reader.fieldnames or ()) != GAN_MANIFEST_COLUMNS:
+            raise ValueError(f"{path}: unexpected GAN manifest columns {reader.fieldnames}")
+        return list(reader)
+
+
+# --- verification of generated outputs (runs on Colab after generation and locally) -------------
+
+
+def _check(report: dict[str, Any], name: str, ok: bool, detail: Any = "") -> None:
+    report["checks"].append({"check": name, "ok": bool(ok), "detail": detail})
+    if not ok:
+        report["errors"].append(f"{name}: {detail}")
+
+
+def verify_gan_outputs(
+    *,
+    gan_dir: Path,
+    repo_root: Path,
+    audit_dir: Path,
+    registry_path: Path,
+    gan_manifest_path: Path | None = None,
+    folds: Iterable[int] | None = None,
+    images: str = "all",
+    seed: int = SEED,
+    sample_size: int = 200,
+) -> dict[str, Any]:
+    """Prove, from the files on disk, that the generated data is what the records say
+    and that validation / test data never touched it. `images`: 'all' opens and hashes
+    every PNG, 'sample' a seeded sample, 'none' only checks the records. Never modifies
+    anything; returns a report with `ok`, `checks`, `errors` and `counts`."""
+    from src.split_v2 import CV_DIR_NAME, SPLIT_DIR_NAME, read_folds, read_split
+
+    if images not in ("all", "sample", "none"):
+        raise ValueError("images must be all|sample|none")
+    gan_dir, repo_root, audit_dir = Path(gan_dir), Path(repo_root), Path(audit_dir)
+    report: dict[str, Any] = {"ok": False, "checks": [], "errors": [], "folds": [], "counts": {}}
+
+    # the split / fold manifests still verify against their digests (raw-data protection)
+    try:
+        all_folds = read_folds(audit_dir / CV_DIR_NAME)
+        split = read_split(audit_dir / SPLIT_DIR_NAME)
+        _check(report, "split and fold manifests verify", True, f"{len(all_folds)} dev rows")
+    except (OSError, ValueError) as exc:
+        _check(report, "split and fold manifests verify", False, str(exc))
+        return report
+    final_test = [s for s in split if s.split == FINAL_TEST]
+    test_ids = {s.image_id for s in final_test}
+    real_ids = {r.image_id for r in all_folds} | test_ids
+
+    wanted = sorted(folds) if folds is not None else completed_folds(gan_dir)
+    _check(report, "completed folds", bool(wanted), wanted)
+    if not wanted:
+        return report
+    registry = {int(r["fold"]): r for r in read_registry(registry_path)} if registry_path else {}
+    rng = random.Random(seed)
+    seen_ids: dict[str, int] = {}
+    seen_paths: dict[str, int] = {}
+    per_fold_rows: dict[int, list[dict[str, Any]]] = {}
+    total_images = 0
+    for fold in wanted:
+        out = gan_dir / f"fold_{fold:02d}"
+        tag = f"fold {fold:02d}"
+        record = json.loads((out / "gan_run.json").read_text())
+        checkpoint = out / "generator.pt"
+        _check(report, f"{tag}: run record is for this fold", int(record["fold"]) == fold)
+        _check(
+            report,
+            f"{tag}: generator digest matches run record",
+            file_sha256(checkpoint) == record["checkpoint_sha256"],
+            record["checkpoint_sha256"][:12],
+        )
+        source = audit_dir / CV_DIR_NAME / f"fold_{fold:02d}_train.csv"
+        _check(
+            report,
+            f"{tag}: training source is fold_{fold:02d}_train.csv and unchanged",
+            Path(record["train_manifest"]).name == source.name
+            and file_sha256(source) == record["train_manifest_sha256"],
+            record["train_manifest_sha256"][:12],
+        )
+        train_rows, validation_rows = fold_members(all_folds, fold)
+        train_ids = {r.image_id for r in train_rows}
+        val_ids = {r.image_id for r in validation_rows}
+        forbidden = forbidden_ids_for_fold(all_folds, fold, final_test)
+        _check(
+            report,
+            f"{tag}: forbidden ids checked == validation + final test",
+            int(record["forbidden_ids_checked"]) == len(forbidden),
+            f"{record['forbidden_ids_checked']} vs {len(forbidden)}",
+        )
+        smoke = record["config"].get("max_train_images") is not None
+        _check(
+            report,
+            f"{tag}: real images seen == training fold rows" + (" (smoke subset)" if smoke else ""),
+            int(record["real_training_images"]) == len(train_rows)
+            or (smoke and int(record["real_training_images"]) <= len(train_rows)),
+            f"{record['real_training_images']} vs {len(train_rows)}",
+        )
+        # synthetic manifest: rows, paths, classes, files
+        synthetic = read_synthetic_manifest(out / "synthetic_manifest.csv")
+        per_fold_rows[fold] = synthetic
+        try:
+            validate_synthetic_rows(synthetic, fold, repo_root)
+            _check(
+                report,
+                f"{tag}: synthetic rows valid (fold, class, label, train path, file)",
+                True,
+                len(synthetic),
+            )
+        except ValueError as exc:
+            _check(
+                report,
+                f"{tag}: synthetic rows valid (fold, class, label, train path, file)",
+                False,
+                str(exc),
+            )
+        _check(
+            report,
+            f"{tag}: every synthetic row names this fold's generator",
+            all(r["generator_sha256"] == record["checkpoint_sha256"] for r in synthetic),
+        )
+        ids = [r["image_id"] for r in synthetic]
+        paths = [r["filepath"] for r in synthetic]
+        _check(report, f"{tag}: synthetic ids unique", len(set(ids)) == len(ids))
+        _check(
+            report, f"{tag}: synthetic ids disjoint from every real id", not (set(ids) & real_ids)
+        )
+        _check(
+            report,
+            f"{tag}: class directory matches class",
+            all(
+                Path(r["filepath"]).parent.name == r["unified_class"].replace(" ", "_")
+                for r in synthetic
+            ),
+        )
+        for i in ids:
+            seen_ids.setdefault(i, fold)
+        for p in paths:
+            seen_paths.setdefault(p, fold)
+        # nothing on disk under fold_XX that is not train/ + records
+        stray = [
+            p.relative_to(out).as_posix()
+            for p in out.rglob("*.png")
+            if "train" not in p.relative_to(out).parts
+        ]
+        _check(report, f"{tag}: no PNG outside fold_{fold:02d}/train", not stray, stray[:3])
+        on_disk = (
+            sorted(p for p in (out / "train").rglob("*.png")) if (out / "train").is_dir() else []
+        )
+        _check(
+            report,
+            f"{tag}: PNGs on disk == synthetic manifest rows",
+            {p.resolve() for p in on_disk} == {(repo_root / p).resolve() for p in paths},
+            f"{len(on_disk)} on disk, {len(paths)} rows",
+        )
+        # image validity
+        if images != "none" and synthetic:
+            to_open = synthetic
+            if images == "sample":
+                to_open = rng.sample(synthetic, min(sample_size, len(synthetic)))
+            size = int(record["config"]["image_size"])
+            bad = []
+            for r in to_open:
+                try:
+                    with Image.open(repo_root / r["filepath"]) as image:
+                        image.load()
+                        if (
+                            image.format != "PNG"
+                            or image.mode != "RGB"
+                            or image.size != (size, size)
+                        ):
+                            bad.append(r["filepath"])
+                except (OSError, ValueError):
+                    bad.append(r["filepath"])
+            _check(
+                report,
+                f"{tag}: PNGs open as RGB {size}x{size} ({images}, {len(to_open)} files)",
+                not bad,
+                bad[:3],
+            )
+        # WITH-GAN manifest = exactly the real training rows + these synthetic rows
+        with_gan = out / f"fold_{fold:02d}_train_gan.csv"
+        with with_gan.open(newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        real = {r["image_id"] for r in rows if r["synthetic"] == "False"}
+        synth = {r["image_id"] for r in rows if r["synthetic"] == "True"}
+        _check(
+            report, f"{tag}: WITH-GAN real rows == fold_{fold:02d}_train.csv ids", real == train_ids
+        )
+        _check(
+            report, f"{tag}: WITH-GAN synthetic rows == synthetic manifest ids", synth == set(ids)
+        )
+        _check(
+            report,
+            f"{tag}: no validation id in WITH-GAN manifest",
+            not ({r["image_id"] for r in rows} & val_ids),
+        )
+        _check(
+            report,
+            f"{tag}: no final-test id in WITH-GAN manifest",
+            not ({r["image_id"] for r in rows} & test_ids),
+        )
+        _check(
+            report,
+            f"{tag}: synthetic rows carry fold=-1 and data/gan/fold_{fold:02d}/train paths",
+            all(
+                int(r["fold"]) == -1
+                and GAN_DIR_NAME in Path(r["filepath"]).parts
+                and f"fold_{fold:02d}" in Path(r["filepath"]).parts
+                and "train" in Path(r["filepath"]).parts
+                for r in rows
+                if r["synthetic"] == "True"
+            ),
+        )
+        # registry line agrees with the files
+        line = registry.get(fold)
+        _check(report, f"{tag}: registry line present", line is not None)
+        if line is not None:
+            _check(
+                report,
+                f"{tag}: registry digests match generator / manifests / source",
+                line["generator_sha256"] == file_sha256(checkpoint)
+                and line["synthetic_manifest_sha256"] == file_sha256(out / "synthetic_manifest.csv")
+                and line["with_gan_manifest_sha256"] == file_sha256(with_gan)
+                and line["source_training_fold_sha256"] == record["train_manifest_sha256"],
+            )
+            _check(
+                report,
+                f"{tag}: registry count == synthetic rows",
+                int(line["generated_count"]) == len(synthetic),
+                f"{line['generated_count']} vs {len(synthetic)}",
+            )
+            _check(
+                report,
+                f"{tag}: registry device / seed / architecture == run record",
+                line["device"] == record["device"]
+                and int(line["seed"]) == int(record["seed"])
+                and line["architecture"] == record["architecture"] == ARCHITECTURE,
+                line["device"],
+            )
+        total_images += len(synthetic)
+        report["folds"].append(
+            {
+                "fold": fold,
+                "device": record["device"],
+                "gpu_name": record.get("gpu_name", ""),
+                "cuda_version": record.get("cuda_version", ""),
+                "epochs": record["epochs_run"],
+                "seconds": record["seconds"],
+                "real_training_images": record["real_training_images"],
+                "synthetic": len(synthetic),
+                "per_class": dict(Counter(r["unified_class"] for r in synthetic)),
+                "smoke": smoke,
+            }
+        )
+    # cross-fold isolation
+    dup_ids = [
+        i
+        for i, f in seen_ids.items()
+        if any(i in {r["image_id"] for r in per_fold_rows[g]} for g in wanted if g != f)
+    ]
+    dup_paths = [
+        p
+        for p, f in seen_paths.items()
+        if any(p in {r["filepath"] for r in per_fold_rows[g]} for g in wanted if g != f)
+    ]
+    _check(report, "no synthetic id shared between folds", not dup_ids, dup_ids[:3])
+    _check(report, "no synthetic path shared between folds", not dup_paths, dup_paths[:3])
+    _check(
+        report,
+        "class mapping: every label index names its class",
+        all(
+            CANONICAL_CLASSES[int(r["label"])] == r["unified_class"]
+            for rows_ in per_fold_rows.values()
+            for r in rows_
+        ),
+        f"{len(CANONICAL_CLASSES)} classes",
+    )
+    # consolidated manifest
+    if gan_manifest_path is not None:
+        gan_manifest_path = Path(gan_manifest_path)
+        _check(
+            report, "GAN_MANIFEST.csv present", gan_manifest_path.is_file(), str(gan_manifest_path)
+        )
+        if gan_manifest_path.is_file():
+            manifest = read_gan_manifest(gan_manifest_path)
+            listed = {
+                (int(m["fold"]), m["synthetic_id"], m["path"])
+                for m in manifest
+                if int(m["fold"]) in wanted
+            }
+            expected = {
+                (f, r["image_id"], r["filepath"])
+                for f, rows_ in per_fold_rows.items()
+                for r in rows_
+            }
+            _check(
+                report,
+                "GAN_MANIFEST.csv rows == union of per-fold synthetic manifests",
+                listed == expected,
+                f"{len(listed)} listed, {len(expected)} expected",
+            )
+            _check(
+                report,
+                "GAN_MANIFEST.csv classes / labels / sources / dimensions consistent",
+                all(
+                    CANONICAL_CLASSES[int(m["label"])] == m["class"]
+                    and m["training_source"].endswith(f"fold_{int(m['fold']):02d}_train.csv")
+                    and m["source_dataset"] == "gan"
+                    and m["format"] == "PNG"
+                    and int(m["width"]) == int(m["height"]) > 0
+                    and m["generated_at"] != ""
+                    for m in manifest
+                ),
+            )
+            if images == "all":
+                bad = [
+                    m["path"]
+                    for m in manifest
+                    if int(m["fold"]) in wanted
+                    and m["sha256"]
+                    and file_sha256(repo_root / m["path"]) != m["sha256"]
+                ]
+                _check(report, "GAN_MANIFEST.csv image digests match files", not bad, bad[:3])
+    report["counts"] = {
+        "folds": len(wanted),
+        "synthetic_images": total_images,
+        "per_fold": {f["fold"]: f["synthetic"] for f in report["folds"]},
+    }
+    report["ok"] = not report["errors"]
+    return report
+
+
+def summarize_verification(report: dict[str, Any]) -> str:
+    lines = [
+        f"[{'ok' if c['ok'] else 'FAIL'}] {c['check']} — {c['detail']}" for c in report["checks"]
+    ]
+    lines.append("RESULT: " + ("VERIFIED" if report["ok"] else "NOT VERIFIED"))
+    return "\n".join(lines)

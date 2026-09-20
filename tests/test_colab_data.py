@@ -417,9 +417,22 @@ def test_preflight_requires_fold_and_arm_without_env_only():
 # --- notebook --------------------------------------------------------------------------------
 
 
-def test_notebook_uses_develop_and_configurable_root():
-    text = (ROOT / "notebooks" / "AquaHealthAI_Phase12_Colab.ipynb").read_text()
+@pytest.mark.parametrize(
+    "notebook", ["AquaHealthAI_Phase12_Colab.ipynb", "AquaHealthAI_Layer3_GAN_Colab.ipynb"]
+)
+def test_notebook_uses_develop_and_configurable_root(notebook):
+    text = (ROOT / "notebooks" / notebook).read_text()
     assert "BRANCH = 'develop'" in text
     assert DATASET_ROOT_ENV in text and "colab_dataset.py verify" in text
     assert "gpu_smoke.py --require-cuda" in text and "colab_preflight.py --env-only" in text
     assert "release/final-completion" not in text and "/Users/" not in text
+
+
+def test_gan_notebook_trains_on_cuda_only_through_the_scripts():
+    text = (ROOT / "notebooks" / "AquaHealthAI_Layer3_GAN_Colab.ipynb").read_text()
+    assert (
+        "run_gan_fold.py --fold 1 --config configs/gan_v2/smoke.json --smoke --require-cuda" in text
+    )
+    assert "run_gan_all_folds.py --config configs/gan_v2/default.json --require-cuda" in text
+    assert "verify_gan_outputs.py --smoke" in text and "verify_gan_outputs.py --images all" in text
+    assert "--device cpu" not in text and "--device mps" not in text

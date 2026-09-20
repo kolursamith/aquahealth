@@ -1,0 +1,20 @@
+{
+  "description": "INFRASTRUCTURE SMOKE TEST — NOT A GENERATION RESULT. Same cDCGAN as default.json with 1 epoch on a seeded 256-image subset of the training fold and a fixed small synthetic count, so the real-data path (fold manifests, forbidden-id guard, image decode, training step, checkpoint, generation, provenance, registry) runs in about a minute. Output goes to data/gan/smoke/ and results/v2/smoke/, never to the real fold directories or registry.",
+  "architecture": "cDCGAN (class-conditional DCGAN)",
+  "gan": {
+    "image_size": 64,
+    "latent_dim": 100,
+    "base_channels": 64,
+    "epochs": 1,
+    "batch_size": 64,
+    "learning_rate": 0.0002,
+    "beta1": 0.5,
+    "beta2": 0.999,
+    "label_smoothing": 0.0,
+    "seed": 42,
+    "target_per_class": null,
+    "synthetic_per_class": {"Aeromoniasis": 8, "Saprolegniasis": 8},
+    "max_synthetic_ratio": 1.0,
+    "max_train_images": 256
+  }
+}

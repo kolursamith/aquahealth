@@ -1,0 +1,25 @@
+{
+  "description": "Phase 10 GAN augmentation, training-fold-only. One class-conditional DCGAN per CV fold, trained on that fold's fold_XX_train.csv rows only (validation fold and frozen final_test are runtime-forbidden ids). No supplied paper or project document specifies a GAN architecture (verified 2026-09-19 across ROADMAO/*, Review_dcouments/*, Research papers/*, team_divison_work/*, Data_training_results_technique3/*): cDCGAN is the project's own documented choice, not attributed to any paper. Synthetic amount policy (roadmap Phase 14: 'GAN should not automatically generate the same number of images for every class'): top every class of the training fold up to the fold's largest class, capped at 1.0 x the class's real count.",
+  "architecture": "cDCGAN (class-conditional DCGAN)",
+  "gan": {
+    "image_size": 64,
+    "latent_dim": 100,
+    "base_channels": 64,
+    "epochs": 30,
+    "batch_size": 64,
+    "learning_rate": 0.0002,
+    "beta1": 0.5,
+    "beta2": 0.999,
+    "label_smoothing": 0.0,
+    "seed": 42,
+    "target_per_class": null,
+    "synthetic_per_class": {},
+    "max_synthetic_ratio": 1.0,
+    "max_train_images": null
+  },
+  "generation": {
+    "output_root": "data/gan/fold_XX/train/<class>/synthetic_NNNNN.png (git-ignored)",
+    "registry": "results/v2/gan/registry.csv (tracked)",
+    "format": "PNG, RGB, image_size x image_size, values from tanh output mapped to [0, 255]"
+  }
+}

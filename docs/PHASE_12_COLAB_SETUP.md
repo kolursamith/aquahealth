@@ -55,11 +55,15 @@ Every manifest row has `filepath` relative to the repository root (`data/raw/<ke
 CSVs work locally and on Colab once `data/raw/` links exist. `scripts/colab_preflight.py` checks that
 every image of the fold's training and validation manifests exists before anything runs.
 
-## GAN data
+## GAN data (Layer 3)
 WITH-GAN needs `data/gan/fold_XX/fold_XX_train_gan.csv` (+ the PNGs under `data/gan/fold_XX/train/`),
-produced on Colab by `scripts/run_gan_fold.py --fold XX --device cuda` (section 6). Section 4 links
-`data/gan` and `results/v2` to `MyDrive/AquaHealth/{gan,results_v2}` so they persist across sessions.
-Synthetic images are never committed.
+produced on Colab CUDA only — `notebooks/AquaHealthAI_Layer3_GAN_Colab.ipynb` runs the GAN smoke test
+(`scripts/run_gan_fold.py --smoke --require-cuda`), then all ten folds
+(`scripts/run_gan_all_folds.py --config configs/gan_v2/default.json --require-cuda`), then
+`scripts/verify_gan_outputs.py`; see `docs/GAN_AUGMENTATION.md`. Section 5 links `data/gan` and
+`results/v2` to `MyDrive/AquaHealth/{gan,results_v2}` so they persist across sessions. Synthetic
+images and generators are never committed; `results/v2/gan/{registry.csv,GAN_MANIFEST.csv,
+verification.json,generation_summary.json}` are.
 
 ## CUDA verification
 `scripts/colab_preflight.py --fold F --data-arm A --require-cuda` prints a JSON report: GPU name, CUDA

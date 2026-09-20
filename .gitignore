@@ -94,6 +94,11 @@ results/**/*.pt
 # Phase-10 GAN registry (one line per fold: architecture, seed, counts, digests) is tracked;
 # the images, checkpoints and per-fold manifests under data/gan/ are not.
 !results/v2/gan/registry.csv
+# Layer 3 GAN records (per-image provenance, verification report, generation summary, console log)
+!results/v2/gan/GAN_MANIFEST.csv
+!results/v2/gan/verification.json
+!results/v2/gan/generation_summary.json
+!results/v2/gan/*.log
 results/v2/smoke/
 # Official one-shot test evaluation (Gate 8): every artifact is evidence.
 !results/final_test/*.json
