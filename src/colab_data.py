@@ -281,7 +281,18 @@ def attach(root: Path, repo_root: Path, *, force: bool = False) -> list[str]:
                 )
             link.unlink()
         elif link.exists():
-            raise DatasetUnavailable(f"{link} exists and is not a symlink; refusing to replace it")
+            # scripts/link_raw_datasets.py builds current_freshwater as a real directory that
+            # holds only symlinks (train_split, test_split, test.csv). With force=True such a
+            # link-only directory is replaced; a directory holding real files never is.
+            entries = list(link.iterdir()) if link.is_dir() else []
+            if force and link.is_dir() and entries and all(e.is_symlink() for e in entries):
+                for e in entries:
+                    e.unlink()
+                link.rmdir()
+            else:
+                raise DatasetUnavailable(
+                    f"{link} exists and is not a symlink; refusing to replace it"
+                )
         link.symlink_to(target, target_is_directory=True)
         lines.append(f"{link} -> {target}")
     return lines

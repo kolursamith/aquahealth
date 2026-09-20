@@ -252,6 +252,23 @@ def test_attach_and_full_verify(repo, colab_repo, tmp_path):
     with pytest.raises(DatasetUnavailable, match="force"):
         attach(other, colab_repo)
     attach(other, colab_repo, force=True)
+    # a link-only directory (what scripts/link_raw_datasets.py leaves for current_freshwater
+    # after a Drive delivery was linked) is replaced with force=True ...
+    link = colab_repo / "data" / "raw" / "src_a"
+    link.unlink()
+    link.mkdir()
+    (link / "train_split").symlink_to(tmp_path)
+    with pytest.raises(DatasetUnavailable, match="not a symlink"):
+        attach(other, colab_repo)
+    attach(other, colab_repo, force=True)
+    assert link.is_symlink() and link.resolve() == (other / "data" / "raw" / "src_a").resolve()
+    # ... but a directory holding a real file never is
+    link.unlink()
+    link.mkdir()
+    (link / "real.jpg").write_bytes(b"x")
+    with pytest.raises(DatasetUnavailable, match="not a symlink"):
+        attach(other, colab_repo, force=True)
+    assert (link / "real.jpg").is_file()
 
 
 def test_verify_detects_modified_image(repo, colab_repo, tmp_path):
