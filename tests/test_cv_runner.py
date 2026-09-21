@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -603,11 +604,18 @@ def test_matrix_refresh_reads_statuses_without_faking_completion(tmp_path):
     assert refreshed[0]["status"] == "FAILED" and refreshed[1]["status"] == "PENDING"
 
 
-def test_real_committed_matrix_is_100_pending():
+def test_real_committed_matrix_has_100_experiments_with_record_backed_statuses():
+    """The committed matrix carries the statuses of the Colab runs whose records are
+    committed: a COMPLETED row must have its run_summary.json + metrics.json in the repo."""
     path = ROOT / "results" / "v2" / "experiment_matrix.csv"
     rows = read_matrix(path)
-    assert len(rows) == 100 and {r["status"] for r in rows} == {"PENDING"}
+    assert len(rows) == 100 and len({r["experiment_id"] for r in rows}) == 100
+    assert {r["status"] for r in rows} <= {"PENDING", "COMPLETED", "FAILED", "INTERRUPTED"}
     assert experiment_id("cnn_vit_lstm", 1, "without_gan") == rows[0]["experiment_id"]
+    for r in rows:
+        if r["status"] == "COMPLETED":
+            exp = ROOT / "results" / "v2" / "experiments" / r["experiment_id"]
+            assert (exp / "run_summary.json").is_file() and (exp / "metrics.json").is_file(), r
 
 
 # --- 23-25: Colab preflight, CUDA detection, Colab configuration ---
@@ -668,5 +676,9 @@ def test_colab_configurations_load_and_smoke_config_is_flagged():
     nb = json.loads((ROOT / "notebooks" / "AquaHealthAI_Phase12_Colab.ipynb").read_text())
     sources = "".join("".join(c["source"]) for c in nb["cells"])
     assert "--require-cuda" in sources and "colab_preflight.py" in sources
-    assert "final_test" not in sources.replace("final_test.csv` is read for ids only", "")
+    # the frozen test file appears only as a digest pin and an ids-absence check, never as
+    # an evaluation split (the v3 flow's section 4 hashes it and asserts no id leaks into a fold)
+    uses = re.findall(r"final_test[^\n]*", sources)
+    assert uses and all("final_test.csv" in u for u in uses), uses
+    assert not re.search(r"evaluate|predict|test_loader|--split\s+final_test", sources)
     assert all(c.get("outputs", []) == [] for c in nb["cells"] if c["cell_type"] == "code")

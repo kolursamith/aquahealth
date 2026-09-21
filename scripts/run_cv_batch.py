@@ -16,10 +16,14 @@ For each (model, fold), in order:
      scripts/verify_gan_outputs.py --folds F (this fold's generator digest, training
      source, synthetic rows, WITH-GAN manifest = real + this fold's synthetic only).
      A failing gate marks the experiment FAILED with the gate's output and moves on.
-  3. scripts/run_cv_experiment.py ... [--resume when a latest.pt exists]. A failed run
+  3. when a latest.pt exists: scripts/verify_resume_checkpoint.py (model / fold / arm /
+     seed / dataset_config_version / manifest, GAN and preprocessing digests / optimizer,
+     scheduler, scaler, RNG state / CUDA) — a mismatch STOPS the whole batch, status
+     untouched, nothing restarted.
+  4. scripts/run_cv_experiment.py ... [--resume when a latest.pt exists]. A failed run
      leaves status.json = FAILED (with the error) and the batch continues.
-  4. src/fit_analysis.write_fit_analysis (fit_analysis.json / .md) for a COMPLETED run.
-  5. results/v2/experiment_matrix.csv statuses refreshed.
+  5. src/fit_analysis.write_fit_analysis (fit_analysis.json / .md) for a COMPLETED run.
+  6. results/v2/experiment_matrix.csv statuses refreshed.
 
 After each model: scripts/summarize_cv_results.py --model M --data-arm A. After the
 batch: --all-models report when --report is given. Nothing here trains; the frozen
@@ -110,7 +114,10 @@ def main(argv: list[str] | None = None) -> int:
         with batch_log.open("a") as handle:
             handle.write(json.dumps(entry) + "\n")
 
+    halted = False
     for model in models:
+        if halted:
+            break
         for fold in folds:
             exp = experiment_id(model, fold, args.data_arm)
             out_dir = experiments / exp
@@ -160,8 +167,38 @@ def main(argv: list[str] | None = None) -> int:
                 if args.stop_on_failure:
                     break
                 continue
-            # train (resume when a checkpoint exists)
+            # resume when a checkpoint exists — after its metadata is verified against the
+            # manifests / GAN artefacts / configuration this run will use (never restart)
             resume = (out_dir / "latest.pt").is_file()
+            if resume:
+                rc = run(
+                    [
+                        py,
+                        str(SCRIPTS / "verify_resume_checkpoint.py"),
+                        "--model",
+                        model,
+                        "--fold",
+                        str(fold),
+                        "--data-arm",
+                        args.data_arm,
+                        "--config",
+                        str(args.config),
+                        *common,
+                        *cuda,
+                    ],
+                    console,
+                )
+                if rc != 0:
+                    logger.error(
+                        "%s: latest.pt cannot be resumed safely (exit %d) — batch stopped, "
+                        "status left as %s; nothing restarted",
+                        exp,
+                        rc,
+                        read_status(out_dir),
+                    )
+                    record(experiment_id=exp, outcome="resume_verification_failed", exit_code=rc)
+                    halted = True
+                    break
             cmd = [
                 py,
                 str(SCRIPTS / "run_cv_experiment.py"),
@@ -249,7 +286,8 @@ def main(argv: list[str] | None = None) -> int:
     for o in outcomes:
         counts[o["outcome"]] = counts.get(o["outcome"], 0) + 1
     print(json.dumps({"batch_log": str(batch_log), "outcomes": counts}, indent=2))
-    return 0 if counts.get("failed", 0) + counts.get("gate_failed", 0) == 0 else 1
+    bad = ("failed", "gate_failed", "resume_verification_failed")
+    return 0 if sum(counts.get(k, 0) for k in bad) == 0 else 1
 
 
 if __name__ == "__main__":

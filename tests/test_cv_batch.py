@@ -175,3 +175,55 @@ def test_fit_analysis_verdicts_from_curves(tmp_path):
     a = write_fit_analysis(exp)
     assert a["verdict"] == "mild_generalisation_gap" and (exp / "fit_analysis.md").is_file()
     assert a["weakest_class"]["name"] == "B"
+
+
+def test_resume_checkpoint_verifier_accepts_a_matching_latest_and_rejects_a_foreign_one(repo):  # noqa: F811
+    from src.cv_runner import run_experiment
+    from tests.test_cv_runner import _args
+
+    run_experiment(_args(repo, data_arm="with_gan", max_train_samples=None))
+    exp = repo / "results" / "v2" / "experiments" / "cnn_bilstm_fold01_with_gan"
+    (exp / "run_summary.json").unlink()
+    (exp / "status.json").write_text(json.dumps({"status": "INTERRUPTED"}))
+
+    def verify(*extra: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "verify_resume_checkpoint.py"),
+                "--model",
+                "cnn_bilstm",
+                "--fold",
+                "1",
+                "--data-arm",
+                "with_gan",
+                "--config",
+                "configs/cv_v2/smoke.json",
+                "--repo-root",
+                str(repo),
+                "--data-dir",
+                str(repo / "data"),
+                *extra,
+            ],
+            capture_output=True,
+            text=True,
+            cwd=ROOT,
+        )
+
+    out = verify()
+    assert out.returncode == 0 and "RESULT: RESUMABLE" in out.stdout, out.stdout + out.stderr
+    for name in ("train manifest digest", "GAN synthetic manifest digest", "preprocessing digest"):
+        assert f"[ok] {name}" in out.stdout
+    # the fixture trains on the CPU: with --require-cuda that checkpoint is refused
+    out = verify("--require-cuda")
+    assert out.returncode == 1 and "[FAIL] checkpoint written on CUDA" in out.stdout
+    # a checkpoint of another fold / arm / manifest is refused
+    import torch
+
+    ck = torch.load(exp / "latest.pt", map_location="cpu", weights_only=False)
+    ck["fold"] = 2
+    ck["manifest_sha256"]["train"] = "0" * 64
+    torch.save(ck, exp / "latest.pt")
+    out = verify()
+    assert out.returncode == 1
+    assert "[FAIL] fold" in out.stdout and "[FAIL] train manifest digest" in out.stdout
