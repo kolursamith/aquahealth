@@ -739,6 +739,12 @@ def run_experiment(args: RunArgs) -> dict[str, Any]:
     paths = Paths(Path(args.out_root) / exp_id)
     if is_completed(paths.out_dir):
         raise FileExistsError(f"{exp_id} is COMPLETED; not retraining (choose a new id to rerun)")
+    if read_status(paths.out_dir) == "COMPLETED":
+        # a fresh clone carries status.json but not the git-ignored best.pt / latest.pt
+        raise FileExistsError(
+            f"{exp_id} is recorded COMPLETED but some outputs (checkpoints) are missing here; "
+            "restore them from artifact storage (docs/PHASE12_GPU_MIGRATION.md) — not retraining"
+        )
     if paths.latest.is_file() and not args.resume:
         raise FileExistsError(
             f"{exp_id} has a checkpoint ({read_status(paths.out_dir)}); pass --resume"

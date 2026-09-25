@@ -137,3 +137,11 @@ aquahealth_bundle*/
 # Quarantined unofficial GAN outputs (v2 data / local MPS): never committed, never used.
 data/gan_archive_unofficial/
 !results/v2/drive_delivery.json
+
+# Phase 12 GPU migration: large archives (GAN tar.gz, Drive/Colab exports, results zips) and
+# Colab scratch never enter git; their locations and digests are documented in
+# docs/PHASE12_GPU_MIGRATION.md.
+*.tar.gz
+*.tgz
+*.zip
+sample_data/

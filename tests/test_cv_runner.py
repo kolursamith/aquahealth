@@ -453,6 +453,14 @@ def test_run_writes_every_artifact_records_provenance_and_refuses_overwrite(repo
         run_experiment(_args(repo))
     with pytest.raises(FileExistsError, match="COMPLETED"):
         run_experiment(_args(repo, resume=True))
+    # a fresh clone keeps status.json but not the git-ignored checkpoints: still never retrained
+    (out / "best.pt").unlink()
+    (out / "latest.pt").unlink()
+    assert not is_completed(out)
+    with pytest.raises(FileExistsError, match="recorded COMPLETED"):
+        run_experiment(_args(repo))
+    with pytest.raises(FileExistsError, match="recorded COMPLETED"):
+        run_experiment(_args(repo, resume=True))
 
 
 def test_with_gan_arm_trains_on_real_plus_synthetic_and_validates_on_fold(repo):

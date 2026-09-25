@@ -75,7 +75,7 @@ aborts rather than falling back to CPU/MPS.
 ## Launch one experiment
 ```bash
 python scripts/run_cv_experiment.py --model cnn_vit_lstm --fold 1 --data-arm without_gan \
-    --config configs/cv_v3/default.json --require-cuda
+    --config configs/cv_v2/default.json --require-cuda
 ```
 `--model` ∈ {efficientnet_b0, cnn_vit_lstm, yolo_efficientnet, cnn_bilstm, resnet_attention,
 yolo_transformer}; `--data-arm` ∈ {without_gan, with_gan}; `--fold` 1–10. The experiment id is

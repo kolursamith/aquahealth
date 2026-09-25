@@ -9,7 +9,8 @@ resnet_attention,yolo_transformer --folds 1-10 --data-arm with_gan --require-cud
 
 For each (model, fold), in order:
 
-  1. COMPLETED (status + every output file present)  -> skipped, never rerun.
+  1. COMPLETED (status + every output file present)  -> skipped, never rerun. A status of
+     COMPLETED with outputs missing (a fresh clone without checkpoints) is skipped too.
   2. gates: scripts/colab_preflight.py --fold F --data-arm A --model M [--require-cuda]
      (manifests exist and resolve, id/group isolation, final-test ids absent, digests,
      CUDA/GPU, model (N,3,224,224) -> (N,8) logits) and, for with_gan,
@@ -126,6 +127,11 @@ def main(argv: list[str] | None = None) -> int:
                 if not (out_dir / "fit_analysis.json").is_file():
                     write_fit_analysis(out_dir)
                 record(experiment_id=exp, outcome="skipped_completed")
+                continue
+            if read_status(out_dir) == "COMPLETED":
+                # recorded COMPLETED (e.g. a fresh clone without the git-ignored checkpoints)
+                logger.warning("%s: COMPLETED but outputs missing — skipped, not retrained", exp)
+                record(experiment_id=exp, outcome="skipped_completed_outputs_missing")
                 continue
             t0 = time.perf_counter()
             # gates
